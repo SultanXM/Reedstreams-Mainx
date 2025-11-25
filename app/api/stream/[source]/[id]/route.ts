@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'https://api.reedstreams.com'
+const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'https://streamed.pk/api'
 
 interface RouteParams {
   params: Promise<{ source: string; id: string }>
