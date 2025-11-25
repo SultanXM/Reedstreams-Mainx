@@ -5,6 +5,8 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Calendar, CalendarDays } from "lucide-react";
 
+const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'https://streamed.pk/api';
+
 interface Match {
   id: string;
   title: string;
@@ -242,7 +244,7 @@ export default function MatchesList() {
                                 <div className="lm-team-badge-container">
                                   {match.teams?.home?.badge ? (
                                     <img
-                                      src={`${process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL}/images/badge/${match.teams.home.badge}.webp`}
+                                      src={`${STREAMED_API_BASE}/images/badge/${match.teams.home.badge}.webp`}
                                       alt={match.teams.home.name}
                                       className="lm-team-logo"
                                       onError={(e) => {
@@ -292,7 +294,7 @@ export default function MatchesList() {
                                 <div className="lm-team-badge-container">
                                   {match.teams?.away?.badge ? (
                                     <img
-                                      src={`${process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL}/images/badge/${match.teams.away.badge}.webp`}
+                                      src={`${STREAMED_API_BASE}/images/badge/${match.teams.away.badge}.webp`}
                                       alt={match.teams.away.name}
                                       className="lm-team-logo"
                                       onError={(e) => {
