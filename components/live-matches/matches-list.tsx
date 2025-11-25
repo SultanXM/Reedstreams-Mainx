@@ -314,13 +314,12 @@ export default function MatchesList() {
                                 <div className="lm-team-badge-container">
                                   {match.teams?.away?.badge ? (
                                     <img
-                                      src={`${STREAMED_API_BASE}/images/badge/${match.teams.away.badge}`}
+                                      src={`${STREAMED_API_BASE}/images/badge/${match.teams.away.badge}.webp`}
                                       alt={match.teams.away.name}
                                       className="lm-team-logo"
                                       onError={(e) => {
                                         const target = e.target as HTMLImageElement;
                                         console.error(`❌ Failed to load badge: ${target.src}`);
-                                        console.log(`🔄 Trying fallback for: ${match.teams?.away?.badge}`);
                                         target.style.display = "none";
                                         if (target.nextElementSibling) {
                                           (target.nextElementSibling as HTMLElement).style.display = "flex";
