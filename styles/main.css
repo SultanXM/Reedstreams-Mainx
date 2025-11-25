@@ -1,0 +1,130 @@
+.filter-buttons { 
+    display: flex; 
+    gap: 0.5rem; 
+    flex-wrap: wrap; 
+    justify-content: center;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    max-width: 1200px;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    min-width: 100px;
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-btn.active {
+    background: #8DB902;
+    color: white;
+    border: none;
+}
+
+.filter-btn:not(.active) {
+    background: transparent;
+    border: 1px solid #8DB902;
+    color: white;
+}
+
+.filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; 
+    left: -100%;
+    width: 100%; 
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.filter-btn:hover::before {
+    left: 100%;
+}
+
+.filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(141,185,2,.4);
+}
+
+/* .stream-selector {
+  margin-top: 2rem;
+  background: rgba(13, 18, 29, 0.95);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(141, 185, 2, 0.2);
+}
+
+.stream-selector-header {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stream-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.stream-option {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stream-option:hover {
+  background: rgba(141, 185, 2, 0.1);
+  border-color: rgba(141, 185, 2, 0.5);
+  transform: translateY(-2px);
+}
+
+.stream-option.active {
+  background: rgba(141, 185, 2, 0.2);
+  border-color: #8DB902;
+}
+
+.stream-number {
+  font-weight: 600;
+  color: #fff;
+}
+
+.stream-lang {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.stream-quality {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.stream-quality.hd {
+  background: #8DB902;
+  color: #000;
+}
+
+.stream-quality.sd {
+  background: rgba(255, 255, 255, 0.1);
+  color: #999;
+} 
+  */

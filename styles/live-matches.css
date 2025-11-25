@@ -1,0 +1,704 @@
+/* Renamed all classes with lm- prefix to avoid CSS conflicts with other components */
+
+/* Transparent Header */
+.lm-header {
+  background: transparent;
+  padding: 1.5rem 3rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  transition: var(--transition);
+}
+
+.lm-header.scrolled {
+  background: rgba(10, 14, 23, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 1rem 3rem;
+  border-bottom: 1px solid rgba(141, 185, 2, 0.2);
+}
+
+.lm-header-hidden {
+  transform: translateY(-100%);
+}
+
+.lm-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lm-logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.lm-logo-text {
+  color: var(--text-light);
+}
+
+.lm-logo-accent {
+  color: var(--primary-color);
+}
+
+.lm-nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.lm-nav-links a {
+  color: var(--text-light);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  position: relative;
+  padding: 0.5rem 0;
+  transition: var(--transition);
+}
+
+.lm-nav-links a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: var(--transition);
+}
+
+.lm-nav-links a:hover {
+  color: var(--primary-color);
+}
+
+.lm-nav-links a:hover::after {
+  width: 100%;
+}
+
+.lm-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.lm-watch-now-btn {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 15px rgba(141, 185, 2, 0.3);
+}
+
+.lm-watch-now-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(141, 185, 2, 0.4);
+}
+
+/* Live Hero Section */
+.lm-live-hero {
+  background: linear-gradient(
+      to top,
+      #0a0e17 0%,
+      rgba(10, 14, 23, 0.25) 70vh,
+      rgba(10, 14, 23, 0.5) 80vh,
+      rgba(10, 14, 23, 2) 90vh,
+      transparent 100%
+    ), url("/Images/BG.jpg") no-repeat center center / cover;
+  padding: 12rem 2rem 6rem;
+  text-align: center;
+  position: relative;
+}
+
+.lm-live-icon {
+  font-size: 3rem;
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+  display: block;
+}
+
+.lm-live-hero h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to right, #ffffff, var(--primary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lm-hero-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  margin-bottom: 3rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.lm-tab-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.lm-tab-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-light);
+  padding: 0.8rem 2rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.lm-tab-btn.active {
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  border-color: var(--primary-color);
+}
+
+.lm-tab-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Matches Section */
+.lm-matches-section {
+  padding: 2rem 1rem;
+  background: linear-gradient(45deg, transparent 0%, rgba(141, 185, 2, 0.03) 50%, transparent 100%);
+  position: relative;
+}
+
+/* Creative Title */
+.lm-creative-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.lm-creative-title h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+
+.lm-creative-title .subtitle {
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Matches Grid */
+.lm-matches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Match Card */
+.lm-match-card {
+  position: relative;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(45deg, transparent 0%, rgba(141, 185, 2, 0.03) 50%, transparent 100%);
+  border-radius: 10px;
+  border: 2px solid var(--primary-color);
+  padding: 1.5rem 1rem 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+  min-height: 180px;
+}
+
+.lm-match-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(141, 185, 2, 0.2);
+  border-color: rgba(141, 185, 2, 0.8);
+}
+
+.lm-live-tag {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  background: rgb(212, 32, 26);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(141, 185, 2, 0.5);
+  animation: lm-live-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes lm-live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(141, 185, 2, 0.5);
+  }
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 4px 20px rgba(141, 185, 2, 0.8);
+  }
+}
+
+/* Teams Container */
+.lm-teams-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  flex-grow: 1;
+}
+
+.lm-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 30%;
+}
+
+.lm-team-badge-container {
+  width: 75px;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lm-team-logo {
+  width: 75px;
+  height: 75px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px;
+}
+
+.lm-team-placeholder {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.lm-team-abbr {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-light);
+  text-align: center;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.lm-match-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  width: 40%;
+  justify-content: center;
+}
+
+.lm-vs-line {
+  width: 40px;
+  height: 1px;
+  background-color: var(--text-muted);
+  margin: 0.3rem 0;
+}
+
+.lm-date {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+  text-align: center;
+}
+
+.lm-time {
+  font-size: 0.75rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+  text-align: center;
+}
+
+.lm-competition {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Filter Buttons */
+.lm-filter-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  max-width: 1200px;
+  flex-wrap: wrap;
+}
+
+.lm-filter-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 100px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--primary-color);
+  background: transparent;
+  color: var(--text-light);
+}
+
+.lm-filter-btn.active {
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  border-color: var(--primary-color);
+}
+
+.lm-filter-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.lm-filter-btn:hover::before {
+  left: 100%;
+}
+
+.lm-filter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(141, 185, 2, 0.4);
+}
+
+/* Date Separator */
+.lm-date-separator {
+  grid-column: 1 / -1;
+  margin: 30px 0 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  position: relative;
+}
+
+.lm-date-separator::before,
+.lm-date-separator::after {
+  content: "";
+  flex-grow: 1;
+  height: 1px;
+  background-color: rgba(141, 185, 2, 0.4);
+  max-width: 40%;
+}
+
+.lm-date-separator h3 {
+  margin: 0;
+  padding: 0 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lm-date-separator i {
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+/* Loading and Empty States */
+.lm-loading-message,
+.lm-error-message,
+.lm-no-matches {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+  font-size: 1rem;
+  width: 100%;
+  grid-column: 1 / -1;
+}
+
+.lm-error-message {
+  color: #d4201a;
+}
+
+/* Mobile Navigation */
+.lm-mobile-nav {
+  z-index: 1000 !important;
+}
+
+.lm-overlay {
+  z-index: 999 !important;
+}
+
+.lm-mobile-menu-btn {
+  z-index: 1001 !important;
+}
+
+body.lm-sidebar-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+.lm-mobile-nav,
+.lm-overlay {
+  transition: all 0.3s ease;
+}
+
+/* Responsive Design */
+@media (min-width: 1200px) {
+  .lm-matches-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .lm-date {
+    font-size: 0.8rem;
+  }
+
+  .lm-time {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .lm-matches-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .lm-match-card {
+    min-height: 220px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .lm-matches-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .lm-match-card {
+    min-height: 200px;
+  }
+
+  .lm-team-logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .lm-team-badge-container {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* ========================= */
+/*   MOBILE < 767px          */
+/* ========================= */
+@media (max-width: 767px) {
+
+  /* Header */
+  .lm-header {
+    padding: 0.9rem 1rem;
+  }
+
+  .lm-header.scrolled {
+    padding: 0.6rem 1rem;
+  }
+
+  .lm-nav-links {
+    display: none;
+  }
+
+  /* Hero */
+  .lm-live-hero {
+    padding: 8rem 1rem 3.5rem;
+    background-size: cover;
+  }
+
+  .lm-live-hero h1 {
+    font-size: 1.9rem;
+  }
+
+  .lm-hero-subtitle {
+    font-size: 1rem;
+    max-width: 350px;
+  }
+
+  .lm-tab-buttons {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .lm-tab-btn {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  /* Matches */
+  .lm-matches-grid {
+    grid-template-columns: 1fr;
+    padding: 0 0.5rem;
+  }
+
+  .lm-match-card {
+    min-height: 190px;
+    padding: 1rem 0.8rem;
+    border-width: 2px;
+  }
+
+  .lm-teams-container {
+    gap: 0.4rem;
+    padding: 0.3rem;
+  }
+
+  .lm-team-logo,
+  .lm-team-badge-container {
+    width: 60px;
+    height: 60px;
+  }
+
+  .lm-team-abbr {
+    font-size: 0.7rem;
+  }
+
+  .lm-match-center {
+    gap: 0.2rem;
+  }
+
+  .lm-vs-line {
+    width: 60px;
+  }
+
+  .lm-date,
+  .lm-time {
+    font-size: 0.7rem;
+    max-width: 70px;
+  }
+
+  .lm-left-tag {
+    font-size: 0.7rem;
+  }
+
+  /* Filters */
+  .lm-filter-buttons {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .lm-filter-btn {
+    min-width: auto;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .lm-live-hero h1 {
+    font-size: 1.7rem;
+  }
+
+  .lm-creative-title h2 {
+    font-size: 1.3rem;
+  }
+
+  .lm-team {
+    width: 35%;
+  }
+
+  .lm-match-center {
+    width: 30%;
+  }
+
+  .lm-team-logo,
+  .lm-team-badge-container {
+    width: 50px;
+    height: 50px;
+  }
+
+  .lm-vs-line {
+    width: 45px;
+  }
+
+  .lm-competition {
+    font-size: 0.6rem;
+  }
+
+  .lm-match-card {
+    min-height: 170px;
+  }
+}
+
+
+@media (max-width: 360px) {
+
+  .lm-live-hero h1 {
+    font-size: 1.4rem;
+  }
+
+  .lm-match-card {
+    padding: 0.7rem;
+    min-height: 150px;
+  }
+
+  .lm-team-logo,
+  .lm-team-badge-container {
+    width: 45px;
+    height: 45px;
+  }
+
+  .lm-team-abbr {
+    font-size: 0.6rem;
+  }
+
+  .lm-date,
+  .lm-time {
+    font-size: 0.55rem;
+  }
+}
