@@ -7,6 +7,24 @@ import { Calendar, CalendarDays } from "lucide-react";
 
 const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'https://streamed.pk/api';
 
+// Helper function to build badge URL with multiple fallback attempts
+function getBadgeUrl(badgeId: string): string {
+  if (!badgeId) return '';
+  
+  // Try multiple URL formats
+  const urls = [
+    `${STREAMED_API_BASE}/images/badge/${badgeId}.webp`,
+    `${STREAMED_API_BASE}/images/badge/${badgeId}.png`,
+    `${STREAMED_API_BASE}/badge/${badgeId}.webp`,
+    `${STREAMED_API_BASE}/badge/${badgeId}.png`,
+    `https://streamed.pk/images/${badgeId}.webp`,
+    `https://streamed.pk/images/${badgeId}.png`,
+  ];
+  
+  console.log(`🔍 Attempting badge URLs for ${badgeId}:`, urls);
+  return urls[0]; // Start with first URL
+}
+
 interface Match {
   id: string;
   title: string;
@@ -65,6 +83,7 @@ export default function MatchesList() {
         );
 
         console.log('✅ Fetched matches:', validMatches);
+        console.log('Full match data sample:', validMatches[0]);
         console.log('Team badges:', validMatches.map(m => ({ id: m.id, home: m.teams?.home?.badge, away: m.teams?.away?.badge })));
         setMatches(validMatches);
         setFilteredMatches(validMatches);
@@ -244,12 +263,13 @@ export default function MatchesList() {
                                 <div className="lm-team-badge-container">
                                   {match.teams?.home?.badge ? (
                                     <img
-                                      src={`${STREAMED_API_BASE}/images/badge/${match.teams.home.badge}.webp`}
+                                      src={`${STREAMED_API_BASE}/images/badge/${match.teams.home.badge}`}
                                       alt={match.teams.home.name}
                                       className="lm-team-logo"
                                       onError={(e) => {
                                         const target = e.target as HTMLImageElement;
                                         console.error(`❌ Failed to load badge: ${target.src}`);
+                                        console.log(`🔄 Trying fallback for: ${match.teams?.home?.badge}`);
                                         target.style.display = "none";
                                         if (target.nextElementSibling) {
                                           (target.nextElementSibling as HTMLElement).style.display = "flex";
@@ -294,12 +314,13 @@ export default function MatchesList() {
                                 <div className="lm-team-badge-container">
                                   {match.teams?.away?.badge ? (
                                     <img
-                                      src={`${STREAMED_API_BASE}/images/badge/${match.teams.away.badge}.webp`}
+                                      src={`${STREAMED_API_BASE}/images/badge/${match.teams.away.badge}`}
                                       alt={match.teams.away.name}
                                       className="lm-team-logo"
                                       onError={(e) => {
                                         const target = e.target as HTMLImageElement;
                                         console.error(`❌ Failed to load badge: ${target.src}`);
+                                        console.log(`🔄 Trying fallback for: ${match.teams?.away?.badge}`);
                                         target.style.display = "none";
                                         if (target.nextElementSibling) {
                                           (target.nextElementSibling as HTMLElement).style.display = "flex";
