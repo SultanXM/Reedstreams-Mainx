@@ -62,10 +62,12 @@ export default function MatchesList() {
             new Date(a.date).getTime() - new Date(b.date).getTime()
         );
 
+        console.log('✅ Fetched matches:', validMatches);
+        console.log('Team badges:', validMatches.map(m => ({ id: m.id, home: m.teams?.home?.badge, away: m.teams?.away?.badge })));
         setMatches(validMatches);
         setFilteredMatches(validMatches);
       } catch (error) {
-        console.error(error);
+        console.error('❌ Error fetching matches:', error);
         setMatches([]);
         setFilteredMatches([]);
       } finally {
@@ -244,14 +246,15 @@ export default function MatchesList() {
                                       alt={match.teams.home.name}
                                       className="lm-team-logo"
                                       onError={(e) => {
-                                        const target =
-                                          e.target as HTMLImageElement;
+                                        const target = e.target as HTMLImageElement;
+                                        console.error(`❌ Failed to load badge: ${target.src}`);
                                         target.style.display = "none";
                                         if (target.nextElementSibling) {
-                                          (
-                                            target.nextElementSibling as HTMLElement
-                                          ).style.display = "flex";
+                                          (target.nextElementSibling as HTMLElement).style.display = "flex";
                                         }
+                                      }}
+                                      onLoad={() => {
+                                        console.log(`✅ Loaded badge: ${match.teams?.home?.badge}`);
                                       }}
                                     />
                                   ) : null}
@@ -293,14 +296,15 @@ export default function MatchesList() {
                                       alt={match.teams.away.name}
                                       className="lm-team-logo"
                                       onError={(e) => {
-                                        const target =
-                                          e.target as HTMLImageElement;
+                                        const target = e.target as HTMLImageElement;
+                                        console.error(`❌ Failed to load badge: ${target.src}`);
                                         target.style.display = "none";
                                         if (target.nextElementSibling) {
-                                          (
-                                            target.nextElementSibling as HTMLElement
-                                          ).style.display = "flex";
+                                          (target.nextElementSibling as HTMLElement).style.display = "flex";
                                         }
+                                      }}
+                                      onLoad={() => {
+                                        console.log(`✅ Loaded badge: ${match.teams?.away?.badge}`);
                                       }}
                                     />
                                   ) : null}
