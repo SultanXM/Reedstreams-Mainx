@@ -7,22 +7,27 @@ import { Calendar, CalendarDays } from "lucide-react";
 
 const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'https://streamed.pk/api';
 
-// Helper function to build badge URL with multiple fallback attempts
-function getBadgeUrl(badgeId: string): string {
-  if (!badgeId) return '';
-  
-  // Try multiple URL formats
+// Build an ordered list of possible badge URLs to try for a badge id
+function buildBadgeUrls(badgeId: string): string[] {
+  if (!badgeId) return [];
+
   const urls = [
+    `${STREAMED_API_BASE}/images/badge/${badgeId}`,
     `${STREAMED_API_BASE}/images/badge/${badgeId}.webp`,
     `${STREAMED_API_BASE}/images/badge/${badgeId}.png`,
-    `${STREAMED_API_BASE}/badge/${badgeId}.webp`,
+    `${STREAMED_API_BASE}/badge/${badgeId}`,
     `${STREAMED_API_BASE}/badge/${badgeId}.png`,
-    `https://streamed.pk/images/${badgeId}.webp`,
+    `https://streamed.pk/images/${badgeId}`,
     `https://streamed.pk/images/${badgeId}.png`,
   ];
-  
-  console.log(`🔍 Attempting badge URLs for ${badgeId}:`, urls);
-  return urls[0]; // Start with first URL
+
+  // Remove duplicates and falsy values
+  return Array.from(new Set(urls.filter(Boolean)));
+}
+
+function firstBadgeUrl(badgeId: string): string {
+  const urls = buildBadgeUrls(badgeId);
+  return urls.length ? urls[0] : '';
 }
 
 interface Match {
