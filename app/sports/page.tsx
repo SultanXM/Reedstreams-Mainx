@@ -2,7 +2,6 @@ import { Suspense } from 'react'
 import SportsHero from '@/components/sports/sports-hero'
 import SportsGrid from '@/components/sports/sports-grid'
 import Footer from '@/components/layout/footer'
-import Header from "../layout/header"
 
 export const metadata = {
   title: 'All Sports - ReedStreams',
@@ -12,7 +11,6 @@ export const metadata = {
 export default function SportsPage() {
   return (
     <>
-      <Header/>
       <SportsHero />
       <section className="sports-section">
         <div className="gradient-accent accent-1"></div>
