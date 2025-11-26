@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import MatchPlayer from '@/components/match/match-player'
 import MatchInfo from '@/components/match/match-info'
+import Header from '@/components/layout/header'
 import Footer from '@/components/layout/footer'
 
 export const metadata = {
@@ -18,6 +19,7 @@ export default async function MatchPage({ params, searchParams }: PageProps) {
   
   return (
     <>
+      <Header />
       <div className="broadcast-container">
         <Suspense fallback={<div className="loading-message">Loading stream...</div>}>
           <MatchPlayer matchId={id} />
