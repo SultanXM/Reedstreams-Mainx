@@ -64,7 +64,8 @@ export default function MatchInfo({ matchId }: { matchId: string }) {
   })
 
   return (
-    <div className="match-info">
+    <>
+      <div className="match-info">
       <div className="match-title" id="match-title">
         {match.title || `${match.teams?.home?.name || "Home"} vs ${match.teams?.away?.name || "Away"}`}
       </div>
