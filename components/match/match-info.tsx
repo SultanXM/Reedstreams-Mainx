@@ -1,6 +1,5 @@
 import { getTeamBadgeUrl } from "@/lib/utils";
-// Import the GET handler from your API route
-import { GET as getMatches } from "@/app/api/matches/route";
+import { fetchMatches } from "@/lib/data";
 
 interface Match {
     id: string;
@@ -16,15 +15,7 @@ interface Match {
 
 async function getMatchInfo(matchId: string): Promise<Match | null> {
     try {
-        // Call the API route handler directly instead of using fetch
-        const response = await getMatches();
-
-        if (!response.ok) {
-            console.error(`Failed to get match info: ${response.statusText}`);
-            return null;
-        }
-        
-        const matches: Match[] = await response.json();
+        const matches = await fetchMatches();
         const data = matches.find(m => m.id === matchId);
 
         if (!data) return null;
