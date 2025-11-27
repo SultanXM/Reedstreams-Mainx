@@ -1,26 +1,24 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
 
-const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'https://streamed.pk/api'
+const STREAMED_API_URL = 'https://streamed.pk/api/matches';
 
-interface RouteParams {
-  params: Promise<{ source: string; id: string }>
-}
-
-export async function GET(request: Request, { params }: RouteParams) {
+/**
+ * Handles GET requests to /api/matches.
+ * Fetches match data from the external streamed.pk API.
+ */
+export async function GET() {
   try {
-    const { source, id } = await params
-    const res = await fetch(`${STREAMED_API_BASE}/stream/${source}/${id}`, {
-      next: { revalidate: 30 } // Cache for 30 seconds
-    })
-    
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`)
+    const response = await fetch(STREAMED_API_URL, {
+      next: { revalidate: 60 }, // Cache for 60 seconds
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch from external API: ${response.statusText}`);
     }
-    
-    const streams = await res.json()
-    return NextResponse.json(streams)
+
+    const data = await response.json();
+    return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching stream:', error)
-    return NextResponse.json({ error: 'Failed to fetch stream' }, { status: 500 })
+    return NextResponse.json({ message: 'Failed to fetch matches' }, { status: 500 });
   }
 }
