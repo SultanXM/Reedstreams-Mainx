@@ -15,10 +15,23 @@ interface Match {
 
 async function getMatchInfo(matchId: string): Promise<Match | null> {
     try {
+        console.log(`[MatchInfo] 1. Searching for match with ID: "${matchId}"`);
+
         const matches = await fetchMatches();
+        
+        console.log(`[MatchInfo] 2. Fetched ${matches.length} total matches from the API.`);
+
+        // Let's inspect the first match's ID to see its format
+        if (matches.length > 0) {
+            console.log(`[MatchInfo] 3. Sample match ID from API: "${matches[0].id}" (Type: ${typeof matches[0].id})`);
+        }
+
         const data = matches.find(m => m.id === matchId);
 
-        if (!data) return null;
+        if (!data) {
+            console.error(`[MatchInfo] 4. ERROR: Match with ID "${matchId}" not found in the fetched data.`);
+            return null;
+        }
         return data;
     } catch (error) {
         console.error('Error fetching match info:', error);
