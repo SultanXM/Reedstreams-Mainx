@@ -1,11 +1,21 @@
-import { NextResponse } from 'next/server';
-import { fetchMatches } from '@/lib/data';
+import { NextResponse } from 'next/server'
 
-/**
- * Handles GET requests to /api/matches.
- * Fetches match data from the external streamed.pk API.
- */
+const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'https://streamed.pk/api'
+
 export async function GET() {
-    const data = await fetchMatches();
-    return NextResponse.json(data);
+  try {
+    const res = await fetch(`${STREAMED_API_BASE}/matches`, {
+      next: { revalidate: 60 }, // Cache for 1 minute
+    })
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`)
+    }
+
+    const matches = await res.json()
+    return NextResponse.json(Array.isArray(matches) ? matches : [])
+  } catch (error) {
+    console.error("Error fetching matches:", error)
+    return NextResponse.json([])
+  }
 }
