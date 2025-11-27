@@ -96,8 +96,16 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
       }
 
       setStreams(allStreams)
+      // --- Start of Change ---
+      // 1. Prioritize 'echo #1' stream
+      const echoStream = allStreams.find(
+        (s) => s.sourceIdentifier === "echo" && s.streamNo === 1,
+      )
+      // 2. Fallback to any HD stream
       const hdStream = allStreams.find((s) => s.hd === true)
-      setSelectedStream(hdStream || allStreams[0])
+      // 3. Set selected stream based on priority: echo #1 > any HD > first available
+      setSelectedStream(echoStream || hdStream || allStreams[0])
+      // --- End of Change ---
     } catch (err) {
       // console.error("Error loading streams:", err)
       setError("Failed to load streams")
