@@ -14,18 +14,24 @@ interface Match {
 
 async function getMatchInfo(matchId: string): Promise<Match | null> {
     try {
-        // This assumes you have an API endpoint that can return data for a single match.
-        // If your endpoint is different, you may need to adjust this URL.
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/match/${matchId}`, {
+        // Fetch all matches from the existing API endpoint.
+        // We need the full URL for server-side fetching.
+        const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+        const res = await fetch(`${baseUrl}/api/matches`, {
             next: { revalidate: 60 } // Re-fetch every 60 seconds
         });
 
         if (!res.ok) {
-            console.error(`Failed to fetch match info for ${matchId}: ${res.statusText}`);
+            console.error(`Failed to fetch matches list: ${res.statusText}`);
             return null;
         }
         
-        const data = await res.json();
+        const matches: Match[] = await res.json();
+
+        // Find the specific match by its ID
+        const data = matches.find(m => m.id === matchId);
+
+        if (!data) return null;
         return data;
     } catch (error) {
         console.error('Error fetching match info:', error);
