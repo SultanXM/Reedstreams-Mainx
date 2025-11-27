@@ -1,124 +1,83 @@
-"use client"
-
-import { useEffect, useState } from "react"
+import { getTeamBadgeUrl } from "@/lib/utils";
+import { fetchMatches } from "@/lib/data";
 
 interface Match {
-  id: string
-  title: string
-  date: string
-  competition?: string
-  stadium?: string
-  teams?: {
-    home?: { name: string; badge?: string }
-    away?: { name: string; badge?: string }
-  }
+    id: string;
+    title: string;
+    date: string;
+    competition?: string;
+    teams?: {
+      home?: { name: string; badge?: string };
+      away?: { name: string; badge?: string };
+    };
+    sources?: Array<{ source: string; id: string }>;
 }
 
-export default function MatchInfo({ matchId }: { matchId: string }) {
-  const [match, setMatch] = useState<Match | null>(null)
-  const [loading, setLoading] = useState(true)
+async function getMatchInfo(matchId: string): Promise<Match | null> {
+    try {
+        console.log(`[MatchInfo] 1. Searching for match with ID: "${matchId}"`);
 
-  useEffect(() => {
-    async function fetchMatchData() {
-      try {
-        // Try sessionStorage first for faster load
-        const storedMatch = sessionStorage.getItem("currentMatch")
-        if (storedMatch) {
-          setMatch(JSON.parse(storedMatch))
-          setLoading(false)
-          return
+        const matches = await fetchMatches();
+        
+        console.log(`[MatchInfo] 2. Fetched ${matches.length} total matches from the API.`);
+
+        // Let's inspect the first match's ID to see its format
+        if (matches.length > 0) {
+            console.log(`[MatchInfo] 3. Sample match ID from API: "${matches[0].id}" (Type: ${typeof matches[0].id})`);
         }
 
-        // Fetch from API if not in sessionStorage
-        const res = await fetch("/api/matches")
-        if (!res.ok) throw new Error("Failed to fetch matches")
+        const data = matches.find(m => m.id === matchId);
 
-        const matches = await res.json()
-        const matchData = matches.find((m: Match) => m.id === matchId)
-
-        if (matchData) {
-          setMatch(matchData)
-          sessionStorage.setItem("currentMatch", JSON.stringify(matchData))
+        if (!data) {
+            console.error(`[MatchInfo] 4. ERROR: Match with ID "${matchId}" not found in the fetched data.`);
+            return null;
         }
-      } catch (err) {
-        // console.error("Error fetching match info:", err)
-      } finally {
-        setLoading(false)
-      }
+        return data;
+    } catch (error) {
+        console.error('Error fetching match info:', error);
+        return null;
+    }
+}
+
+export default async function MatchInfo({ matchId }: { matchId: string }) {
+    const match = await getMatchInfo(matchId);
+
+    if (!match) {
+        return <div className="lm-no-matches">Match information is currently unavailable.</div>;
     }
 
-    fetchMatchData()
-  }, [matchId])
+    const homeBadgeUrl = getTeamBadgeUrl(match.teams?.home?.badge);
+    const awayBadgeUrl = getTeamBadgeUrl(match.teams?.away?.badge);
 
-  if (loading || !match) {
-    return <div className="loading-message">Loading match info...</div>
-  }
-
-  const matchDate = new Date(match.date)
-  const dateStr = matchDate.toLocaleString("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  })
-
-  return (
-    <>
-      <div className="match-info">
-      <div className="match-title" id="match-title">
-        {match.title || `${match.teams?.home?.name || "Home"} vs ${match.teams?.away?.name || "Away"}`}
-      </div>
-
-      <div className="teams-display">
-        <div className="team">
-          {match.teams?.home?.badge ? (
-            <div className="team-logo" id="team1-logo">
-              <img
-                src={`${process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL}/images/badge/${match.teams.home.badge}.webp`}
-                alt={match.teams.home.name}
-                onError={(e) => {
-                  e.currentTarget.src = "/Images/placeholder.png"
-                }}
-              />
+    return (
+        <div className="col-span-full p-4">
+            <div className="lm-match-card" style={{ cursor: 'default' }}>
+                <div className="lm-teams-container">
+                    <div className="lm-team">
+                        <div className="lm-team-badge-container">
+                            {homeBadgeUrl && <img src={homeBadgeUrl} alt={match.teams?.home?.name} className="lm-team-logo" />}
+                            {!homeBadgeUrl && <div className="lm-team-placeholder">?</div>}
+                        </div>
+                        <span className="lm-team-abbr" title={match.teams?.home?.name || "Unknown"}>
+                            {match.teams?.home?.name?.toUpperCase() || "HOME"}
+                        </span>
+                    </div>
+                    <div className="lm-match-center">
+                        {match.competition && <div className="lm-competition">{match.competition}</div>}
+                        <div className="lm-vs-line"></div>
+                        <div className="lm-time">{match.title}</div>
+                    </div>
+                    <div className="lm-team">
+                        <div className="lm-team-badge-container">
+                            {awayBadgeUrl && <img src={awayBadgeUrl} alt={match.teams?.away?.name} className="lm-team-logo" />}
+                            {!awayBadgeUrl && <div className="lm-team-placeholder">?</div>}
+                        </div>
+                        <span className="lm-team-abbr" title={match.teams?.away?.name || "Unknown"}>
+                            {match.teams?.away?.name?.toUpperCase() || "AWAY"}
+                        </span>
+                    </div>
+                </div>
             </div>
-          ) : (
-            <div className="team-logo" id="team1-logo">
-              <span style={{ fontSize: "2rem" }}>?</span>
-            </div>
-          )}
-          <div className="team-name" id="team1-name">
-            {match.teams?.home?.name || "HOME TEAM"}
-          </div>
         </div>
-
-        <div className="vs-separator">VS</div>
-
-        <div className="team">
-          {match.teams?.away?.badge ? (
-            <div className="team-logo" id="team2-logo">
-              <img
-                src={`${process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL}/images/badge/${match.teams.away.badge}.webp`}
-                alt={match.teams.away.name}
-                onError={(e) => {
-                  e.currentTarget.src = "/Images/placeholder.png"
-                }}
-              />
-            </div>
-          ) : (
-            <div className="team-logo" id="team2-logo">
-              <span style={{ fontSize: "2rem" }}>?</span>
-            </div>
-          )}
-          <div className="team-name" id="team2-name">
-            {match.teams?.away?.name || "AWAY TEAM"}
-          </div>
-        </div>
-      </div>
-
-      <div className="match-time" id="match-time">
-        {dateStr}
-      </div>
-    </div>
-  )
+    );
 }
