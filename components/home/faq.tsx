@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 const faqs = [
   {
-    question: 'What is ReedStreams?',
+    question: 'What is Sultan?',
     answer: 'ReedStreams is a free sports streaming platform where you can watch live matches from different sports and check upcoming schedules. We make it easy for fans to stay connected to their favorite games.'
   },
   {
