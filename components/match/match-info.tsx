@@ -1,4 +1,6 @@
 import { getTeamBadgeUrl } from "@/lib/utils";
+// Import the GET handler from your API route
+import { GET as getMatches } from "@/app/api/matches/route";
 
 interface Match {
     id: string;
@@ -14,21 +16,15 @@ interface Match {
 
 async function getMatchInfo(matchId: string): Promise<Match | null> {
     try {
-        // Fetch all matches from the existing API endpoint.
-        // We need the full URL for server-side fetching.
-        const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
-        const res = await fetch(`${baseUrl}/api/matches`, {
-            next: { revalidate: 60 } // Re-fetch every 60 seconds
-        });
+        // Call the API route handler directly instead of using fetch
+        const response = await getMatches();
 
-        if (!res.ok) {
-            console.error(`Failed to fetch matches list: ${res.statusText}`);
+        if (!response.ok) {
+            console.error(`Failed to get match info: ${response.statusText}`);
             return null;
         }
         
-        const matches: Match[] = await res.json();
-
-        // Find the specific match by its ID
+        const matches: Match[] = await response.json();
         const data = matches.find(m => m.id === matchId);
 
         if (!data) return null;
