@@ -4,15 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Calendar, CalendarDays } from "lucide-react";
-
-const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'https://streamed.pk/api';
-
-// Helper from legacy site: build the canonical badge URL (encode id)
-function getTeamBadgeUrl(badgeId?: string | null) {
-  if (!badgeId) return null;
-  const encoded = encodeURIComponent(badgeId);
-  return `${STREAMED_API_BASE}/images/badge/${encoded}.webp`;
-}
+import { getTeamBadgeUrl } from "@/lib/utils";
 
 interface Match {
   id: string;
