@@ -29,13 +29,13 @@ export default function Header() {
         <div className="logo">
           <Link href="/">
             <span className="logo-text">Reed</span>
-            <span className="logo-accent"></span>
+            <span className="logo-accent">Streams</span>
           </Link>
         </div>
         <div className="nav-actions">
           <Link href="/sports">
             <button className="watch-now-btn rolex">
-              <i className="fas fa-play-circle"></i> Browse Sports?
+              <i className="fas fa-play-circle"></i> Browse Sports ?
             </button>
           </Link>
         </div>
