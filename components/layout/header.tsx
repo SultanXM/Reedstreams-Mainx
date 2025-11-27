@@ -29,7 +29,7 @@ export default function Header() {
         <div className="logo">
           <Link href="/">
             <span className="logo-text">Reed</span>
-            <span className="logo-accent">Streams</span>
+            <span className="logo-accent">StreamsX</span>
           </Link>
         </div>
         <div className="nav-actions">
