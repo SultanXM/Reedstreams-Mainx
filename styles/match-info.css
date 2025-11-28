@@ -1,88 +1,265 @@
+/* Premium Match Info Section - Synced with LM Design System */
 .match-info-section {
-    background: linear-gradient(145deg, #232323, #1a1a1a);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 2rem;
-    margin: 1.5rem 0;
-    color: #fff;
-    font-family: 'Inter', sans-serif; /* A modern, clean font */
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    text-align: center;
+  background: linear-gradient(145deg, rgba(10, 14, 23, 0.95), rgba(26, 35, 50, 0.9));
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  margin: 1.5rem 0;
+  color: var(--text-light);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.match-info-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
 }
 
 .match-info-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #e0e0e0;
-    margin-bottom: 2rem;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 2rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
 }
 
-.match-info-title span {
-    color: #a0a0a0;
-    font-weight: 400;
+.match-info-title::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background: var(--primary-color);
+  border-radius: 2px;
 }
 
 .match-info-details {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .match-info-team {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    flex: 1;
-    min-width: 120px; /* Allow space but let it grow */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 120px;
+  padding: 1rem;
+  border-radius: 8px;
+  transition: var(--transition);
+}
+
+.match-info-team:hover {
+  background: rgba(255, 255, 255, 0.03);
+  transform: translateY(-2px);
 }
 
 .match-info-badge {
-    height: 90px;
-    width: 90px;
-    object-fit: contain;
-    transition: transform 0.3s ease;
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  transition: var(--transition);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
 .match-info-team:hover .match-info-badge {
-    transform: scale(1.1);
+  transform: scale(1.15);
+  filter: drop-shadow(0 6px 12px rgba(141, 185, 2, 0.3));
 }
 
 .match-info-team-name {
-    font-size: 1.1rem;
-    font-weight: 700;
-    word-wrap: break-word; /* Ensure long names wrap */
-    line-height: 1.4;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-light);
+  text-align: center;
+  line-height: 1.3;
+  max-width: 150px;
+  word-wrap: break-word;
 }
 
 .match-info-time-section {
-    flex-shrink: 0; /* Prevent this section from shrinking */
-    padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.match-info-time-section::before,
+.match-info-time-section::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--primary-color), transparent);
+  transform: translateY(-50%);
+}
+
+.match-info-time-section::before {
+  left: 0;
+}
+
+.match-info-time-section::after {
+  right: 0;
 }
 
 .match-info-time {
-    font-size: 2.25rem;
-    font-weight: 800;
-    color: var(--primary-color, #8db902);
-    line-height: 1;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  line-height: 1;
+  text-shadow: 0 2px 8px rgba(141, 185, 2, 0.3);
 }
 
 .match-info-date {
-    font-size: 0.9rem;
-    color: #b0b0b0;
-    margin-top: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
 }
 
-/* Responsive adjustments */
+/* Live Match State */
+.match-info-section.live .match-info-time {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    text-shadow: 0 2px 8px rgba(141, 185, 2, 0.3);
+  }
+  50% {
+    text-shadow: 0 2px 16px rgba(141, 185, 2, 0.6);
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .match-info-section {
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+  
+  .match-info-details {
+    gap: 1rem;
+  }
+  
+  .match-info-badge {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .match-info-team-name {
+    font-size: 1rem;
+    max-width: 120px;
+  }
+  
+  .match-info-time {
+    font-size: 1.75rem;
+  }
+  
+  .match-info-time-section {
+    padding: 0 1.5rem;
+  }
+}
+
 @media (max-width: 640px) {
-    .match-info-details {
-        flex-direction: column;
-        gap: 2rem;
-    }
+  .match-info-details {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .match-info-time-section::before,
+  .match-info-time-section::after {
+    display: none;
+  }
+  
+  .match-info-time-section {
+    padding: 1rem 0;
+    order: -1;
+    width: 100%;
+    background: rgba(141, 185, 2, 0.05);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+  
+  .match-info-team {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+  
+  .match-info-badge {
+    width: 60px;
+    height: 60px;
+  }
 }
 
+@media (max-width: 480px) {
+  .match-info-section {
+    padding: 1.25rem;
+    border-radius: 10px;
+  }
+  
+  .match-info-title {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .match-info-badge {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .match-info-team-name {
+    font-size: 0.9rem;
+  }
+  
+  .match-info-time {
+    font-size: 1.5rem;
+  }
+  
+  .match-info-date {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .match-info-section {
+    padding: 1rem;
+  }
+  
+  .match-info-team {
+    padding: 0.75rem;
+  }
+  
+  .match-info-badge {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .match-info-team-name {
+    font-size: 0.85rem;
+  }
+}
