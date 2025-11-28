@@ -12,7 +12,36 @@ interface Match {
     sources?: Array<{ source: string; id: string }>;
 }
 
-export default function MatchInfo({ match }: { match: Match | null }) {
+async function getMatchInfo(matchId: string): Promise<Match | null> {
+    try {
+        // Fetch all matches from the existing API endpoint.
+        // We need the full URL for server-side fetching.
+        const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+        const res = await fetch(`${baseUrl}/api/matches`, {
+            next: { revalidate: 60 } // Re-fetch every 60 seconds
+        });
+
+        if (!res.ok) {
+            console.error(`Failed to fetch matches list: ${res.statusText}`);
+            return null;
+        }
+        
+        const matches: Match[] = await res.json();
+
+        // Find the specific match by its ID
+        const data = matches.find(m => m.id === matchId);
+
+        if (!data) return null;
+        return data;
+    } catch (error) {
+        console.error('Error fetching match info:', error);
+        return null;
+    }
+}
+
+export default async function MatchInfo({ matchId }: { matchId: string }) {
+    const match = await getMatchInfo(matchId);
+
     if (!match) {
         return <div className="lm-no-matches">Match information is currently unavailable.</div>;
     }
