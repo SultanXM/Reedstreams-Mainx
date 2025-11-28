@@ -1,4 +1,7 @@
+"use client";
+
 import { getTeamBadgeUrl } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 interface Match {
     id: string;
@@ -12,35 +15,20 @@ interface Match {
     sources?: Array<{ source: string; id: string }>;
 }
 
-async function getMatchInfo(matchId: string): Promise<Match | null> {
-    try {
-        // Fetch all matches from the existing API endpoint.
-        // We need the full URL for server-side fetching.
-        const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
-        const res = await fetch(`${baseUrl}/api/matches`, {
-            next: { revalidate: 60 } // Re-fetch every 60 seconds
-        });
+export default function MatchInfo({ matchId }: { matchId: string }) {
+    const [match, setMatch] = useState<Match | null>(null);
 
-        if (!res.ok) {
-            console.error(`Failed to fetch matches list: ${res.statusText}`);
-            return null;
+    useEffect(() => {
+        // Read match data from sessionStorage, which is set when a user clicks a match.
+        const storedMatch = sessionStorage.getItem("currentMatch");
+        if (storedMatch) {
+            const matchData: Match = JSON.parse(storedMatch);
+            // Ensure the stored match is the one for this page
+            if (matchData.id === matchId) {
+                setMatch(matchData);
+            }
         }
-        
-        const matches: Match[] = await res.json();
-
-        // Find the specific match by its ID
-        const data = matches.find(m => m.id === matchId);
-
-        if (!data) return null;
-        return data;
-    } catch (error) {
-        console.error('Error fetching match info:', error);
-        return null;
-    }
-}
-
-export default async function MatchInfo({ matchId }: { matchId: string }) {
-    const match = await getMatchInfo(matchId);
+    }, [matchId]);
 
     if (!match) {
         return <div className="lm-no-matches">Match information is currently unavailable.</div>;
