@@ -1,0 +1,87 @@
+.match-info-section {
+    background: linear-gradient(145deg, #232323, #1a1a1a);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    margin: 1.5rem 0;
+    color: #fff;
+    font-family: 'Inter', sans-serif; /* A modern, clean font */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.match-info-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #e0e0e0;
+    margin-bottom: 2rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.match-info-title span {
+    color: #a0a0a0;
+    font-weight: 400;
+}
+
+.match-info-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.match-info-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 120px; /* Allow space but let it grow */
+}
+
+.match-info-badge {
+    height: 90px;
+    width: 90px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.match-info-team:hover .match-info-badge {
+    transform: scale(1.1);
+}
+
+.match-info-team-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    word-wrap: break-word; /* Ensure long names wrap */
+    line-height: 1.4;
+}
+
+.match-info-time-section {
+    flex-shrink: 0; /* Prevent this section from shrinking */
+    padding: 0 2rem;
+}
+
+.match-info-time {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--primary-color, #8db902);
+    line-height: 1;
+}
+
+.match-info-date {
+    font-size: 0.9rem;
+    color: #b0b0b0;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .match-info-details {
+        flex-direction: column;
+        gap: 2rem;
+    }
+}

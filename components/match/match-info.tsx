@@ -1,5 +1,6 @@
 "use client";
 
+import '@/styles/match-info.css';
 import { getTeamBadgeUrl } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
@@ -50,52 +51,41 @@ export default function MatchInfo({ matchId }: { matchId: string }) {
     });
 
     return (
-        <div style={{
-            padding: '1.5rem',
-            backgroundColor: '#1f1f1f',
-            borderRadius: '12px',
-            border: '1px solid #333',
-            color: '#fff',
-            fontFamily: 'sans-serif',
-            display: 'flex',
-            justifyContent: 'space-around',
-            alignItems: 'center',
-            textAlign: 'center',
-            margin: '1rem 0'
-        }}>
-            {/* Home Team */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '150px' }}>
-                <img 
-                    src={homeBadgeUrl || '/images/placeholder-badge.png'} 
-                    alt={match.teams?.home?.name || 'Home Team'} 
-                    style={{ height: '80px', width: '80px', objectFit: 'contain', marginBottom: '0.5rem' }} 
-                />
-                <span style={{ fontWeight: 'bold', fontSize: '1rem' }}>
-                    {match.teams?.home?.name || "HOME"}
-                </span>
-            </div>
-
-            {/* Match Time Info */}
-            <div style={{ margin: '0 2rem' }}>
-                <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#8db902' }}>
-                    {timeStr}
+        <section className="match-info-section">
+            <h1 className="match-info-title">
+                {match.teams?.home?.name || "Home"} <span>vs</span> {match.teams?.away?.name || "Away"}
+            </h1>
+            <div className="match-info-details">
+                {/* Home Team */}
+                <div className="match-info-team">
+                    <img 
+                        src={homeBadgeUrl || '/images/placeholder-badge.png'} 
+                        alt={match.teams?.home?.name || 'Home Team'} 
+                        className="match-info-badge"
+                    />
+                    <span className="match-info-team-name">
+                        {match.teams?.home?.name || "HOME"}
+                    </span>
                 </div>
-                <div style={{ fontSize: '0.9rem', color: '#aaa', marginTop: '0.25rem' }}>
-                    {dateStr}
+    
+                {/* Match Time Info */}
+                <div className="match-info-time-section">
+                    <div className="match-info-time">{timeStr}</div>
+                    <div className="match-info-date">{dateStr}</div>
+                </div>
+    
+                {/* Away Team */}
+                <div className="match-info-team">
+                    <img 
+                        src={awayBadgeUrl || '/images/placeholder-badge.png'} 
+                        alt={match.teams?.away?.name || 'Away Team'} 
+                        className="match-info-badge"
+                    />
+                    <span className="match-info-team-name">
+                        {match.teams?.away?.name || "AWAY"}
+                    </span>
                 </div>
             </div>
-
-            {/* Away Team */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '150px' }}>
-                <img 
-                    src={awayBadgeUrl || '/images/placeholder-badge.png'} 
-                    alt={match.teams?.away?.name || 'Away Team'} 
-                    style={{ height: '80px', width: '80px', objectFit: 'contain', marginBottom: '0.5rem' }} 
-                />
-                <span style={{ fontWeight: 'bold', fontSize: '1rem' }}>
-                    {match.teams?.away?.name || "AWAY"}
-                </span>
-            </div>
-        </div>
+        </section>
     );
 }
