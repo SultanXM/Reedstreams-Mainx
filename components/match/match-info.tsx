@@ -37,34 +37,64 @@ export default function MatchInfo({ matchId }: { matchId: string }) {
     const homeBadgeUrl = getTeamBadgeUrl(match.teams?.home?.badge);
     const awayBadgeUrl = getTeamBadgeUrl(match.teams?.away?.badge);
 
+    const matchDate = new Date(match.date);
+    const timeStr = matchDate.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+    });
+    const dateStr = matchDate.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'short',
+        day: 'numeric',
+    });
+
     return (
-        <div className="col-span-full p-4">
-            <div className="lm-match-card" style={{ cursor: 'default' }}>
-                <div className="lm-teams-container">
-                    <div className="lm-team">
-                        <div className="lm-team-badge-container">
-                            {homeBadgeUrl && <img src={homeBadgeUrl} alt={match.teams?.home?.name} className="lm-team-logo" />}
-                            {!homeBadgeUrl && <div className="lm-team-placeholder">?</div>}
-                        </div>
-                        <span className="lm-team-abbr" title={match.teams?.home?.name || "Unknown"}>
-                            {match.teams?.home?.name?.toUpperCase() || "HOME"}
-                        </span>
-                    </div>
-                    <div className="lm-match-center">
-                        {match.competition && <div className="lm-competition">{match.competition}</div>}
-                        <div className="lm-vs-line"></div>
-                        <div className="lm-time">{match.title}</div>
-                    </div>
-                    <div className="lm-team">
-                        <div className="lm-team-badge-container">
-                            {awayBadgeUrl && <img src={awayBadgeUrl} alt={match.teams?.away?.name} className="lm-team-logo" />}
-                            {!awayBadgeUrl && <div className="lm-team-placeholder">?</div>}
-                        </div>
-                        <span className="lm-team-abbr" title={match.teams?.away?.name || "Unknown"}>
-                            {match.teams?.away?.name?.toUpperCase() || "AWAY"}
-                        </span>
-                    </div>
+        <div style={{
+            padding: '1.5rem',
+            backgroundColor: '#1f1f1f',
+            borderRadius: '12px',
+            border: '1px solid #333',
+            color: '#fff',
+            fontFamily: 'sans-serif',
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            textAlign: 'center',
+            margin: '1rem 0'
+        }}>
+            {/* Home Team */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '150px' }}>
+                <img 
+                    src={homeBadgeUrl || '/images/placeholder-badge.png'} 
+                    alt={match.teams?.home?.name || 'Home Team'} 
+                    style={{ height: '80px', width: '80px', objectFit: 'contain', marginBottom: '0.5rem' }} 
+                />
+                <span style={{ fontWeight: 'bold', fontSize: '1rem' }}>
+                    {match.teams?.home?.name || "HOME"}
+                </span>
+            </div>
+
+            {/* Match Time Info */}
+            <div style={{ margin: '0 2rem' }}>
+                <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#8db902' }}>
+                    {timeStr}
                 </div>
+                <div style={{ fontSize: '0.9rem', color: '#aaa', marginTop: '0.25rem' }}>
+                    {dateStr}
+                </div>
+            </div>
+
+            {/* Away Team */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '150px' }}>
+                <img 
+                    src={awayBadgeUrl || '/images/placeholder-badge.png'} 
+                    alt={match.teams?.away?.name || 'Away Team'} 
+                    style={{ height: '80px', width: '80px', objectFit: 'contain', marginBottom: '0.5rem' }} 
+                />
+                <span style={{ fontWeight: 'bold', fontSize: '1rem' }}>
+                    {match.teams?.away?.name || "AWAY"}
+                </span>
             </div>
         </div>
     );
