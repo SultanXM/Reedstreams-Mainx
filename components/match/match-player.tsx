@@ -17,7 +17,13 @@ interface Match {
   sources?: Array<{ source: string; id: string }>
 }
 
-export default function MatchPlayer({ matchId }: { matchId: string }) {
+export default function MatchPlayer({
+  matchId,
+  onMatchDataLoaded,
+}: {
+  matchId: string
+  onMatchDataLoaded: (match: Match | null) => void
+}) {
   const [streams, setStreams] = useState<Stream[]>([])
   const [selectedStream, setSelectedStream] = useState<Stream | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -31,6 +37,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         const storedMatch = sessionStorage.getItem("currentMatch")
         if (storedMatch) {
           const match = JSON.parse(storedMatch)
+          onMatchDataLoaded(match)
           setMatchData(match)
           loadStreams(match)
           setLoading(false)
@@ -46,9 +53,11 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
         if (match) {
           setMatchData(match)
+          onMatchDataLoaded(match)
           sessionStorage.setItem("currentMatch", JSON.stringify(match))
           loadStreams(match)
         } else {
+          onMatchDataLoaded(null)
           setError("Match not found")
         }
       } catch (err) {
@@ -60,7 +69,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     }
 
     fetchMatchData()
-  }, [matchId])
+  }, [matchId, onMatchDataLoaded])
 
   async function loadStreams(match: Match) {
     if (!match.sources || match.sources.length === 0) {
