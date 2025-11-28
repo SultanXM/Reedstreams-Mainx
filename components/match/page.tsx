@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import MatchInfo from "@/components/match/match-info"
 import MatchPlayer from "@/components/match/match-player"
 
@@ -19,10 +19,14 @@ interface Match {
 export default function MatchPage({ params }: { params: { id: string } }) {
   const [matchData, setMatchData] = useState<Match | null>(null)
 
+  const handleMatchDataLoaded = useCallback((match: Match | null) => {
+    setMatchData(match)
+  }, [])
+
   return (
     <div className="match-page-container">
       <MatchInfo match={matchData} />
-      <MatchPlayer matchId={params.id} onMatchDataLoaded={setMatchData} />
+      <MatchPlayer matchId={params.id} onMatchDataLoaded={handleMatchDataLoaded} />
       {/* You can add other components like chat or related matches here */}
     </div>
   )
