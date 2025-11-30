@@ -100,12 +100,14 @@ export default function MatchesList() {
         priorityTeamNames.includes(match.teams?.away?.name || "");
 
       // If it's a priority match, always include it, regardless of the filter
-      if (isPriorityMatch) return true;
-      if (filter === "all") return true;
+      if (isPriorityMatch) {
+        return true;
+      }
+
+      // Otherwise, apply the selected filter
       if (filter === "live") return isLive;
       if (filter === "upcoming") return isUpcoming;
-
-      return false;
+      return true; // This handles the 'all' case
     });
 
     setFilteredMatches(filtered);
