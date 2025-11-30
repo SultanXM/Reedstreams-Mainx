@@ -40,17 +40,20 @@ export default function MatchesList() {
           return;
         }
 
+        // Logic removed: We now accept matches even if teams are "???" or empty.
+        const validMatches = data;
+
         // Sort by date ascending
-        data.sort(
+        validMatches.sort(
           (a: Match, b: Match) =>
             new Date(a.date).getTime() - new Date(b.date).getTime()
         );
-        
-        console.log('✅ Fetched matches:', data);
-        console.log('Full match data sample:', data[0]);
-        console.log('Team badges:', data.map(m => ({ id: m.id, home: m.teams?.home?.badge, away: m.teams?.away?.badge })));
-        setMatches(data);
-        setFilteredMatches(data);
+
+        console.log('✅ Fetched matches:', validMatches);
+        console.log('Full match data sample:', validMatches[0]);
+        console.log('Team badges:', validMatches.map((m: Match) => ({ id: m.id, home: m.teams?.home?.badge, away: m.teams?.away?.badge })));
+        setMatches(validMatches);
+        setFilteredMatches(validMatches);
       } catch (error) {
         console.error('❌ Error fetching matches:', error);
         setMatches([]);
