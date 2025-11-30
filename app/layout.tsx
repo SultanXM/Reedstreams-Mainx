@@ -12,6 +12,7 @@ import "@/styles/scroll.css"
 import "@/styles/sports.css"
 import "@/styles/live-matches.css"
 import "@/styles/match.css"
+import Script from 'next/script' 
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -38,6 +39,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`font-sans antialiased`}>
+        <Script src="/scripts/ad-blocker.js" strategy="beforeInteractive" />
         {children}
         <Analytics />
       </body>
