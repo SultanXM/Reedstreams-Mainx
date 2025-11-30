@@ -15,7 +15,6 @@ interface Match {
     home?: { name: string; badge?: string };
     away?: { name: string; badge?: string };
   };
-  status?: string; // Add status to the interface
   sources?: Array<{ source: string; id: string }>;
 }
 
@@ -41,34 +40,17 @@ export default function MatchesList() {
           return;
         }
 
-        // Filter out any match where home or away team is ??? or empty
-        const validMatches = data.filter((match: Match) => {
-          const homeTeamName = match.teams?.home?.name?.trim() || "";
-          const awayTeamName = match.teams?.away?.name?.trim() || "";
-
-          if (
-            !homeTeamName ||
-            !awayTeamName ||
-            homeTeamName === "???" ||
-            awayTeamName === "???"
-          ) {
-            return false;
-          }
-
-          return true;
-        });
-
         // Sort by date ascending
-        validMatches.sort(
+        data.sort(
           (a: Match, b: Match) =>
             new Date(a.date).getTime() - new Date(b.date).getTime()
         );
-
-        console.log('✅ Fetched matches:', validMatches);
-        console.log('Full match data sample:', validMatches[0]);
-        console.log('Team badges:', validMatches.map(m => ({ id: m.id, home: m.teams?.home?.badge, away: m.teams?.away?.badge })));
-        setMatches(validMatches);
-        setFilteredMatches(validMatches);
+        
+        console.log('✅ Fetched matches:', data);
+        console.log('Full match data sample:', data[0]);
+        console.log('Team badges:', data.map(m => ({ id: m.id, home: m.teams?.home?.badge, away: m.teams?.away?.badge })));
+        setMatches(data);
+        setFilteredMatches(data);
       } catch (error) {
         console.error('❌ Error fetching matches:', error);
         setMatches([]);
@@ -84,33 +66,18 @@ export default function MatchesList() {
   useEffect(() => {
     const now = new Date();
 
-    // Define the team names that should always be shown
-    const priorityTeamNames = ["NFL RedZone", "NFL RedZone|"];
-
-    // Filter the matches based on the selected tab ('all', 'live', 'upcoming')
     const filtered = matches.filter((match) => {
       const matchDate = new Date(match.date);
-      // A match is live if its status is 'live' OR if it started in the last 4 hours.
-      const isLive = 
-        match.status === 'live' || 
-        (matchDate <= now && matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000));
-
+      const isLive =
+        matchDate <= now &&
+        matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
       const isUpcoming = matchDate > now;
 
-      // Check if the match involves a priority team
-      const isPriorityMatch =
-        priorityTeamNames.includes(match.teams?.home?.name || "") ||
-        priorityTeamNames.includes(match.teams?.away?.name || "");
-
-      // If it's a priority match, always include it, regardless of the filter
-      if (isPriorityMatch) {
-        return true;
-      }
-
-      // Otherwise, apply the selected filter
+      if (filter === "all") return true;
       if (filter === "live") return isLive;
       if (filter === "upcoming") return isUpcoming;
-      return true; // This handles the 'all' case
+
+      return false;
     });
 
     setFilteredMatches(filtered);
@@ -217,10 +184,10 @@ export default function MatchesList() {
                     {dateMatches.map((match) => {
                       const now = new Date();
                       const matchDate = new Date(match.date);
-                      const isLive = 
-                        match.status === 'live' || 
-                        (matchDate <= now && matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000));
-
+                      const isLive =
+                        matchDate <= now &&
+                        matchDate >=
+                          new Date(now.getTime() - 4 * 60 * 60 * 1000);
                       /* Check if match start time is in the future for upcoming badge */
                       const isUpcoming = matchDate > now;
 
