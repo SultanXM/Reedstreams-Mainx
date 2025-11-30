@@ -15,6 +15,7 @@ interface Match {
     home?: { name: string; badge?: string };
     away?: { name: string; badge?: string };
   };
+  status?: string; // Add status to the interface
   sources?: Array<{ source: string; id: string }>;
 }
 
@@ -89,9 +90,11 @@ export default function MatchesList() {
     // Filter the matches based on the selected tab ('all', 'live', 'upcoming')
     const filtered = matches.filter((match) => {
       const matchDate = new Date(match.date);
-      const isLive =
-        matchDate <= now &&
-        matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
+      // A match is live if its status is 'live' OR if it started in the last 4 hours.
+      const isLive = 
+        match.status === 'live' || 
+        (matchDate <= now && matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000));
+
       const isUpcoming = matchDate > now;
 
       // Check if the match involves a priority team
@@ -214,10 +217,10 @@ export default function MatchesList() {
                     {dateMatches.map((match) => {
                       const now = new Date();
                       const matchDate = new Date(match.date);
-                      const isLive =
-                        matchDate <= now &&
-                        matchDate >=
-                          new Date(now.getTime() - 4 * 60 * 60 * 1000);
+                      const isLive = 
+                        match.status === 'live' || 
+                        (matchDate <= now && matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000));
+
                       /* Check if match start time is in the future for upcoming badge */
                       const isUpcoming = matchDate > now;
 
