@@ -83,6 +83,10 @@ export default function MatchesList() {
   useEffect(() => {
     const now = new Date();
 
+    // Define the team names that should always be shown
+    const priorityTeamNames = ["NFL RedZone", "NFL RedZone|"];
+
+    // Filter the matches based on the selected tab ('all', 'live', 'upcoming')
     const filtered = matches.filter((match) => {
       const matchDate = new Date(match.date);
       const isLive =
@@ -90,6 +94,13 @@ export default function MatchesList() {
         matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
       const isUpcoming = matchDate > now;
 
+      // Check if the match involves a priority team
+      const isPriorityMatch =
+        priorityTeamNames.includes(match.teams?.home?.name || "") ||
+        priorityTeamNames.includes(match.teams?.away?.name || "");
+
+      // If it's a priority match, always include it, regardless of the filter
+      if (isPriorityMatch) return true;
       if (filter === "all") return true;
       if (filter === "live") return isLive;
       if (filter === "upcoming") return isUpcoming;
