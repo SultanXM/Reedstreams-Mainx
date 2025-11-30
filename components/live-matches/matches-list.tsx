@@ -40,8 +40,22 @@ export default function MatchesList() {
           return;
         }
 
-        // Logic removed: We now accept matches even if teams are "???" or empty.
-        const validMatches = data;
+        // Filter out any match where home or away team is ??? or empty
+        const validMatches = data.filter((match: Match) => {
+          const homeTeamName = match.teams?.home?.name?.trim() || "";
+          const awayTeamName = match.teams?.away?.name?.trim() || "";
+
+          if (
+            !homeTeamName ||
+            !awayTeamName ||
+            homeTeamName === "???" ||
+            awayTeamName === "???"
+          ) {
+            return false;
+          }
+
+          return true;
+        });
 
         // Sort by date ascending
         validMatches.sort(
@@ -51,7 +65,7 @@ export default function MatchesList() {
 
         console.log('✅ Fetched matches:', validMatches);
         console.log('Full match data sample:', validMatches[0]);
-        console.log('Team badges:', validMatches.map((m: Match) => ({ id: m.id, home: m.teams?.home?.badge, away: m.teams?.away?.badge })));
+        console.log('Team badges:', validMatches.map(m => ({ id: m.id, home: m.teams?.home?.badge, away: m.teams?.away?.badge })));
         setMatches(validMatches);
         setFilteredMatches(validMatches);
       } catch (error) {
