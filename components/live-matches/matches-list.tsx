@@ -6,16 +6,16 @@ import Link from "next/link";
 import { Calendar, CalendarDays } from "lucide-react";
 import { getTeamBadgeUrl } from "@/lib/utils";
 
+// Define a robust interface that allows for missing data
 interface Match {
   id: string;
-  title: string;
-  date: string;
+  title?: string;
+  date?: string;
   competition?: string;
   teams?: {
-    home?: { name: string; badge?: string };
-    away?: { name: string; badge?: string };
+    home?: { name?: string; badge?: string };
+    away?: { name?: string; badge?: string };
   };
-  sources?: Array<{ source: string; id: string }>;
 }
 
 export default function MatchesList() {
@@ -26,50 +26,45 @@ export default function MatchesList() {
   const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchMatches() {
       try {
+        setLoading(true);
+        setError(null);
+        
         const url = sportId ? `/api/matches/${sportId}` : "/api/matches";
         const res = await fetch(url);
+        
+        if (!res.ok) {
+            throw new Error(`API Error: ${res.status}`);
+        }
+
         const data = await res.json();
 
         if (!Array.isArray(data)) {
+          console.warn("API did not return an array:", data);
           setMatches([]);
           setFilteredMatches([]);
           return;
         }
 
-        // Filter out any match where home or away team is ??? or empty
-        const validMatches = data.filter((match: Match) => {
-          const homeTeamName = match.teams?.home?.name?.trim() || "";
-          const awayTeamName = match.teams?.away?.name?.trim() || "";
-
-          if (
-            !homeTeamName ||
-            !awayTeamName ||
-            homeTeamName === "???" ||
-            awayTeamName === "???"
-          ) {
-            return false;
-          }
-
-          return true;
+        // --- SAFE SORTING ---
+        // We do NOT filter "???". We take everything.
+        // We sort safely so undefined dates don't break the page.
+        const sortedData = [...data].sort((a: Match, b: Match) => {
+            const dateA = a.date ? new Date(a.date).getTime() : 0;
+            const dateB = b.date ? new Date(b.date).getTime() : 0;
+            return dateA - dateB;
         });
 
-        // Sort by date ascending
-        validMatches.sort(
-          (a: Match, b: Match) =>
-            new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
-
-        console.log('✅ Fetched matches:', validMatches);
-        console.log('Full match data sample:', validMatches[0]);
-        console.log('Team badges:', validMatches.map(m => ({ id: m.id, home: m.teams?.home?.badge, away: m.teams?.away?.badge })));
-        setMatches(validMatches);
-        setFilteredMatches(validMatches);
-      } catch (error) {
-        console.error('❌ Error fetching matches:', error);
+        console.log('✅ Matches loaded:', sortedData.length);
+        setMatches(sortedData);
+        setFilteredMatches(sortedData);
+      } catch (err: any) {
+        console.error('❌ CRITICAL ERROR fetching matches:', err);
+        setError(err.message || "Failed to load matches");
         setMatches([]);
         setFilteredMatches([]);
       } finally {
@@ -80,11 +75,20 @@ export default function MatchesList() {
     fetchMatches();
   }, [sportId]);
 
+  // --- FILTERING LOGIC ---
   useEffect(() => {
+    if (!matches.length) return;
+
     const now = new Date();
 
     const filtered = matches.filter((match) => {
+      // Safety check: if no date, show it in 'all' but treat as not live/upcoming
+      if (!match.date) return filter === "all";
+
       const matchDate = new Date(match.date);
+      // Safe check for Invalid Date
+      if (isNaN(matchDate.getTime())) return filter === "all";
+
       const isLive =
         matchDate <= now &&
         matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
@@ -104,11 +108,23 @@ export default function MatchesList() {
     sessionStorage.setItem("currentMatch", JSON.stringify(match));
   }
 
+  // --- SAFE GROUPING LOGIC ---
   function groupMatchesByDate(matches: Match[]) {
     const grouped: { [key: string]: Match[] } = {};
 
     matches.forEach((match) => {
-      const matchDate = new Date(match.date);
+      // Fallback date if missing
+      const dateStr = match.date || new Date().toISOString(); 
+      const matchDate = new Date(dateStr);
+      
+      // Handle invalid dates safely
+      if (isNaN(matchDate.getTime())) {
+          const unknownKey = "Unknown Date";
+          if (!grouped[unknownKey]) grouped[unknownKey] = [];
+          grouped[unknownKey].push(match);
+          return;
+      }
+
       const normalizedDate = new Date(matchDate);
       normalizedDate.setHours(0, 0, 0, 0);
       const dateKey = normalizedDate.toISOString();
@@ -123,7 +139,11 @@ export default function MatchesList() {
   }
 
   function formatDateSeparator(dateString: string) {
+    if (dateString === "Unknown Date") return { text: "Date TBD", icon: Calendar };
+
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return null;
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -146,6 +166,10 @@ export default function MatchesList() {
 
   if (loading) {
     return <div className="lm-loading-message">Loading matches...</div>;
+  }
+
+  if (error) {
+      return <div className="lm-no-matches" style={{color: 'red'}}>Error: {error}</div>
   }
 
   const groupedMatches = groupMatchesByDate(filteredMatches);
@@ -177,7 +201,7 @@ export default function MatchesList() {
       <div className="lm-matches-grid" id="match-list">
         {filteredMatches.length === 0 ? (
           <div className="lm-no-matches">
-            No matches available. Check back later!
+            No matches found.
           </div>
         ) : (
           <>
@@ -199,25 +223,31 @@ export default function MatchesList() {
 
                   <div className="lm-matches-grid" style={{ marginTop: "0" }}>
                     {dateMatches.map((match) => {
+                      // --- SAFE DATE PARSING FOR INDIVIDUAL CARDS ---
                       const now = new Date();
-                      const matchDate = new Date(match.date);
-                      const isLive =
-                        matchDate <= now &&
-                        matchDate >=
-                          new Date(now.getTime() - 4 * 60 * 60 * 1000);
-                      /* Check if match start time is in the future for upcoming badge */
-                      const isUpcoming = matchDate > now;
+                      const matchDate = match.date ? new Date(match.date) : new Date();
+                      const isValidDate = !isNaN(matchDate.getTime());
 
-                      const dateStr = matchDate.toLocaleDateString("en-US", {
-                        weekday: "short",
-                        month: "short",
-                        day: "numeric",
-                      });
-                      const timeStr = matchDate.toLocaleTimeString("en-US", {
-                        hour: "numeric",
-                        minute: "2-digit",
-                        hour12: true,
-                      });
+                      let isLive = false;
+                      let isUpcoming = false;
+                      let dateStr = "TBD";
+                      let timeStr = "TBD";
+
+                      if (isValidDate && match.date) {
+                          isLive = matchDate <= now && matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
+                          isUpcoming = matchDate > now;
+                          dateStr = matchDate.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+                          timeStr = matchDate.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+                      }
+
+                      // --- SAFE DATA ACCESS ---
+                      // We use "???" as fallback if names are missing
+                      const homeName = match.teams?.home?.name?.substring(0, 10).toUpperCase() || "???";
+                      const awayName = match.teams?.away?.name?.substring(0, 10).toUpperCase() || "???";
+                      
+                      // Badges
+                      const homeBadge = match.teams?.home?.badge;
+                      const awayBadge = match.teams?.away?.badge;
 
                       return (
                         <Link
@@ -225,27 +255,24 @@ export default function MatchesList() {
                           href={`/match/${match.id}`}
                           onClick={() => handleMatchClick(match)}
                         >
-                          <div
-                            className={`lm-match-card ${
-                              isLive ? "lm-live" : ""
-                            }`}
-                          >
+                          <div className={`lm-match-card ${isLive ? "lm-live" : ""}`}>
+                            
                             {isLive && <div className="lm-live-tag">LIVE</div>}
                             {isUpcoming && (
-                              <div
-                                className="lm-live-tag"
-                                style={{ background: "rgba(141, 185, 2, 0.7)" }}
-                              >
+                              <div className="lm-live-tag" style={{ background: "rgba(141, 185, 2, 0.7)" }}>
                                 UPCOMING
                               </div>
                             )}
+
                             <div className="lm-teams-container">
+                              
+                              {/* HOME TEAM */}
                               <div className="lm-team">
                                 <div className="lm-team-badge-container">
-                                  {match.teams?.home?.badge ? (
+                                  {homeBadge ? (
                                     <img
-                                      src={getTeamBadgeUrl(match.teams.home.badge) || undefined}
-                                      alt={match.teams.home.name}
+                                      src={getTeamBadgeUrl(homeBadge) || undefined}
+                                      alt={homeName}
                                       className="lm-team-logo"
                                       onError={(e) => {
                                         const target = e.target as HTMLImageElement;
@@ -254,31 +281,21 @@ export default function MatchesList() {
                                           (target.nextElementSibling as HTMLElement).style.display = 'flex';
                                         }
                                       }}
-                                      onLoad={() => {
-                                        console.log(`✅ Loaded badge: ${match.teams?.home?.badge}`);
-                                      }}
                                     />
                                   ) : null}
                                   <div
                                     className="lm-team-placeholder"
-                                    style={{
-                                      display: match.teams?.home?.badge
-                                        ? "none"
-                                        : "flex",
-                                    }}
+                                    style={{ display: homeBadge ? "none" : "flex" }}
                                   >
                                     ?
                                   </div>
                                 </div>
-                                <span
-                                  className="lm-team-abbr"
-                                  title={match.teams?.home?.name || "Unknown"}
-                                >
-                                  {match.teams?.home?.name
-                                    ?.substring(0, 10)
-                                    .toUpperCase() || "???"}
+                                <span className="lm-team-abbr" title={match.teams?.home?.name || "Unknown"}>
+                                  {homeName}
                                 </span>
                               </div>
+
+                              {/* CENTER INFO */}
                               <div className="lm-match-center">
                                 {match.competition && (
                                   <div className="lm-competition">
@@ -289,12 +306,14 @@ export default function MatchesList() {
                                 <div className="lm-vs-line"></div>
                                 <div className="lm-time">{timeStr}</div>
                               </div>
+
+                              {/* AWAY TEAM */}
                               <div className="lm-team">
                                 <div className="lm-team-badge-container">
-                                  {match.teams?.away?.badge ? (
+                                  {awayBadge ? (
                                     <img
-                                      src={getTeamBadgeUrl(match.teams.away.badge) || undefined}
-                                      alt={match.teams.away.name}
+                                      src={getTeamBadgeUrl(awayBadge) || undefined}
+                                      alt={awayName}
                                       className="lm-team-logo"
                                       onError={(e) => {
                                         const target = e.target as HTMLImageElement;
@@ -303,31 +322,20 @@ export default function MatchesList() {
                                           (target.nextElementSibling as HTMLElement).style.display = 'flex';
                                         }
                                       }}
-                                      onLoad={() => {
-                                        console.log(`✅ Loaded badge: ${match.teams?.away?.badge}`);
-                                      }}
                                     />
                                   ) : null}
                                   <div
                                     className="lm-team-placeholder"
-                                    style={{
-                                      display: match.teams?.away?.badge
-                                        ? "none"
-                                        : "flex",
-                                    }}
+                                    style={{ display: awayBadge ? "none" : "flex" }}
                                   >
                                     ?
                                   </div>
                                 </div>
-                                <span
-                                  className="lm-team-abbr"
-                                  title={match.teams?.away?.name || "Unknown"}
-                                >
-                                  {match.teams?.away?.name
-                                    ?.substring(0, 10)
-                                    .toUpperCase() || "???"}
+                                <span className="lm-team-abbr" title={match.teams?.away?.name || "Unknown"}>
+                                  {awayName}
                                 </span>
                               </div>
+
                             </div>
                           </div>
                         </Link>
