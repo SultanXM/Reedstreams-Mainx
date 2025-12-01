@@ -24,7 +24,7 @@ export default function MatchesList() {
 
   const [matches, setMatches] = useState<Match[]>([]);
   const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState("live");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,7 +61,18 @@ export default function MatchesList() {
 
         console.log('✅ Matches loaded:', sortedData.length);
         setMatches(sortedData);
-        setFilteredMatches(sortedData);
+
+        // Pre-filter for the initial "live" state to prevent blink
+        const now = new Date();
+        const initialFiltered = sortedData.filter((match) => {
+            if (!match.date) return false;
+            const matchDate = new Date(match.date);
+            if (isNaN(matchDate.getTime())) return false;
+            const isLive = matchDate <= now && matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
+            return isLive;
+        });
+        setFilteredMatches(initialFiltered);
+
       } catch (err: any) {
         console.error('❌ CRITICAL ERROR fetching matches:', err);
         setError(err.message || "Failed to load matches");
@@ -201,7 +212,20 @@ export default function MatchesList() {
       <div className="lm-matches-grid" id="match-list">
         {filteredMatches.length === 0 ? (
           <div className="lm-no-matches">
-            No matches found.
+            No matches currently live. Check upcoming matches{" "}
+            <a
+              href="#match-list"
+              onClick={(e) => {
+                e.preventDefault();
+                setFilter("upcoming");
+              }}
+              style={{
+                color: "var(--primary-color, #8db902)",
+                textDecoration: "underline",
+              }}
+            >
+              here
+            </a>.
           </div>
         ) : (
           <>

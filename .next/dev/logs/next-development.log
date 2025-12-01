@@ -1,0 +1,48 @@
+[00:00:14.091] Server  LOG      ✓ Ready in 12s
+[00:00:17.749] Server  LOG      ○ Compiling / ...
+[00:00:48.306] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:51.865] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:00:51.865] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:00:51.865] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572507298}
+[00:00:59.880] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572515568}
+[00:01:05.033] Server  LOG      ○ Compiling /api/matches/[sportId] ...
+[00:01:09.604] Browser LOG     ✅ Matches loaded: 13
+[00:01:09.771] Browser LOG     ✅ Matches loaded: 13
+[00:02:37.709] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572613407}
+[00:02:41.297] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572617003}
+[00:02:42.691] Browser LOG     ✅ Matches loaded: 62
+[00:02:43.653] Browser LOG     ✅ Matches loaded: 62
+[00:03:28.836] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572664524}
+[00:03:43.533] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572679220}
+[00:03:45.145] Browser LOG     ✅ Matches loaded: 13
+[00:03:45.145] Browser LOG     ✅ Matches loaded: 13
+[00:05:16.704] Server  LOG      ✓ Compiled in 7.8s
+[00:05:16.708] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572769441}
+[00:05:16.708] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572770775}
+[00:05:18.773] Browser LOG     ✅ Matches loaded: 13
+[00:05:18.820] Browser LOG     ✅ Matches loaded: 13
+[00:05:18.820] Browser LOG     ✅ Matches loaded: 13
+[00:05:19.794] Browser LOG     ✅ Matches loaded: 13
+[00:05:19.795] Browser LOG     ✅ Matches loaded: 13
+[00:05:24.574] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:24.887] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:05:24.887] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
+[00:05:24.887] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572780543}
+[00:05:25.495] Browser LOG     ✅ Matches loaded: 13
+[00:07:07.787] Server  LOG      ✓ Compiled in 3.8s
+[00:07:12.780] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572888279}
+[00:07:13.149] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572888824}
+[00:07:17.578] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572893046}
+[00:07:18.616] Browser LOG     ✅ Matches loaded: 13
+[00:07:18.616] Browser LOG     ✅ Matches loaded: 13
+[00:07:35.526] Server  LOG      ○ Compiling /match/[id] ...
+[00:07:41.563] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/washington-commanders-vs-denver-broncos-2261379 color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/washington-commanders-vs-denver-broncos-2261379","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572917251}
+[00:08:32.601] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572968279}
+[00:08:33.372] Browser LOG     ✅ Matches loaded: 13
+[00:08:33.473] Browser LOG     ✅ Matches loaded: 13
+[00:08:36.697] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/new-england-patriots-vs-new-york-giants-2261380 color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/new-england-patriots-vs-new-york-giants-2261380","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764572972399}
+[00:11:30.243] Server  LOG      ✓ Compiled in 3.3s
+[00:11:34.011] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764573149651}
+[00:11:35.824] Browser LOG     ✅ Matches loaded: 19
+[00:11:35.825] Browser LOG     ✅ Matches loaded: 19
+[00:11:39.053] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/new-england-patriots-vs-new-york-giants-2261380 color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/new-england-patriots-vs-new-york-giants-2261380","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764573154573}

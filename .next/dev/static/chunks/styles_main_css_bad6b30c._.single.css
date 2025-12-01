@@ -1,0 +1,57 @@
+/* [project]/styles/main.css [app-client] (css) */
+.filter-buttons {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .5rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  display: flex;
+}
+
+.filter-btn {
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: 6px;
+  min-width: 100px;
+  padding: .5rem 1rem;
+  font-size: .85rem;
+  font-weight: 600;
+  transition: all .3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-btn.active {
+  color: #fff;
+  background: #8db902;
+  border: none;
+}
+
+.filter-btn:not(.active) {
+  color: #fff;
+  background: none;
+  border: 1px solid #8db902;
+}
+
+.filter-btn:before {
+  content: "";
+  background: linear-gradient(90deg, #0000, #fff3, #0000);
+  width: 100%;
+  height: 100%;
+  transition: left .6s;
+  position: absolute;
+  top: 0;
+  left: -100%;
+}
+
+.filter-btn:hover:before {
+  left: 100%;
+}
+
+.filter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #8db90266;
+}
+
+/*# sourceMappingURL=styles_main_css_bad6b30c._.single.css.map*/

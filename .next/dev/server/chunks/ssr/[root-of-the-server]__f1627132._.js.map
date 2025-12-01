@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 14, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/HackaX/Desktop/Reedstreams-mainxa/Reedstreams-Mainx/app/page.tsx"],"sourcesContent":["import { redirect } from 'next/navigation'\n\nexport const metadata = {\n  title: 'ReedStreams - Sports',\n  description: 'Browse sports and live matches',\n}\n\nexport default function HomePage() {\n  // Redirect the root path to /sports\n  redirect('/sports')\n}"],"names":[],"mappings":";;;;;;AAAA;AAAA;;AAEO,MAAM,WAAW;IACtB,OAAO;IACP,aAAa;AACf;AAEe,SAAS;IACtB,oCAAoC;IACpC,IAAA,iMAAQ,EAAC;AACX"}}]
+}
