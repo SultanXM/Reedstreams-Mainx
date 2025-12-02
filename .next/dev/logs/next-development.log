@@ -1,9 +1,160 @@
-[00:00:05.961] Server  LOG      ✓ Ready in 4.5s
-[00:00:09.581] Server  LOG      ○ Compiling /sports ...
-[00:00:38.527] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:38.812] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:00:38.812] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:00:38.812] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764685308663}
-[00:00:42.083] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764685311930}
-[00:00:47.127] Browser LOG     ✅ Matches loaded: 29
-[00:00:47.127] Browser LOG     ✅ Matches loaded: 29
+[00:00:05.863] Server  LOG      ✓ Ready in 4.6s
+[00:00:15.473] Server  LOG      ○ Compiling / ...
+[00:00:29.270] Server  ERROR    ⨯ ./components/sports/sports-grid.tsx:18:9
+Parsing ecmascript source code failed
+  16 |   rugby: '🏉',
+  17 |   motorsport: '🏁',
+> 18 |   Motor Sports: '🏎️',
+     |         ^^^^^^
+  19 |   volleyball: '🏐',
+  20 |   golf: '⛳',
+  21 |   darts: '🎯',
+
+Unexpected token `Sports`. Expected ... , *,  (, [, :, , ?, =, an identifier, public, protected, private, readonly, <.
+
+Import trace:
+  Server Component:
+    ./components/sports/sports-grid.tsx
+    ./app/sports/page.tsx
+
+
+[00:00:32.292] Server  LOG      ○ Compiling /_error ...
+[00:00:42.268] Browser ERROR   uncaughtError: Error: ./components/sports/sports-grid.tsx:18:9
+Parsing ecmascript source code failed
+  16 |   rugby: '🏉',
+  17 |   motorsport: '🏁',
+> 18 |   Motor Sports: '🏎️',
+     |         ^^^^^^
+  19 |   volleyball: '🏐',
+  20 |   golf: '⛳',
+  21 |   darts: '🎯',
+
+Unexpected token `Sports`. Expected ... , *,  (, [, :, , ?, =, an identifier, public, protected, private, readonly, <.
+
+Import trace:
+  Server Component:
+    ./components/sports/sports-grid.tsx
+    ./app/sports/page.tsx
+
+
+[00:00:42.837] Browser ERROR   ./components/sports/sports-grid.tsx:18:9
+Parsing ecmascript source code failed
+  16 |   rugby: '🏉',
+  17 |   motorsport: '🏁',
+> 18 |   Motor Sports: '🏎️',
+     |         ^^^^^^
+  19 |   volleyball: '🏐',
+  20 |   golf: '⛳',
+  21 |   darts: '🎯',
+
+Unexpected token `Sports`. Expected ... , *,  (, [, :, , ?, =, an identifier, public, protected, private, readonly, <.
+
+Import trace:
+  Server Component:
+    ./components/sports/sports-grid.tsx
+    ./app/sports/page.tsx
+[00:00:43.981] Browser ERROR   ./components/sports/sports-grid.tsx:18:9
+Parsing ecmascript source code failed
+  16 |   rugby: '🏉',
+  17 |   motorsport: '🏁',
+> 18 |   Motor Sports: '🏎️',
+     |         ^^^^^^
+  19 |   volleyball: '🏐',
+  20 |   golf: '⛳',
+  21 |   darts: '🎯',
+
+Unexpected token `Sports`. Expected ... , *,  (, [, :, , ?, =, an identifier, public, protected, private, readonly, <.
+
+Import trace:
+  Server Component:
+    ./components/sports/sports-grid.tsx
+    ./app/sports/page.tsx
+[00:01:05.848] Server  LOG      ✓ Compiled in 919ms
+[00:01:14.892] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:17.768] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:01:17.768] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:01:17.768] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686478718}
+[00:02:38.495] Server  LOG      ✓ Compiled in 477ms
+[00:02:49.615] Server  LOG      ○ Compiling /live-matches ...
+[00:02:51.211] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=motor-sports&sportName=Motor%20Sports color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=motor-sports&sportName=Motor%20Sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686572350}
+[00:02:54.481] Server  LOG      ○ Compiling /api/matches/[sportId] ...
+[00:02:59.582] Browser LOG     ✅ Matches loaded: 11
+[00:03:00.024] Browser LOG     ✅ Matches loaded: 11
+[00:03:13.764] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686594700}
+[00:03:14.436] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686595543}
+[00:04:04.675] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=motor-sports&sportName=Motor%20Sports color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=motor-sports&sportName=Motor%20Sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686645738}
+[00:04:06.542] Browser LOG     ✅ Matches loaded: 11
+[00:04:09.464] Browser LOG     ✅ Matches loaded: 11
+[00:04:12.417] Server  LOG      ○ Compiling /match/[id] ...
+[00:04:19.719] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/motogp-qualifying-motogp-main-race color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/motogp-qualifying-motogp-main-race","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686660876}
+[00:04:55.060] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=motor-sports&sportName=Motor%20Sports color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=motor-sports&sportName=Motor%20Sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686696170}
+[00:04:55.315] Browser LOG     ✅ Matches loaded: 11
+[00:04:55.549] Browser LOG     ✅ Matches loaded: 11
+[00:05:21.873] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686723026}
+[00:05:23.545] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686724698}
+[00:05:24.522] Browser LOG     ✅ Matches loaded: 175
+[00:05:25.608] Browser LOG     ✅ Matches loaded: 175
+[00:05:27.168] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/1764676800000-serbia-w-czech-republic-w color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/1764676800000-serbia-w-czech-republic-w","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686728297}
+[00:05:47.574] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686748719}
+[00:05:47.782] Browser LOG     ✅ Matches loaded: 176
+[00:05:48.155] Browser LOG     ✅ Matches loaded: 176
+[00:05:50.986] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/morocco-vs-comoros-2388978 color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/morocco-vs-comoros-2388978","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686752124}
+[00:06:03.342] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764686764416}
+[00:06:03.668] Browser LOG     ✅ Matches loaded: 176
+[00:06:03.836] Browser LOG     ✅ Matches loaded: 176
+[00:15:07.387] Server  LOG      ✓ Compiled in 2.8s
+[00:16:00.908] Browser LOG     ✅ Matches loaded: 176
+[00:16:00.908] Browser LOG     ✅ Matches loaded: 175
+[00:16:00.908] Browser LOG     ✅ Matches loaded: 175
+[00:16:06.896] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687368033}
+[00:16:11.313] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687372474}
+[00:16:13.318] Browser LOG     ✅ Matches loaded: 29
+[00:16:13.873] Browser LOG     ✅ Matches loaded: 29
+[00:16:30.689] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687391807}
+[00:16:43.739] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687404830}
+[00:16:45.733] Browser LOG     ✅ Matches loaded: 52
+[00:16:47.812] Browser LOG     ✅ Matches loaded: 52
+[00:17:09.830] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687430985}
+[00:17:12.532] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687433289}
+[00:17:13.569] Browser LOG     ✅ Matches loaded: 175
+[00:17:15.067] Browser LOG     ✅ Matches loaded: 175
+[00:18:53.705] Server  LOG      ✓ Compiled in 3.9s
+[00:19:18.540] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:19:18.978] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:19:18.978] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
+[00:19:18.978] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687560130}
+[00:19:21.294] Browser LOG     ✅ Matches loaded: 137
+[00:19:23.544] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687564695}
+[00:19:25.563] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687566713}
+[00:19:25.794] Browser LOG     ✅ Matches loaded: 29
+[00:19:25.953] Browser LOG     ✅ Matches loaded: 29
+[00:19:29.371] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687570530}
+[00:19:31.476] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=fight&sportName=Fight%20(UFC%2C%20Boxing) color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=fight&sportName=Fight%20(UFC%2C%20Boxing)","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687572541}
+[00:19:32.035] Browser LOG     ✅ Matches loaded: 5
+[00:19:32.650] Browser LOG     ✅ Matches loaded: 5
+[00:19:39.076] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687580229}
+[00:19:40.221] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=tennis&sportName=Tennis color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=tennis&sportName=Tennis","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687581374}
+[00:19:40.415] Browser LOG     ✅ Matches loaded: 0
+[00:19:40.415] Browser LOG     ✅ Matches loaded: 0
+[00:19:44.363] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687585497}
+[00:19:45.420] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=motor-sports&sportName=Motor%20Sports color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=motor-sports&sportName=Motor%20Sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687586574}
+[00:19:45.624] Browser LOG     ✅ Matches loaded: 0
+[00:19:45.624] Browser LOG     ✅ Matches loaded: 0
+[00:19:48.855] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687590008}
+[00:19:51.081] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764687592242}
+[00:19:51.193] Browser LOG     ✅ Matches loaded: 137
+[00:19:51.347] Browser LOG     ✅ Matches loaded: 137
+[00:35:19.601] Server  LOG      ✓ Compiled in 5.8s
+[00:35:29.258] Server  LOG      ✓ Compiled in 4.2s
+[00:36:23.428] Server  LOG      ✓ Compiled in 1298ms
+[00:36:38.738] Server  LOG      ✓ Compiled in 4.5s
+[00:36:56.320] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:36:58.551] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:36:58.551] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
+[00:36:58.551] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764688618955}
+[00:37:00.116] Browser LOG     ✅ Matches loaded: 137
+[00:37:08.491] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764688629579}
+[00:37:09.990] Browser LOG     ✅ Matches loaded: 0
+[00:37:11.836] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764688632462}
+[00:37:12.412] Browser LOG     ✅ Matches loaded: 29
+[00:37:12.645] Browser LOG     ✅ Matches loaded: 29

@@ -407,13 +407,19 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
+function normalizeSportKey(sportName) {
+    if (!sportName) return '';
+    return sportName.toLowerCase().replace(/\s+/g, '').replace(/[()]/g, '');
+}
 function MatchesList() {
     _s();
     const searchParams = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"])();
     const sportId = searchParams.get("sportId");
+    const sportName = searchParams.get("sportName");
+    const isAmericanFootball = normalizeSportKey(sportName) === 'americanfootball';
     const [matches, setMatches] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [filteredMatches, setFilteredMatches] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
-    const [filter, setFilter] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("live");
+    const [filter, setFilter] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(isAmericanFootball ? "all" : "live");
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
@@ -434,11 +440,30 @@ function MatchesList() {
                         setFilteredMatches([]);
                         return;
                     }
+                    // Primary Filter: All matches must have sources.
+                    // Secondary Filter: Hide "???" vs "???" names, except for American Football.
+                    const filteredData = data.filter({
+                        "MatchesList.useEffect.fetchMatches.filteredData": (match)=>{
+                            // Rule 1: Must have sources. This applies to ALL sports.
+                            if (!match.sources || match.sources.length === 0) {
+                                return false;
+                            }
+                            // Rule 2: Hide "???" vs "???", except for NFL.
+                            if (!isAmericanFootball) {
+                                const homeName = match.teams?.home?.name;
+                                const awayName = match.teams?.away?.name;
+                                if (!homeName && !awayName) {
+                                    return false;
+                                }
+                            }
+                            return true; // If we reached here, the match is valid.
+                        }
+                    }["MatchesList.useEffect.fetchMatches.filteredData"]);
                     // --- SAFE SORTING ---
                     // We do NOT filter "???". We take everything.
                     // We sort safely so undefined dates don't break the page.
                     const sortedData = [
-                        ...data
+                        ...filteredData
                     ].sort({
                         "MatchesList.useEffect.fetchMatches.sortedData": (a, b)=>{
                             const dateA = a.date ? new Date(a.date).getTime() : 0;
@@ -448,18 +473,23 @@ function MatchesList() {
                     }["MatchesList.useEffect.fetchMatches.sortedData"]);
                     console.log('✅ Matches loaded:', sortedData.length);
                     setMatches(sortedData);
-                    // Pre-filter for the initial "live" state to prevent blink
-                    const now = new Date();
-                    const initialFiltered = sortedData.filter({
-                        "MatchesList.useEffect.fetchMatches.initialFiltered": (match)=>{
-                            if (!match.date) return false;
-                            const matchDate = new Date(match.date);
-                            if (isNaN(matchDate.getTime())) return false;
-                            const isLive = matchDate <= now && matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
-                            return isLive;
-                        }
-                    }["MatchesList.useEffect.fetchMatches.initialFiltered"]);
-                    setFilteredMatches(initialFiltered);
+                    // If it's American Football, show all matches from the start.
+                    if (isAmericanFootball) {
+                        setFilteredMatches(sortedData);
+                    } else {
+                        // Pre-filter for the initial "live" state to prevent blink
+                        const now = new Date();
+                        const initialFiltered = sortedData.filter({
+                            "MatchesList.useEffect.fetchMatches.initialFiltered": (match)=>{
+                                if (!match.date) return false;
+                                const matchDate = new Date(match.date);
+                                if (isNaN(matchDate.getTime())) return false;
+                                const isLive = matchDate <= now && matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
+                                return isLive;
+                            }
+                        }["MatchesList.useEffect.fetchMatches.initialFiltered"]);
+                        setFilteredMatches(initialFiltered);
+                    }
                 } catch (err) {
                     console.error('❌ CRITICAL ERROR fetching matches:', err);
                     setError(err.message || "Failed to load matches");
@@ -472,12 +502,18 @@ function MatchesList() {
             fetchMatches();
         }
     }["MatchesList.useEffect"], [
-        sportId
+        sportId,
+        isAmericanFootball
     ]);
     // --- FILTERING LOGIC ---
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "MatchesList.useEffect": ()=>{
             if (!matches.length) return;
+            // For American Football, we always show all matches, so no filtering is applied.
+            if (isAmericanFootball) {
+                setFilteredMatches(matches);
+                return;
+            }
             const now = new Date();
             const filtered = matches.filter({
                 "MatchesList.useEffect.filtered": (match)=>{
@@ -498,7 +534,8 @@ function MatchesList() {
         }
     }["MatchesList.useEffect"], [
         filter,
-        matches
+        matches,
+        isAmericanFootball
     ]);
     function handleMatchClick(match) {
         sessionStorage.setItem("currentMatch", JSON.stringify(match));
@@ -563,7 +600,7 @@ function MatchesList() {
             children: "Loading matches..."
         }, void 0, false, {
             fileName: "[project]/components/live-matches/matches-list.tsx",
-            lineNumber: 179,
+            lineNumber: 219,
             columnNumber: 12
         }, this);
     }
@@ -579,7 +616,7 @@ function MatchesList() {
             ]
         }, void 0, true, {
             fileName: "[project]/components/live-matches/matches-list.tsx",
-            lineNumber: 183,
+            lineNumber: 223,
             columnNumber: 14
         }, this);
     }
@@ -587,7 +624,7 @@ function MatchesList() {
     const sortedDates = Object.keys(groupedMatches).sort();
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            !isAmericanFootball && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "lm-filter-buttons",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -596,8 +633,8 @@ function MatchesList() {
                         children: "All Matches"
                     }, void 0, false, {
                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                        lineNumber: 192,
-                        columnNumber: 9
+                        lineNumber: 233,
+                        columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         className: `lm-filter-btn ${filter === "live" ? "active" : ""}`,
@@ -605,8 +642,8 @@ function MatchesList() {
                         children: "Live"
                     }, void 0, false, {
                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                        lineNumber: 198,
-                        columnNumber: 9
+                        lineNumber: 239,
+                        columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         className: `lm-filter-btn ${filter === "upcoming" ? "active" : ""}`,
@@ -614,14 +651,14 @@ function MatchesList() {
                         children: "Upcoming"
                     }, void 0, false, {
                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                        lineNumber: 204,
-                        columnNumber: 9
+                        lineNumber: 245,
+                        columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/live-matches/matches-list.tsx",
-                lineNumber: 191,
-                columnNumber: 7
+                lineNumber: 232,
+                columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "lm-matches-grid",
@@ -644,14 +681,14 @@ function MatchesList() {
                             children: "here"
                         }, void 0, false, {
                             fileName: "[project]/components/live-matches/matches-list.tsx",
-                            lineNumber: 216,
+                            lineNumber: 258,
                             columnNumber: 13
                         }, this),
                         "."
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/live-matches/matches-list.tsx",
-                    lineNumber: 214,
+                    lineNumber: 256,
                     columnNumber: 11
                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                     children: sortedDates.map((dateKey)=>{
@@ -670,20 +707,20 @@ function MatchesList() {
                                             }
                                         }, void 0, false, {
                                             fileName: "[project]/components/live-matches/matches-list.tsx",
-                                            lineNumber: 240,
+                                            lineNumber: 282,
                                             columnNumber: 23
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                             children: separator.text
                                         }, void 0, false, {
                                             fileName: "[project]/components/live-matches/matches-list.tsx",
-                                            lineNumber: 244,
+                                            lineNumber: 286,
                                             columnNumber: 23
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/live-matches/matches-list.tsx",
-                                    lineNumber: 239,
+                                    lineNumber: 281,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -732,7 +769,7 @@ function MatchesList() {
                                                         children: "LIVE"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                        lineNumber: 284,
+                                                        lineNumber: 326,
                                                         columnNumber: 40
                                                     }, this),
                                                     isUpcoming && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -743,7 +780,7 @@ function MatchesList() {
                                                         children: "UPCOMING"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                        lineNumber: 286,
+                                                        lineNumber: 328,
                                                         columnNumber: 31
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -768,7 +805,7 @@ function MatchesList() {
                                                                                 }
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                                lineNumber: 297,
+                                                                                lineNumber: 339,
                                                                                 columnNumber: 37
                                                                             }, this) : null,
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -779,13 +816,13 @@ function MatchesList() {
                                                                                 children: "?"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                                lineNumber: 310,
+                                                                                lineNumber: 352,
                                                                                 columnNumber: 35
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                        lineNumber: 295,
+                                                                        lineNumber: 337,
                                                                         columnNumber: 33
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -794,13 +831,13 @@ function MatchesList() {
                                                                         children: homeName
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                        lineNumber: 317,
+                                                                        lineNumber: 359,
                                                                         columnNumber: 33
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                lineNumber: 294,
+                                                                lineNumber: 336,
                                                                 columnNumber: 31
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -811,7 +848,7 @@ function MatchesList() {
                                                                         children: match.competition
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                        lineNumber: 325,
+                                                                        lineNumber: 367,
                                                                         columnNumber: 35
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -819,14 +856,14 @@ function MatchesList() {
                                                                         children: dateStr
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                        lineNumber: 329,
+                                                                        lineNumber: 371,
                                                                         columnNumber: 33
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                         className: "lm-vs-line"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                        lineNumber: 330,
+                                                                        lineNumber: 372,
                                                                         columnNumber: 33
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -834,13 +871,13 @@ function MatchesList() {
                                                                         children: timeStr
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                        lineNumber: 331,
+                                                                        lineNumber: 373,
                                                                         columnNumber: 33
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                lineNumber: 323,
+                                                                lineNumber: 365,
                                                                 columnNumber: 31
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -862,7 +899,7 @@ function MatchesList() {
                                                                                 }
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                                lineNumber: 338,
+                                                                                lineNumber: 380,
                                                                                 columnNumber: 37
                                                                             }, this) : null,
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -873,13 +910,13 @@ function MatchesList() {
                                                                                 children: "?"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                                lineNumber: 351,
+                                                                                lineNumber: 393,
                                                                                 columnNumber: 35
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                        lineNumber: 336,
+                                                                        lineNumber: 378,
                                                                         columnNumber: 33
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -888,55 +925,55 @@ function MatchesList() {
                                                                         children: awayName
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                        lineNumber: 358,
+                                                                        lineNumber: 400,
                                                                         columnNumber: 33
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                                lineNumber: 335,
+                                                                lineNumber: 377,
                                                                 columnNumber: 31
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                        lineNumber: 291,
+                                                        lineNumber: 333,
                                                         columnNumber: 29
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/live-matches/matches-list.tsx",
-                                                lineNumber: 282,
+                                                lineNumber: 324,
                                                 columnNumber: 27
                                             }, this)
                                         }, match.id, false, {
                                             fileName: "[project]/components/live-matches/matches-list.tsx",
-                                            lineNumber: 277,
+                                            lineNumber: 319,
                                             columnNumber: 25
                                         }, this);
                                     })
                                 }, void 0, false, {
                                     fileName: "[project]/components/live-matches/matches-list.tsx",
-                                    lineNumber: 248,
+                                    lineNumber: 290,
                                     columnNumber: 19
                                 }, this)
                             ]
                         }, dateKey, true, {
                             fileName: "[project]/components/live-matches/matches-list.tsx",
-                            lineNumber: 237,
+                            lineNumber: 279,
                             columnNumber: 17
                         }, this);
                     })
                 }, void 0, false)
             }, void 0, false, {
                 fileName: "[project]/components/live-matches/matches-list.tsx",
-                lineNumber: 212,
+                lineNumber: 254,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true);
 }
-_s(MatchesList, "oo69QiOlVlKi7Oek7uoAOcAzjew=", false, function() {
+_s(MatchesList, "U9NHjtEgwpMcphMIaUW0FhtViJg=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"]
     ];

@@ -16,15 +16,24 @@ interface Match {
     home?: { name?: string; badge?: string };
     away?: { name?: string; badge?: string };
   };
+  sources?: any[];
+}
+
+function normalizeSportKey(sportName: string | null) {
+  if (!sportName) return ''
+  return sportName.toLowerCase().replace(/\s+/g, '').replace(/[()]/g, '')
 }
 
 export default function MatchesList() {
   const searchParams = useSearchParams();
   const sportId = searchParams.get("sportId");
+  const sportName = searchParams.get("sportName");
+
+  const isAmericanFootball = normalizeSportKey(sportName) === 'americanfootball';
 
   const [matches, setMatches] = useState<Match[]>([]);
   const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
-  const [filter, setFilter] = useState("live");
+  const [filter, setFilter] = useState(isAmericanFootball ? "all" : "live");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,10 +59,30 @@ export default function MatchesList() {
           return;
         }
 
+        // Primary Filter: All matches must have sources.
+        // Secondary Filter: Hide "???" vs "???" names, except for American Football.
+        const filteredData = data.filter((match: Match) => {
+          // Rule 1: Must have sources. This applies to ALL sports.
+          if (!match.sources || match.sources.length === 0) {
+            return false;
+          }
+
+          // Rule 2: Hide "???" vs "???", except for NFL.
+          if (!isAmericanFootball) {
+            const homeName = match.teams?.home?.name;
+            const awayName = match.teams?.away?.name;
+            if (!homeName && !awayName) {
+              return false;
+            }
+          }
+
+          return true; // If we reached here, the match is valid.
+        });
+
         // --- SAFE SORTING ---
         // We do NOT filter "???". We take everything.
         // We sort safely so undefined dates don't break the page.
-        const sortedData = [...data].sort((a: Match, b: Match) => {
+        const sortedData = [...filteredData].sort((a: Match, b: Match) => {
             const dateA = a.date ? new Date(a.date).getTime() : 0;
             const dateB = b.date ? new Date(b.date).getTime() : 0;
             return dateA - dateB;
@@ -62,16 +91,21 @@ export default function MatchesList() {
         console.log('✅ Matches loaded:', sortedData.length);
         setMatches(sortedData);
 
-        // Pre-filter for the initial "live" state to prevent blink
-        const now = new Date();
-        const initialFiltered = sortedData.filter((match) => {
-            if (!match.date) return false;
-            const matchDate = new Date(match.date);
-            if (isNaN(matchDate.getTime())) return false;
-            const isLive = matchDate <= now && matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
-            return isLive;
-        });
-        setFilteredMatches(initialFiltered);
+        // If it's American Football, show all matches from the start.
+        if (isAmericanFootball) {
+          setFilteredMatches(sortedData);
+        } else {
+          // Pre-filter for the initial "live" state to prevent blink
+          const now = new Date();
+          const initialFiltered = sortedData.filter((match) => {
+              if (!match.date) return false;
+              const matchDate = new Date(match.date);
+              if (isNaN(matchDate.getTime())) return false;
+              const isLive = matchDate <= now && matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
+              return isLive;
+          });
+          setFilteredMatches(initialFiltered);
+        }
 
       } catch (err: any) {
         console.error('❌ CRITICAL ERROR fetching matches:', err);
@@ -84,11 +118,17 @@ export default function MatchesList() {
     }
 
     fetchMatches();
-  }, [sportId]);
+  }, [sportId, isAmericanFootball]);
 
   // --- FILTERING LOGIC ---
   useEffect(() => {
     if (!matches.length) return;
+
+    // For American Football, we always show all matches, so no filtering is applied.
+    if (isAmericanFootball) {
+      setFilteredMatches(matches);
+      return;
+    }
 
     const now = new Date();
 
@@ -113,7 +153,7 @@ export default function MatchesList() {
     });
 
     setFilteredMatches(filtered);
-  }, [filter, matches]);
+  }, [filter, matches, isAmericanFootball]);
 
   function handleMatchClick(match: Match) {
     sessionStorage.setItem("currentMatch", JSON.stringify(match));
@@ -188,26 +228,28 @@ export default function MatchesList() {
 
   return (
     <>
-      <div className="lm-filter-buttons">
-        <button
-          className={`lm-filter-btn ${filter === "all" ? "active" : ""}`}
-          onClick={() => setFilter("all")}
-        >
-          All Matches
-        </button>
-        <button
-          className={`lm-filter-btn ${filter === "live" ? "active" : ""}`}
-          onClick={() => setFilter("live")}
-        >
-          Live
-        </button>
-        <button
-          className={`lm-filter-btn ${filter === "upcoming" ? "active" : ""}`}
-          onClick={() => setFilter("upcoming")}
-        >
-          Upcoming
-        </button>
-      </div>
+      {!isAmericanFootball && (
+        <div className="lm-filter-buttons">
+          <button
+            className={`lm-filter-btn ${filter === "all" ? "active" : ""}`}
+            onClick={() => setFilter("all")}
+          >
+            All Matches
+          </button>
+          <button
+            className={`lm-filter-btn ${filter === "live" ? "active" : ""}`}
+            onClick={() => setFilter("live")}
+          >
+            Live
+          </button>
+          <button
+            className={`lm-filter-btn ${filter === "upcoming" ? "active" : ""}`}
+            onClick={() => setFilter("upcoming")}
+          >
+            Upcoming
+          </button>
+        </div>
+      )}
 
       <div className="lm-matches-grid" id="match-list">
         {filteredMatches.length === 0 ? (

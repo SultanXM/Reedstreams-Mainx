@@ -123,7 +123,7 @@ const sportIcons = {
     cricket: '🏏',
     rugby: '🏉',
     motorsport: '🏁',
-    racing: '🏎️',
+    motorsports: '🏎️',
     volleyball: '🏐',
     golf: '⛳',
     darts: '🎯'
@@ -139,7 +139,7 @@ const sportNames = {
     boxing: 'Boxing',
     cricket: 'Cricket',
     rugby: 'Rugby',
-    motorsport: 'Auto Racing',
+    motorsport: 'F1/MotoGP',
     racing: 'Auto Racing',
     volleyball: 'Volleyball',
     golf: 'Golf',
