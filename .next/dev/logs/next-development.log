@@ -158,3 +158,27 @@ Import trace:
 [00:37:11.836] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764688632462}
 [00:37:12.412] Browser LOG     ✅ Matches loaded: 29
 [00:37:12.645] Browser LOG     ✅ Matches loaded: 29
+[00:45:14.638] Server  LOG      ✓ Compiled in 3.1s
+[00:45:26.787] Server  LOG      ✓ Compiled in 1500ms
+[00:45:27.067] Browser LOG     ✅ Matches loaded: 29
+[00:45:29.025] Browser LOG     ✅ Matches loaded: 29
+[00:45:29.839] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
+
+Previous: %s
+Incoming: %s useEffect [american-football, true] [american-football]
+[00:45:29.839] Browser LOG     ✅ Matches loaded: 29
+[00:45:37.418] Server  LOG      ✓ Compiled in 1159ms
+[00:45:38.798] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
+
+Previous: %s
+Incoming: %s useEffect [live, [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object], true] [live, [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]]
+[00:46:06.932] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:46:07.937] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:46:07.937] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
+[00:46:07.937] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764689169101}
+[00:46:08.055] Browser LOG     ✅ Matches loaded: 29
+[00:46:28.750] Server  LOG      ✓ Compiled in 2.8s
+[00:46:57.794] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764689218783}
+[00:47:00.478] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764689221629}
+[00:47:00.732] Browser LOG     ✅ Matches loaded: 49
+[00:47:01.020] Browser LOG     ✅ Matches loaded: 49
