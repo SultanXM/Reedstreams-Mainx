@@ -8,10 +8,14 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-ssr] (ecmascript)");
 "use client";
 ;
 ;
+;
 function MatchPlayer({ matchId }) {
+    const searchParams = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useSearchParams"])();
+    const sportName = searchParams.get("sportName");
     const [streams, setStreams] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [selectedStream, setSelectedStream] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
@@ -78,6 +82,14 @@ function MatchPlayer({ matchId }) {
             }
             setStreams(allStreams);
             // --- Start of Change ---
+            const isBasketball = sportName?.toLowerCase().includes("basketball");
+            if (isBasketball) {
+                const bravoStream = allStreams.find((s)=>s.sourceIdentifier === "bravo");
+                if (bravoStream) {
+                    setSelectedStream(bravoStream);
+                    return;
+                }
+            }
             // 1. Prioritize 'admin #1' stream
             const adminStream = allStreams.find((s)=>s.sourceIdentifier === "admin" && s.streamNo === 1);
             // 2. Fallback to any HD stream
@@ -98,12 +110,12 @@ function MatchPlayer({ matchId }) {
                 children: "Loading stream..."
             }, void 0, false, {
                 fileName: "[project]/components/match/match-player.tsx",
-                lineNumber: 118,
+                lineNumber: 132,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/components/match/match-player.tsx",
-            lineNumber: 117,
+            lineNumber: 131,
             columnNumber: 7
         }, this);
     }
@@ -117,25 +129,25 @@ function MatchPlayer({ matchId }) {
                         className: "fas fa-exclamation-triangle"
                     }, void 0, false, {
                         fileName: "[project]/components/match/match-player.tsx",
-                        lineNumber: 127,
+                        lineNumber: 141,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         children: error
                     }, void 0, false, {
                         fileName: "[project]/components/match/match-player.tsx",
-                        lineNumber: 128,
+                        lineNumber: 142,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/match/match-player.tsx",
-                lineNumber: 126,
+                lineNumber: 140,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/components/match/match-player.tsx",
-            lineNumber: 125,
+            lineNumber: 139,
             columnNumber: 7
         }, this);
     }
@@ -151,19 +163,19 @@ function MatchPlayer({ matchId }) {
                     frameBorder: "0"
                 }, void 0, false, {
                     fileName: "[project]/components/match/match-player.tsx",
-                    lineNumber: 138,
+                    lineNumber: 152,
                     columnNumber: 11
                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "loading-message",
                     children: "Loading stream..."
                 }, void 0, false, {
                     fileName: "[project]/components/match/match-player.tsx",
-                    lineNumber: 146,
+                    lineNumber: 160,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/match/match-player.tsx",
-                lineNumber: 136,
+                lineNumber: 150,
                 columnNumber: 7
             }, this),
             streams.length > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -176,7 +188,7 @@ function MatchPlayer({ matchId }) {
                                 className: "fas fa-tv"
                             }, void 0, false, {
                                 fileName: "[project]/components/match/match-player.tsx",
-                                lineNumber: 153,
+                                lineNumber: 167,
                                 columnNumber: 13
                             }, this),
                             " ",
@@ -184,7 +196,7 @@ function MatchPlayer({ matchId }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/match/match-player.tsx",
-                        lineNumber: 152,
+                        lineNumber: 166,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -203,7 +215,7 @@ function MatchPlayer({ matchId }) {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/match/match-player.tsx",
-                                        lineNumber: 163,
+                                        lineNumber: 177,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -211,7 +223,7 @@ function MatchPlayer({ matchId }) {
                                         children: stream.language
                                     }, void 0, false, {
                                         fileName: "[project]/components/match/match-player.tsx",
-                                        lineNumber: 167,
+                                        lineNumber: 181,
                                         columnNumber: 17
                                     }, this),
                                     stream.hd ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -219,31 +231,31 @@ function MatchPlayer({ matchId }) {
                                         children: "HD"
                                     }, void 0, false, {
                                         fileName: "[project]/components/match/match-player.tsx",
-                                        lineNumber: 169,
+                                        lineNumber: 183,
                                         columnNumber: 19
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: "stream-quality sd",
                                         children: "SD"
                                     }, void 0, false, {
                                         fileName: "[project]/components/match/match-player.tsx",
-                                        lineNumber: 171,
+                                        lineNumber: 185,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, index, true, {
                                 fileName: "[project]/components/match/match-player.tsx",
-                                lineNumber: 157,
+                                lineNumber: 171,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/match/match-player.tsx",
-                        lineNumber: 155,
+                        lineNumber: 169,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/match/match-player.tsx",
-                lineNumber: 151,
+                lineNumber: 165,
                 columnNumber: 9
             }, this)
         ]

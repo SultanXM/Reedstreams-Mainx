@@ -1,3 +1,4 @@
+import GoogleAnalytics from "@/components/layout/google-analytics"
 import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
@@ -39,6 +40,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`font-sans antialiased`}>
+        <GoogleAnalytics />
         <Script src="/scripts/ad-blocker.js" strategy="beforeInteractive" />
         {children}
         <Analytics />

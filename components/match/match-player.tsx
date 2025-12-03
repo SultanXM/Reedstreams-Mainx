@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 
 interface Stream {
   embedUrl: string
@@ -18,6 +19,8 @@ interface Match {
 }
 
 export default function MatchPlayer({ matchId }: { matchId: string }) {
+  const searchParams = useSearchParams()
+  const sportName = searchParams.get("sportName")
   const [streams, setStreams] = useState<Stream[]>([])
   const [selectedStream, setSelectedStream] = useState<Stream | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -97,6 +100,17 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
       setStreams(allStreams)
       // --- Start of Change ---
+      const isBasketball = sportName?.toLowerCase().includes("basketball")
+
+      if (isBasketball) {
+        const bravoStream = allStreams.find(
+          (s) => s.sourceIdentifier === "bravo",
+        )
+        if (bravoStream) {
+          setSelectedStream(bravoStream)
+          return
+        }
+      }
       // 1. Prioritize 'admin #1' stream
       const adminStream = allStreams.find(
         (s) => s.sourceIdentifier === "admin" && s.streamNo === 1,

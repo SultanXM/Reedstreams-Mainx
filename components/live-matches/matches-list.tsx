@@ -305,7 +305,7 @@ export default function MatchesList() {
                       return (
                         <Link
                           key={match.id}
-                          href={`/match/${match.id}`}
+                          href={`/match/${match.id}?sportName=${sportName}`}
                           onClick={() => handleMatchClick(match)}
                         >
                           <div className={`lm-match-card ${isLive ? "lm-live" : ""}`}>
