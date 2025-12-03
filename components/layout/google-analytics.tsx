@@ -1,34 +1,31 @@
 "use client"
 
-import { usePathname, useSearchParams } from "next/navigation"
-import { useEffect } from "react"
+import { useState, useEffect } from "react"
+import Script from "next/script"
 
 const GTM_ID = "G-1LLX3T93LK"
 
 export default function GoogleAnalytics() {
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    if (GTM_ID) {
-      const url = pathname + searchParams.toString()
-      window.gtag("config", GTM_ID, {
-        page_path: url,
-      })
-    }
-  }, [pathname, searchParams])
+    setMounted(true)
+  }, [])
 
-  if (!GTM_ID) {
+  if (!mounted || !GTM_ID) {
     return null
   }
 
   return (
     <>
-      <script
-        async
+      <Script
+        id="gtag-base"
+        strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${GTM_ID}`}
-      ></script>
-      <script
+      />
+      <Script
+        id="gtag-init"
+        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             window.dataLayer = window.dataLayer || [];
