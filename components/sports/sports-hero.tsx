@@ -6,7 +6,7 @@ export default function SportsHero() {
       <Header />
       <section className="sports-hero">
         <div className="sports-hero-content">
-          <h1>All Sports</h1>
+          <h1>Select Sport</h1>
           <p>Choose your favorite sport and dive into live matches, upcoming games, and premium streaming experience</p>
         </div>
       </section>

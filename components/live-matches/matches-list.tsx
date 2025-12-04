@@ -326,7 +326,7 @@ export default function MatchesList() {
                                     <img
                                       src={getTeamBadgeUrl(homeBadge) || undefined}
                                       alt={homeName}
-                                      className="lm-team-logo"
+                                      className="lm-team-logo rounded-[10%]"
                                       onError={(e) => {
                                         const target = e.target as HTMLImageElement;
                                         target.style.display = 'none';
@@ -367,7 +367,7 @@ export default function MatchesList() {
                                     <img
                                       src={getTeamBadgeUrl(awayBadge) || undefined}
                                       alt={awayName}
-                                      className="lm-team-logo"
+                                      className="lm-team-logo rounded-[10%]"
                                       onError={(e) => {
                                         const target = e.target as HTMLImageElement;
                                         target.style.display = 'none';

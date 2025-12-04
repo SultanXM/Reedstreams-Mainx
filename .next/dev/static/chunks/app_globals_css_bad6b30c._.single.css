@@ -1346,6 +1346,10 @@
     border-radius: 4px;
   }
 
+  .rounded-\[10\%\] {
+    border-radius: 10%;
+  }
+
   .rounded-\[calc\(var\(--radius\)-5px\)\] {
     border-radius: calc(var(--radius)  - 5px);
   }

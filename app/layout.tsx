@@ -21,7 +21,10 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "ReedStreams - Your Home for Free Live Sports",
   description: "Watch Any sport game live from anywhere! Free HD sports streaming.",
-    generator: 'v0.app'
+  generator: 'v0.app',
+  icons: {
+    icon: '/Images/logo.png',
+  },
 }
 
 export default function RootLayout({
@@ -32,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="/Images/logo.png" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link href="https://cdn.jsdelivr.net/npm/remixicon@4.7.0/fonts/remixicon.css" rel="stylesheet" />
         <link

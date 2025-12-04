@@ -1,98 +1,403 @@
-[00:00:23.555] Server  LOG      ✓ Ready in 19.4s
-[00:00:47.507] Server  LOG      ○ Compiling / ...
-[00:01:36.680] Server  LOG      ○ Compiling /sports ...
-[00:01:44.453] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:01:47.570] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:01:47.570] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:01:47.570] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764790984941}
-[00:08:39.563] Server  LOG      ○ Compiling /live-matches ...
-[00:08:46.331] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791403681}
-[00:08:50.469] Server  LOG      ○ Compiling /api/matches/[sportId] ...
-[00:08:58.896] Browser LOG     ✅ Matches loaded: 130
-[00:08:58.896] Browser LOG     ✅ Matches loaded: 130
-[00:09:07.980] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/lipscomb-vs-tennessee-tech-2375429?sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/lipscomb-vs-tennessee-tech-2375429?sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791425454}
-[00:09:23.050] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791440440}
-[00:09:23.238] Browser LOG     ✅ Matches loaded: 130
-[00:09:23.238] Browser LOG     ✅ Matches loaded: 130
-[00:09:29.472] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/james-madison-vs-north-carolina-central-4549099?sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/james-madison-vs-north-carolina-central-4549099?sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791446940}
-[00:09:38.386] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791455803}
-[00:09:38.663] Browser LOG     ✅ Matches loaded: 130
-[00:09:38.837] Browser LOG     ✅ Matches loaded: 130
-[00:09:42.448] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/oakland-vs-purdue-fort-wayne-4549097?sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/oakland-vs-purdue-fort-wayne-4549097?sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791459903}
-[00:11:23.972] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791561403}
-[00:11:24.734] Browser LOG     ✅ Matches loaded: 130
-[00:11:25.008] Browser LOG     ✅ Matches loaded: 130
-[00:11:28.871] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/wofford-vs-presbyterian-2375443?sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/wofford-vs-presbyterian-2375443?sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791566336}
-[00:11:31.931] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791569296}
-[00:11:32.142] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791569501}
-[00:11:32.142] Browser LOG     ✅ Matches loaded: 130
-[00:11:32.812] Browser LOG     ✅ Matches loaded: 130
-[00:11:33.193] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=rugby&sportName=Rugby color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=rugby&sportName=Rugby","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791570663}
-[00:11:33.637] Browser LOG     ✅ Matches loaded: 0
-[00:11:34.030] Browser LOG     ✅ Matches loaded: 0
-[00:11:34.210] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791571674}
-[00:11:35.263] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791572698}
-[00:11:35.704] Browser LOG     ✅ Matches loaded: 27
-[00:11:35.704] Browser LOG     ✅ Matches loaded: 27
-[00:11:39.772] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791577245}
-[00:11:41.266] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=fight&sportName=Fight%20(UFC%2C%20Boxing) color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=fight&sportName=Fight%20(UFC%2C%20Boxing)","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791578723}
-[00:11:41.992] Browser LOG     ✅ Matches loaded: 8
-[00:11:41.992] Browser LOG     ✅ Matches loaded: 8
-[00:11:45.772] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791583248}
-[00:11:47.367] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=motor-sports&sportName=Motor%20Sports color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=motor-sports&sportName=Motor%20Sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791584832}
-[00:11:48.077] Browser LOG     ✅ Matches loaded: 0
-[00:11:48.077] Browser LOG     ✅ Matches loaded: 0
-[00:11:49.464] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791586924}
-[00:11:50.646] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=tennis&sportName=Tennis color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=tennis&sportName=Tennis","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791588111}
-[00:11:51.094] Browser LOG     ✅ Matches loaded: 0
-[00:11:51.094] Browser LOG     ✅ Matches loaded: 0
-[00:11:52.383] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791589822}
-[00:11:53.360] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791590832}
-[00:11:54.402] Browser LOG     ✅ Matches loaded: 158
-[00:11:54.694] Browser LOG     ✅ Matches loaded: 158
-[00:11:59.323] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/mura-vs-nafta-2379170?sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/mura-vs-nafta-2379170?sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791596800}
-[00:12:04.369] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791601837}
-[00:12:04.895] Browser LOG     ✅ Matches loaded: 158
-[00:12:05.346] Browser LOG     ✅ Matches loaded: 158
-[00:12:07.594] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/esbjerg-vs-fc-copenhagen-2374351?sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/esbjerg-vs-fc-copenhagen-2374351?sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791605035}
-[00:12:14.826] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791612290}
-[00:12:15.809] Browser LOG     ✅ Matches loaded: 158
-[00:12:15.809] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791613035}
-[00:12:15.809] Browser LOG     ✅ Matches loaded: 158
-[00:12:17.817] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791615085}
-[00:12:17.817] Browser LOG     ✅ Matches loaded: 27
-[00:12:17.920] Browser LOG     ✅ Matches loaded: 27
-[00:12:20.669] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/vs-american-football-19207?sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/vs-american-football-19207?sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791618135}
-[00:12:25.363] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791621581}
-[00:12:26.064] Browser LOG     ✅ Matches loaded: 27
-[00:12:26.495] Browser LOG     ✅ Matches loaded: 27
-[00:12:29.245] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/nfl-network-247-nfl-2025-516518?sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/nfl-network-247-nfl-2025-516518?sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791626692}
-[00:12:34.964] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791632415}
-[00:12:35.179] Browser LOG     ✅ Matches loaded: 27
-[00:12:35.179] Browser LOG     ✅ Matches loaded: 27
-[00:12:36.151] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791633624}
-[00:12:37.804] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791635271}
-[00:12:38.520] Browser LOG     ✅ Matches loaded: 130
-[00:12:38.909] Browser LOG     ✅ Matches loaded: 130
-[00:12:39.625] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/lipscomb-vs-tennessee-tech-2375429?sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/lipscomb-vs-tennessee-tech-2375429?sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791637102}
-[00:12:43.677] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791641111}
-[00:12:43.949] Browser LOG     ✅ Matches loaded: 130
-[00:12:43.949] Browser LOG     ✅ Matches loaded: 130
-[00:12:47.322] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/holy-cross-vs-northeastern-2375433?sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/holy-cross-vs-northeastern-2375433?sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791644788}
-[00:12:50.334] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791647632}
-[00:12:50.652] Browser LOG     ✅ Matches loaded: 130
-[00:12:50.800] Browser LOG     ✅ Matches loaded: 130
-[00:12:54.470] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/youngstown-state-vs-wright-state-2375434?sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/youngstown-state-vs-wright-state-2375434?sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791651847}
-[00:12:57.885] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791655325}
-[00:12:58.025] Browser LOG     ✅ Matches loaded: 130
-[00:12:58.191] Browser LOG     ✅ Matches loaded: 130
-[00:13:03.378] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/st-bonaventure-vs-bloomsburg-4625279?sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/st-bonaventure-vs-bloomsburg-4625279?sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791660846}
-[00:13:06.657] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764791664069}
-[00:13:06.754] Browser LOG     ✅ Matches loaded: 130
-[00:13:06.931] Browser LOG     ✅ Matches loaded: 130
-[00:29:30.777] Server  LOG      ✓ Compiled in 5.1s
-[00:36:18.605] Server  LOG      ✓ Compiled in 12.1s
-[00:37:03.453] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:37:08.864] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:37:08.864] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:37:08.864] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764793105900}
+[00:00:25.972] Server  LOG      ✓ Ready in 22.4s
+[00:01:35.807] Server  LOG      ○ Compiling / ...
+[00:02:26.334] Server  LOG      ○ Compiling /sports ...
+[00:02:43.568] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:02:44.040] Browser WARN    Image with src "http://localhost:3000/Images/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:02:46.701] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:02:46.701] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:02:46.701] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764867727594}
+[00:04:05.127] Server  LOG      ✓ Compiled in 5.6s
+[00:07:30.900] Server  LOG      ✓ Compiled in 844ms
+[00:07:40.165] Server  LOG      ✓ Compiled in 787ms
+[00:08:15.131] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:08:16.734] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:08:16.734] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:08:16.734] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868058135}
+[00:08:29.778] Server  LOG      ✓ Compiled in 1617ms
+[00:08:50.146] Server  LOG      ○ Compiling /live-matches ...
+[00:08:55.423] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868096934}
+[00:08:59.288] Server  LOG      ○ Compiling /api/matches/[sportId] ...
+[00:09:01.771] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868102917}
+[00:09:09.545] Server  LOG      ✓ Compiled in 2.3s
+[00:09:26.213] Browser LOG     ✅ Matches loaded: 55
+[00:09:26.830] Browser LOG     ✅ Matches loaded: 55
+[00:09:31.368] Server  LOG      ✓ Compiled in 6.2s
+[00:09:31.371] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
+
+Previous: %s
+Incoming: %s useEffect [] [false]
+[00:09:49.706] Server  LOG      ✓ Compiled in 882ms
+[00:09:50.652] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
+
+Previous: %s
+Incoming: %s useEffect [false] []
+[00:13:10.843] Server  LOG      ✓ Compiled in 2.7s
+[00:13:38.824] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:13:43.175] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:13:43.175] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:13:43.175] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868384660}
+[00:14:03.403] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868404935}
+[00:14:03.957] Browser LOG     ✅ Matches loaded: 57
+[00:14:04.098] Browser LOG     ✅ Matches loaded: 57
+[00:16:27.245] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:16:28.265] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:16:28.265] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
+[00:16:28.265] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868549698}
+[00:16:31.368] Browser LOG     ✅ Matches loaded: 57
+[00:16:38.172] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868559004}
+[00:16:42.670] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868564192}
+[00:16:47.164] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868568705}
+[00:19:50.827] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:19:51.243] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:19:51.244] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:19:51.244] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868752781}
+[00:20:27.139] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868788375}
+[00:20:27.937] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868789472}
+[00:21:25.643] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:21:26.116] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:21:26.116] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:21:26.116] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868847660}
+[00:21:33.169] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868854707}
+[00:21:33.851] Browser LOG     ✅ Matches loaded: 57
+[00:21:33.911] Browser LOG     ✅ Matches loaded: 57
+[00:21:37.574] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868859058}
+[00:22:37.948] Server  LOG      ✓ Compiled in 3.1s
+[00:22:50.611] Server  LOG      ✓ Compiled in 771ms
+[00:23:00.713] Server  LOG      ✓ Compiled in 1239ms
+[00:23:11.455] Server  LOG      ✓ Compiled in 1070ms
+[00:24:07.814] Server  LOG      ✓ Compiled in 6.2s
+[00:29:53.079] Server  LOG      ✓ Compiled in 1660ms
+[00:31:01.412] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869422664}
+[00:31:02.505] Browser LOG     ✅ Matches loaded: 27
+[00:31:03.281] Browser LOG     ✅ Matches loaded: 27
+[00:31:36.206] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869457732}
+[00:33:52.629] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:33:57.488] Browser ERROR   uncaughtError: NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+[00:34:23.915] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:34:33.208] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:34:33.208] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:34:33.208] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869634519}
+[00:34:34.505] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:34:34.505] Browser ERROR   uncaughtError: NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+[00:38:06.520] Server  LOG      ✓ Compiled in 2.9s
+[00:38:06.607] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:38:25.546] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:38:26.739] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:38:29.474] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <ScrollAndFocusHandler segmentPath={[...]}>
+      <InnerScrollAndFocusHandler segmentPath={[...]} focusAndScrollRef={{apply:false, ...}}>
+        <ErrorBoundary errorComponent={undefined} errorStyles={undefined} errorScripts={undefined}>
+          <LoadingBoundary name="sports/" loading={null}>
+            <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <InnerLayoutRouter url="/sports" tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} ...>
+                    <SegmentViewNode type="page" pagePath="sports/pag...">
+                      <SegmentTrieNode>
+                      <SportsPage>
+                        <SportsPage>
+                          <SportsHero>
+                            <SportsHero>
+                              <Header>
+                                <header>
+                                <div className={"mobile-n..."}>
+                                  <div>
++                                 <div className="overlay" onClick={function onClick}>
+                            ...
+                        ...
+                    ...
+                  ...
+        ...
+
+[00:38:30.706] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:38:30.706] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:38:30.706] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:38:30.706] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869871148}
+[00:38:30.706] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869871149}
+[00:38:30.706] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:39:26.512] Server  LOG      ✓ Compiled in 1823ms
+[00:40:10.843] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:40:14.549] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:40:17.018] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <ScrollAndFocusHandler segmentPath={[...]}>
+      <InnerScrollAndFocusHandler segmentPath={[...]} focusAndScrollRef={{apply:false, ...}}>
+        <ErrorBoundary errorComponent={undefined} errorStyles={undefined} errorScripts={undefined}>
+          <LoadingBoundary name="sports/" loading={null}>
+            <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <InnerLayoutRouter url="/sports" tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} ...>
+                    <SegmentViewNode type="page" pagePath="sports/pag...">
+                      <SegmentTrieNode>
+                      <SportsPage>
+                        <SportsPage>
+                          <SportsHero>
+                            <SportsHero>
+                              <Header>
+                                <header>
+                                <div className={"mobile-n..."}>
+                                  <div>
++                                 <div className="overlay" onClick={function onClick}>
+                            ...
+                        ...
+                    ...
+                  ...
+        ...
+
+[00:40:17.018] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:40:17.018] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:40:17.018] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:40:17.018] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869977201}
+[00:40:17.018] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869977207}
+[00:40:17.018] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:41:07.234] Server  LOG      ✓ Compiled in 1883ms
+[00:42:04.130] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:42:09.683] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:42:20.326] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <ScrollAndFocusHandler segmentPath={[...]}>
+      <InnerScrollAndFocusHandler segmentPath={[...]} focusAndScrollRef={{apply:false, ...}}>
+        <ErrorBoundary errorComponent={undefined} errorStyles={undefined} errorScripts={undefined}>
+          <LoadingBoundary name="sports/" loading={null}>
+            <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <InnerLayoutRouter url="/sports" tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} ...>
+                    <SegmentViewNode type="page" pagePath="sports/pag...">
+                      <SegmentTrieNode>
+                      <SportsPage>
+                        <SportsPage>
+                          <SportsHero>
+                            <SportsHero>
+                              <Header>
+                                <header>
+                                <div className={"mobile-n..."}>
+                                  <div>
++                                 <div className="overlay" onClick={function onClick}>
+                            ...
+                        ...
+                    ...
+                  ...
+        ...
+
+[00:42:20.326] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:42:20.326] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:42:20.326] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:42:20.326] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870098913}
+[00:42:20.326] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870098915}
+[00:42:20.333] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:43:41.583] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:43:41.583] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:43:42.493] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <ScrollAndFocusHandler segmentPath={[...]}>
+      <InnerScrollAndFocusHandler segmentPath={[...]} focusAndScrollRef={{apply:false, ...}}>
+        <ErrorBoundary errorComponent={undefined} errorStyles={undefined} errorScripts={undefined}>
+          <LoadingBoundary name="sports/" loading={null}>
+            <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <InnerLayoutRouter url="/sports" tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} ...>
+                    <SegmentViewNode type="page" pagePath="sports/pag...">
+                      <SegmentTrieNode>
+                      <SportsPage>
+                        <SportsPage>
+                          <SportsHero>
+                            <SportsHero>
+                              <Header>
+                                <header>
+                                <div className={"mobile-n..."}>
+                                  <div>
++                                 <div className="overlay" onClick={function onClick}>
+                            ...
+                        ...
+                    ...
+                  ...
+        ...
+
+[00:43:42.494] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:43:42.494] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:43:42.494] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:43:42.494] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870183546}
+[00:43:42.494] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870183547}
+[00:43:42.494] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:44:06.751] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870208044}
+[00:44:08.394] Browser LOG     ✅ Matches loaded: 56
+[00:44:08.613] Browser LOG     ✅ Matches loaded: 56
+[00:44:09.114] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:45:15.705] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:45:16.275] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:45:16.275] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <ScrollAndFocusHandler segmentPath={[...]}>
+      <InnerScrollAndFocusHandler segmentPath={[...]} focusAndScrollRef={{apply:false, ...}}>
+        <ErrorBoundary errorComponent={undefined} errorStyles={undefined} errorScripts={undefined}>
+          <LoadingBoundary name="live-matches/" loading={null}>
+            <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <InnerLayoutRouter url={"/live-ma..."} tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} ...>
+                    <SegmentViewNode type="page" pagePath="live-match...">
+                      <SegmentTrieNode>
+                      <LiveMatchesPage>
+                        <LiveMatchesPage>
+                          <LiveMatchesHero>
+                            <LiveMatchesHero>
+                              <Header>
+                                <header>
+                                <div className={"mobile-n..."}>
+                                  <div>
++                                 <div className="overlay" onClick={function onClick}>
+                            ...
+                        ...
+                    ...
+                  ...
+        ...
+
+[00:45:16.275] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:45:16.275] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
+[00:45:16.275] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
+[00:45:16.276] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870277769}
+[00:45:16.276] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870277770}
+[00:45:17.725] Browser LOG     ✅ Matches loaded: 56
+[00:45:17.725] Browser LOG     ✅ Matches loaded: 56
+[00:45:18.470] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:45:23.365] Server  LOG      ○ Compiling /match/[id] ...
+[00:45:38.936] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/1764864000000-bahcesehir-koleji-neptunas?sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/1764864000000-bahcesehir-koleji-neptunas?sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870300463}
+[00:45:39.470] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:45:46.780] Server  LOG      ✓ Compiled in 3.9s
+[00:45:48.468] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:46:52.958] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870374461}
+[00:46:54.493] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:47:00.570] Browser LOG     ✅ Matches loaded: 56
+[00:47:00.570] Browser LOG     ✅ Matches loaded: 56
+[00:47:03.705] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870385166}
+[00:47:06.462] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:48:35.959] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:48:38.338] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:48:38.338] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:48:38.338] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870479790}
+[00:48:40.809] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:48:59.256] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870500294}
+[00:49:03.780] Browser LOG     ✅ Matches loaded: 56
+[00:49:03.780] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:49:04.167] Browser LOG     ✅ Matches loaded: 56
+[00:49:46.842] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:49:48.111] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:49:48.111] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:49:48.111] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
+[00:49:48.111] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870549137}
+[00:49:51.024] Browser LOG     ✅ Matches loaded: 56
+[00:52:05.139] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:52:05.155] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:52:05.156] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:52:05.156] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
+[00:52:05.156] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870686573}
+[00:52:21.911] Server  ERROR   TypeError: fetch failed
+[00:52:21.928] Server  ERROR   TypeError: fetch failed
+[00:52:22.092] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:52:22.392] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:52:23.139] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:52:23.307] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:52:23.352] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:52:23.440] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:52:23.508] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:52:23.568] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:52:25.133] Server  ERROR   Error: failed to pipe response
+[00:52:26.387] Browser LOG     ✅ Matches loaded: 56
+[00:53:01.461] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870742980}
+[00:53:05.152] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:53:19.569] Server  LOG      ✓ Compiled in 4s
+[00:53:37.147] Server  LOG      ✓ Compiled in 4.8s
+[01:00:43.251] Server  LOG      ✓ Compiled in 2.8s
+[01:02:16.245] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871297769}
+[01:02:16.876] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[01:02:21.938] Browser LOG     ✅ Matches loaded: 181
+[01:02:25.747] Browser LOG     ✅ Matches loaded: 181
+[01:02:40.155] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/cibalia-vs-sesvete-2281311?sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/cibalia-vs-sesvete-2281311?sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871321544}
+[01:02:41.695] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[01:02:41.695] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871322593}
+[01:02:43.865] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[01:02:48.799] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871328330}
+[01:02:48.799] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[01:02:49.686] Browser LOG     ✅ Matches loaded: 180
+[01:02:50.633] Browser LOG     ✅ Matches loaded: 180
+[01:06:17.314] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=fight&sportName=Fight%20(UFC%2C%20Boxing) color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=fight&sportName=Fight%20(UFC%2C%20Boxing)","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871537969}
+[01:06:17.315] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[01:06:18.842] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871539840}
+[01:06:19.641] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[01:06:20.117] Browser LOG     ✅ Matches loaded: 9
+[01:06:20.517] Browser LOG     ✅ Matches loaded: 9
+[01:07:37.072] Server  LOG      ○ Compiling /faq ...
+[01:07:44.672] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/faq color: rgb(120, 120, 120) color: inherit {"dp":"/faq","o":"http://localhost:3000/faq","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871625143}
+[01:08:22.347] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871663777}
+[01:08:22.633] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[01:08:42.855] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871683944}
+[01:08:43.636] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[01:08:45.363] Browser LOG     ✅ Matches loaded: 56
+[01:08:46.875] Browser LOG     ✅ Matches loaded: 56
+[01:08:48.832] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871690275}
+[01:08:49.727] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[01:08:55.724] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871696131}
+[01:08:56.232] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[01:08:57.580] Browser LOG     ✅ Matches loaded: 68
+[01:08:58.480] Browser LOG     ✅ Matches loaded: 68
+[01:09:17.541] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871719069}
+[01:09:19.676] Browser LOG     [ReedStreams AdBlock] Removed overlay element

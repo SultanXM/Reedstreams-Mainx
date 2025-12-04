@@ -4,7 +4,7 @@ import SportsGrid from '@/components/sports/sports-grid'
 import Footer from '@/components/layout/footer'
 
 export const metadata = {
-  title: 'All Sports - ReedStreams',
+  title: 'Reedstreams - Select Sport',
   description: 'Choose your favorite sport and dive into live matches, upcoming games, and premium streaming experience',
 }
 
