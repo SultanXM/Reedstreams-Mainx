@@ -104,7 +104,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
       if (isBasketball) {
         const bravoStream = allStreams.find(
-          (s) => s.sourceIdentifier === "bravo",
+          (s) => s.sourceIdentifier === "bravo #2",
         )
         if (bravoStream) {
           setSelectedStream(bravoStream)
