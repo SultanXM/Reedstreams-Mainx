@@ -5637,7 +5637,14 @@ body {
   align-items: center;
   padding: 1rem 3rem;
   display: flex;
-  position: relative;
+  position: sticky;
+  top: 0;
+}
+
+.top-bar.scrolled {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  background: #0a0e17f2;
 }
 
 .logo {
@@ -5829,7 +5836,7 @@ body {
 
 @media (max-width: 768px) {
   .top-bar {
-    padding: 1rem 1.5rem;
+    padding: .75rem 1.5rem;
   }
 
   .nav-links, .rolex {
@@ -5884,11 +5891,11 @@ body {
 
 @media (max-width: 480px) {
   .top-bar {
-    padding: 1rem;
+    padding: .75rem 1rem;
   }
 
   .logo {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 
   .hero-content {
@@ -5918,7 +5925,7 @@ body {
 
 @media (max-width: 320px) {
   .top-bar {
-    padding: 1rem;
+    padding: .75rem 1rem;
   }
 
   .logo, .mobile-menu-btn {

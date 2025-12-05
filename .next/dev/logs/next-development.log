@@ -1,403 +1,255 @@
-[00:00:25.972] Server  LOG      ✓ Ready in 22.4s
-[00:01:35.807] Server  LOG      ○ Compiling / ...
-[00:02:26.334] Server  LOG      ○ Compiling /sports ...
-[00:02:43.568] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:02:44.040] Browser WARN    Image with src "http://localhost:3000/Images/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:02:46.701] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:02:46.701] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:02:46.701] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764867727594}
-[00:04:05.127] Server  LOG      ✓ Compiled in 5.6s
-[00:07:30.900] Server  LOG      ✓ Compiled in 844ms
-[00:07:40.165] Server  LOG      ✓ Compiled in 787ms
-[00:08:15.131] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:08:16.734] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:08:16.734] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:08:16.734] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868058135}
-[00:08:29.778] Server  LOG      ✓ Compiled in 1617ms
-[00:08:50.146] Server  LOG      ○ Compiling /live-matches ...
-[00:08:55.423] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868096934}
-[00:08:59.288] Server  LOG      ○ Compiling /api/matches/[sportId] ...
-[00:09:01.771] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868102917}
-[00:09:09.545] Server  LOG      ✓ Compiled in 2.3s
-[00:09:26.213] Browser LOG     ✅ Matches loaded: 55
-[00:09:26.830] Browser LOG     ✅ Matches loaded: 55
-[00:09:31.368] Server  LOG      ✓ Compiled in 6.2s
-[00:09:31.371] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
-
-Previous: %s
-Incoming: %s useEffect [] [false]
-[00:09:49.706] Server  LOG      ✓ Compiled in 882ms
-[00:09:50.652] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
-
-Previous: %s
-Incoming: %s useEffect [false] []
-[00:13:10.843] Server  LOG      ✓ Compiled in 2.7s
-[00:13:38.824] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:13:43.175] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:13:43.175] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:13:43.175] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868384660}
-[00:14:03.403] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868404935}
-[00:14:03.957] Browser LOG     ✅ Matches loaded: 57
-[00:14:04.098] Browser LOG     ✅ Matches loaded: 57
-[00:16:27.245] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:16:28.265] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:16:28.265] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
-[00:16:28.265] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868549698}
-[00:16:31.368] Browser LOG     ✅ Matches loaded: 57
-[00:16:38.172] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868559004}
-[00:16:42.670] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868564192}
-[00:16:47.164] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868568705}
-[00:19:50.827] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:19:51.243] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:19:51.244] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:19:51.244] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868752781}
-[00:20:27.139] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868788375}
-[00:20:27.937] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868789472}
-[00:21:25.643] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:21:26.116] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:21:26.116] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:21:26.116] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868847660}
-[00:21:33.169] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868854707}
-[00:21:33.851] Browser LOG     ✅ Matches loaded: 57
-[00:21:33.911] Browser LOG     ✅ Matches loaded: 57
-[00:21:37.574] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764868859058}
-[00:22:37.948] Server  LOG      ✓ Compiled in 3.1s
-[00:22:50.611] Server  LOG      ✓ Compiled in 771ms
-[00:23:00.713] Server  LOG      ✓ Compiled in 1239ms
-[00:23:11.455] Server  LOG      ✓ Compiled in 1070ms
-[00:24:07.814] Server  LOG      ✓ Compiled in 6.2s
-[00:29:53.079] Server  LOG      ✓ Compiled in 1660ms
-[00:31:01.412] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=american-football&sportName=American%20Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869422664}
-[00:31:02.505] Browser LOG     ✅ Matches loaded: 27
-[00:31:03.281] Browser LOG     ✅ Matches loaded: 27
-[00:31:36.206] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869457732}
-[00:33:52.629] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:33:57.488] Browser ERROR   uncaughtError: NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
-[00:34:23.915] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:34:33.208] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:34:33.208] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:34:33.208] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869634519}
-[00:34:34.505] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:34:34.505] Browser ERROR   uncaughtError: NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
-[00:38:06.520] Server  LOG      ✓ Compiled in 2.9s
-[00:38:06.607] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:38:25.546] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:38:26.739] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:38:29.474] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-https://react.dev/link/hydration-mismatch
-
-  ...
-    <ScrollAndFocusHandler segmentPath={[...]}>
-      <InnerScrollAndFocusHandler segmentPath={[...]} focusAndScrollRef={{apply:false, ...}}>
-        <ErrorBoundary errorComponent={undefined} errorStyles={undefined} errorScripts={undefined}>
-          <LoadingBoundary name="sports/" loading={null}>
-            <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <InnerLayoutRouter url="/sports" tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} ...>
-                    <SegmentViewNode type="page" pagePath="sports/pag...">
-                      <SegmentTrieNode>
-                      <SportsPage>
-                        <SportsPage>
-                          <SportsHero>
-                            <SportsHero>
-                              <Header>
-                                <header>
-                                <div className={"mobile-n..."}>
-                                  <div>
-+                                 <div className="overlay" onClick={function onClick}>
-                            ...
-                        ...
-                    ...
-                  ...
-        ...
-
-[00:38:30.706] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:38:30.706] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:38:30.706] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:38:30.706] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869871148}
-[00:38:30.706] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869871149}
-[00:38:30.706] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:39:26.512] Server  LOG      ✓ Compiled in 1823ms
-[00:40:10.843] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:40:14.549] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:40:17.018] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-https://react.dev/link/hydration-mismatch
-
-  ...
-    <ScrollAndFocusHandler segmentPath={[...]}>
-      <InnerScrollAndFocusHandler segmentPath={[...]} focusAndScrollRef={{apply:false, ...}}>
-        <ErrorBoundary errorComponent={undefined} errorStyles={undefined} errorScripts={undefined}>
-          <LoadingBoundary name="sports/" loading={null}>
-            <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <InnerLayoutRouter url="/sports" tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} ...>
-                    <SegmentViewNode type="page" pagePath="sports/pag...">
-                      <SegmentTrieNode>
-                      <SportsPage>
-                        <SportsPage>
-                          <SportsHero>
-                            <SportsHero>
-                              <Header>
-                                <header>
-                                <div className={"mobile-n..."}>
-                                  <div>
-+                                 <div className="overlay" onClick={function onClick}>
-                            ...
-                        ...
-                    ...
-                  ...
-        ...
-
-[00:40:17.018] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:40:17.018] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:40:17.018] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:40:17.018] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869977201}
-[00:40:17.018] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764869977207}
-[00:40:17.018] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:41:07.234] Server  LOG      ✓ Compiled in 1883ms
-[00:42:04.130] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:42:09.683] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:42:20.326] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-https://react.dev/link/hydration-mismatch
-
-  ...
-    <ScrollAndFocusHandler segmentPath={[...]}>
-      <InnerScrollAndFocusHandler segmentPath={[...]} focusAndScrollRef={{apply:false, ...}}>
-        <ErrorBoundary errorComponent={undefined} errorStyles={undefined} errorScripts={undefined}>
-          <LoadingBoundary name="sports/" loading={null}>
-            <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <InnerLayoutRouter url="/sports" tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} ...>
-                    <SegmentViewNode type="page" pagePath="sports/pag...">
-                      <SegmentTrieNode>
-                      <SportsPage>
-                        <SportsPage>
-                          <SportsHero>
-                            <SportsHero>
-                              <Header>
-                                <header>
-                                <div className={"mobile-n..."}>
-                                  <div>
-+                                 <div className="overlay" onClick={function onClick}>
-                            ...
-                        ...
-                    ...
-                  ...
-        ...
-
-[00:42:20.326] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:42:20.326] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:42:20.326] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:42:20.326] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870098913}
-[00:42:20.326] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870098915}
-[00:42:20.333] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:43:41.583] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:43:41.583] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:43:42.493] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-https://react.dev/link/hydration-mismatch
-
-  ...
-    <ScrollAndFocusHandler segmentPath={[...]}>
-      <InnerScrollAndFocusHandler segmentPath={[...]} focusAndScrollRef={{apply:false, ...}}>
-        <ErrorBoundary errorComponent={undefined} errorStyles={undefined} errorScripts={undefined}>
-          <LoadingBoundary name="sports/" loading={null}>
-            <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <InnerLayoutRouter url="/sports" tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} ...>
-                    <SegmentViewNode type="page" pagePath="sports/pag...">
-                      <SegmentTrieNode>
-                      <SportsPage>
-                        <SportsPage>
-                          <SportsHero>
-                            <SportsHero>
-                              <Header>
-                                <header>
-                                <div className={"mobile-n..."}>
-                                  <div>
-+                                 <div className="overlay" onClick={function onClick}>
-                            ...
-                        ...
-                    ...
-                  ...
-        ...
-
-[00:43:42.494] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:43:42.494] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:43:42.494] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:43:42.494] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870183546}
-[00:43:42.494] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870183547}
-[00:43:42.494] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:44:06.751] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870208044}
-[00:44:08.394] Browser LOG     ✅ Matches loaded: 56
-[00:44:08.613] Browser LOG     ✅ Matches loaded: 56
-[00:44:09.114] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:45:15.705] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:45:16.275] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:45:16.275] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-https://react.dev/link/hydration-mismatch
-
-  ...
-    <ScrollAndFocusHandler segmentPath={[...]}>
-      <InnerScrollAndFocusHandler segmentPath={[...]} focusAndScrollRef={{apply:false, ...}}>
-        <ErrorBoundary errorComponent={undefined} errorStyles={undefined} errorScripts={undefined}>
-          <LoadingBoundary name="live-matches/" loading={null}>
-            <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <InnerLayoutRouter url={"/live-ma..."} tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} ...>
-                    <SegmentViewNode type="page" pagePath="live-match...">
-                      <SegmentTrieNode>
-                      <LiveMatchesPage>
-                        <LiveMatchesPage>
-                          <LiveMatchesHero>
-                            <LiveMatchesHero>
-                              <Header>
-                                <header>
-                                <div className={"mobile-n..."}>
-                                  <div>
-+                                 <div className="overlay" onClick={function onClick}>
-                            ...
-                        ...
-                    ...
-                  ...
-        ...
-
-[00:45:16.275] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:45:16.275] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
-[00:45:16.275] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
-[00:45:16.276] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870277769}
-[00:45:16.276] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870277770}
-[00:45:17.725] Browser LOG     ✅ Matches loaded: 56
-[00:45:17.725] Browser LOG     ✅ Matches loaded: 56
-[00:45:18.470] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:45:23.365] Server  LOG      ○ Compiling /match/[id] ...
-[00:45:38.936] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/1764864000000-bahcesehir-koleji-neptunas?sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/1764864000000-bahcesehir-koleji-neptunas?sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870300463}
-[00:45:39.470] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:45:46.780] Server  LOG      ✓ Compiled in 3.9s
-[00:45:48.468] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:46:52.958] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870374461}
-[00:46:54.493] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:47:00.570] Browser LOG     ✅ Matches loaded: 56
-[00:47:00.570] Browser LOG     ✅ Matches loaded: 56
-[00:47:03.705] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870385166}
-[00:47:06.462] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:48:35.959] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:48:38.338] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:48:38.338] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
-[00:48:38.338] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870479790}
-[00:48:40.809] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:48:59.256] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870500294}
-[00:49:03.780] Browser LOG     ✅ Matches loaded: 56
-[00:49:03.780] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:49:04.167] Browser LOG     ✅ Matches loaded: 56
-[00:49:46.842] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:49:48.111] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:49:48.111] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:49:48.111] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
-[00:49:48.111] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870549137}
-[00:49:51.024] Browser LOG     ✅ Matches loaded: 56
-[00:52:05.139] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:52:05.155] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:52:05.156] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:52:05.156] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/live-matches","route":"/live-matches"}
-[00:52:05.156] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870686573}
-[00:52:21.911] Server  ERROR   TypeError: fetch failed
-[00:52:21.928] Server  ERROR   TypeError: fetch failed
-[00:52:22.092] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:52:22.392] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:52:23.139] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:52:23.307] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:52:23.352] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:52:23.440] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:52:23.508] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:52:23.568] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:52:25.133] Server  ERROR   Error: failed to pipe response
-[00:52:26.387] Browser LOG     ✅ Matches loaded: 56
-[00:53:01.461] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764870742980}
-[00:53:05.152] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[00:53:19.569] Server  LOG      ✓ Compiled in 4s
-[00:53:37.147] Server  LOG      ✓ Compiled in 4.8s
-[01:00:43.251] Server  LOG      ✓ Compiled in 2.8s
-[01:02:16.245] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871297769}
-[01:02:16.876] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[01:02:21.938] Browser LOG     ✅ Matches loaded: 181
-[01:02:25.747] Browser LOG     ✅ Matches loaded: 181
-[01:02:40.155] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/cibalia-vs-sesvete-2281311?sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/cibalia-vs-sesvete-2281311?sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871321544}
-[01:02:41.695] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[01:02:41.695] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871322593}
-[01:02:43.865] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[01:02:48.799] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871328330}
-[01:02:48.799] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[01:02:49.686] Browser LOG     ✅ Matches loaded: 180
-[01:02:50.633] Browser LOG     ✅ Matches loaded: 180
-[01:06:17.314] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=fight&sportName=Fight%20(UFC%2C%20Boxing) color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=fight&sportName=Fight%20(UFC%2C%20Boxing)","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871537969}
-[01:06:17.315] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[01:06:18.842] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871539840}
-[01:06:19.641] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[01:06:20.117] Browser LOG     ✅ Matches loaded: 9
-[01:06:20.517] Browser LOG     ✅ Matches loaded: 9
-[01:07:37.072] Server  LOG      ○ Compiling /faq ...
-[01:07:44.672] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/faq color: rgb(120, 120, 120) color: inherit {"dp":"/faq","o":"http://localhost:3000/faq","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871625143}
-[01:08:22.347] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871663777}
-[01:08:22.633] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[01:08:42.855] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871683944}
-[01:08:43.636] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[01:08:45.363] Browser LOG     ✅ Matches loaded: 56
-[01:08:46.875] Browser LOG     ✅ Matches loaded: 56
-[01:08:48.832] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871690275}
-[01:08:49.727] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[01:08:55.724] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871696131}
-[01:08:56.232] Browser LOG     [ReedStreams AdBlock] Removed overlay element
-[01:08:57.580] Browser LOG     ✅ Matches loaded: 68
-[01:08:58.480] Browser LOG     ✅ Matches loaded: 68
-[01:09:17.541] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764871719069}
-[01:09:19.676] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:00:07.379] Server  LOG      ✓ Ready in 5.4s
+[00:00:13.801] Server  LOG      ○ Compiling / ...
+[00:00:34.910] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:35.983] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:00:35.983] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:00:35.983] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764945551974}
+[00:00:37.169] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:04:47.975] Server  LOG      ✓ Compiled in 2.4s
+[00:04:54.669] Server  LOG      ✓ Compiled in 1527ms
+[00:05:50.078] Server  LOG      ○ Compiling /live-matches ...
+[00:05:54.920] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764945871245}
+[00:05:56.469] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:06:05.197] Browser LOG     ✅ Matches loaded: 49
+[00:06:05.333] Browser LOG     ✅ Matches loaded: 49
+[00:07:07.748] Server  LOG      ✓ Compiled in 1221ms
+[00:07:15.610] Server  LOG      ✓ Compiled in 803ms
+[00:07:21.403] Server  LOG      ✓ Compiled in 1649ms
+[00:07:25.102] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764945961312}
+[00:07:42.774] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764945978577}
+[00:07:45.580] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:09:25.130] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946081397}
+[00:09:25.531] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:09:33.788] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946089979}
+[00:09:34.755] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:09:39.723] Server  ERROR   TypeError: fetch failed
+[00:09:39.734] Server  ERROR   TypeError: fetch failed
+[00:09:39.832] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:39.890] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:39.917] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:39.924] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:39.934] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:39.936] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:39.951] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:39.954] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:39.970] Server  ERROR   Error: failed to pipe response
+[00:09:40.094] Browser LOG     ✅ Matches loaded: 54
+[00:09:40.791] Server  ERROR   TypeError: fetch failed
+[00:09:40.821] Server  ERROR   TypeError: fetch failed
+[00:09:40.824] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:40.827] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:40.839] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:40.841] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:40.842] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:40.849] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:40.859] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:40.868] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:40.924] Server  ERROR   Error: failed to pipe response
+[00:09:41.044] Browser LOG     ✅ Matches loaded: 54
+[00:09:53.627] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946109979}
+[00:09:53.675] Server  ERROR   TypeError: fetch failed
+[00:09:53.689] Server  ERROR   TypeError: fetch failed
+[00:09:53.694] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:53.698] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:53.709] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:53.713] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:53.726] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:53.728] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:53.730] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:53.738] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:53.746] Server  ERROR   Error: failed to pipe response
+[00:09:53.904] Browser LOG     ✅ Matches loaded: 153
+[00:09:53.957] Server  ERROR   TypeError: fetch failed
+[00:09:53.978] Server  ERROR   TypeError: fetch failed
+[00:09:53.990] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:53.997] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:54.010] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:54.012] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:54.024] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:54.026] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:54.030] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:54.041] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:54.060] Server  ERROR   Error: failed to pipe response
+[00:09:54.180] Browser LOG     ✅ Matches loaded: 153
+[00:09:55.520] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:11:04.475] Server  LOG      ○ Compiling /match/[id] ...
+[00:11:25.440] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:11:28.637] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:11:32.874] Server  LOG      ○ Compiling /api/matches ...
+[00:11:33.610] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:11:36.727] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:11:36.727] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:11:36.727] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/sports","route":"/sports"}
+[00:11:36.727] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946211366}
+[00:11:39.839] Server  ERROR   TypeError: fetch failed
+[00:11:52.854] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\[root-of-the-server]__2f4ccedb._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:52.991] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:53.214] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_d14df122._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:53.262] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:53.294] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:53.298] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:53.314] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:53.331] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:53.357] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:53.409] Server  ERROR   Error fetching matches: TypeError: fetch failed
+[00:12:01.232] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946237394}
+[00:12:02.228] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946238557}
+[00:12:04.529] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:12:20.238] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946256624}
+[00:12:22.517] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:12:28.111] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946264501}
+[00:12:28.528] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:12:30.903] Server  ERROR   TypeError: fetch failed
+[00:12:30.918] Server  ERROR   TypeError: fetch failed
+[00:12:30.921] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:30.926] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:30.928] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:30.935] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:30.937] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:30.939] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:30.941] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:30.943] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:30.956] Server  ERROR   Error: failed to pipe response
+[00:12:30.974] Server  ERROR   TypeError: fetch failed
+[00:12:30.984] Server  ERROR   TypeError: fetch failed
+[00:12:30.986] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:30.991] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:30.994] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:30.999] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:31.002] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:31.003] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:31.005] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:31.006] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:12:31.018] Server  ERROR   Error: failed to pipe response
+[00:12:31.136] Browser LOG     ✅ Matches loaded: 54
+[00:12:31.137] Browser LOG     ✅ Matches loaded: 54
+[00:14:03.064] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946359426}
+[00:14:03.109] Server  ERROR   TypeError: fetch failed
+[00:14:03.134] Server  ERROR   TypeError: fetch failed
+[00:14:03.151] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.186] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.203] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.279] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.316] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.345] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.353] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.400] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.420] Server  ERROR   Error: failed to pipe response
+[00:14:03.583] Server  ERROR   TypeError: fetch failed
+[00:14:03.629] Server  ERROR   TypeError: fetch failed
+[00:14:03.632] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.677] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.701] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.712] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.714] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.716] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.728] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.731] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:03.749] Server  ERROR   Error: failed to pipe response
+[00:14:03.785] Browser LOG     ✅ Matches loaded: 54
+[00:14:03.874] Browser LOG     ✅ Matches loaded: 54
+[00:14:04.892] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:14:08.724] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/match/besiktas-basketbol-vs-panionios-bc-2288363?sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/match/[id]","o":"http://localhost:3000/match/besiktas-basketbol-vs-panionios-bc-2288363?sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946365115}
+[00:14:10.902] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:14:13.089] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\[root-of-the-server]__fa949699._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.092] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.119] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_ec422710._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.122] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.126] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.137] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.140] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.141] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.151] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.175] Server  ERROR   Error fetching stream: TypeError: fetch failed
+[00:14:13.307] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\[root-of-the-server]__fa949699._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.310] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.314] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_ec422710._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.318] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.322] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.324] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.343] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.353] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.356] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:13.372] Server  ERROR   Error fetching stream: TypeError: fetch failed
+[00:14:15.846] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946372225}
+[00:14:15.881] Server  ERROR   TypeError: fetch failed
+[00:14:15.983] Server  ERROR   TypeError: fetch failed
+[00:14:16.059] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.114] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.129] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.165] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.172] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.178] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.183] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.188] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.388] Server  ERROR   Error: failed to pipe response
+[00:14:16.474] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946372450}
+[00:14:16.505] Browser LOG     ✅ Matches loaded: 54
+[00:14:16.641] Server  ERROR   TypeError: fetch failed
+[00:14:16.754] Server  ERROR   TypeError: fetch failed
+[00:14:16.773] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.787] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.790] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.817] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.819] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.821] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.836] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.840] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:14:16.869] Server  ERROR   Error: failed to pipe response
+[00:14:17.201] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:14:17.201] Browser LOG     ✅ Matches loaded: 54
+[00:14:57.899] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=basketball&sportName=Basketball","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946414267}
+[00:14:58.903] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:15:08.563] Server  ERROR   TypeError: fetch failed
+[00:15:08.577] Server  ERROR   TypeError: fetch failed
+[00:15:08.580] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.583] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.585] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.587] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.589] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.770] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.782] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.784] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.837] Server  ERROR   Error: failed to pipe response
+[00:15:08.869] Server  ERROR   TypeError: fetch failed
+[00:15:08.883] Server  ERROR   TypeError: fetch failed
+[00:15:08.896] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.901] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.912] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.914] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.916] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.919] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.930] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.932] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:15:08.947] Server  ERROR   Error: failed to pipe response
+[00:15:08.970] Browser LOG     ✅ Matches loaded: 54
+[00:15:09.064] Browser LOG     ✅ Matches loaded: 54
+[00:15:19.627] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946435656}
+[00:15:20.261] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/sports color: rgb(120, 120, 120) color: inherit {"dp":"/sports","o":"http://localhost:3000/sports","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946436642}
+[00:15:22.901] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:16:04.774] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/live-matches?sportId=football&sportName=Football color: rgb(120, 120, 120) color: inherit {"dp":"/live-matches","o":"http://localhost:3000/live-matches?sportId=football&sportName=Football","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764946481169}
+[00:16:07.515] Browser LOG     [ReedStreams AdBlock] Removed overlay element
+[00:16:15.396] Server  ERROR   TypeError: fetch failed
+[00:16:15.415] Server  ERROR   TypeError: fetch failed
+[00:16:15.433] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:15.590] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:15.770] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:15.825] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:15.830] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:15.834] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:15.851] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:15.857] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:15.873] Server  ERROR   Error: failed to pipe response
+[00:16:15.970] Server  ERROR   TypeError: fetch failed
+[00:16:15.986] Server  ERROR   TypeError: fetch failed
+[00:16:15.991] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\.next\dev\server\chunks\node_modules_next_14013b47._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:16.024] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:16.032] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:16.053] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:16.055] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:16.057] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:16.069] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:16.072] Server  ERROR   C:\Users\HackaX\Desktop\Reedstreams-mainxa\Reedstreams-Mainx\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:16:16.102] Server  ERROR   Error: failed to pipe response
+[00:16:16.124] Browser LOG     ✅ Matches loaded: 153
+[00:16:16.221] Browser LOG     ✅ Matches loaded: 153

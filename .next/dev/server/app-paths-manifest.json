@@ -1,7 +1,7 @@
 {
   "/api/matches/[sportId]/route": "app/api/matches/[sportId]/route.js",
+  "/api/matches/route": "app/api/matches/route.js",
   "/api/stream/[source]/[id]/route": "app/api/stream/[source]/[id]/route.js",
-  "/faq/page": "app/faq/page.js",
   "/live-matches/page": "app/live-matches/page.js",
   "/match/[id]/page": "app/match/[id]/page.js",
   "/page": "app/page.js",

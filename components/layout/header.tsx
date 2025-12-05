@@ -21,12 +21,7 @@ export default function Header() {
   return (
     <>
       <header 
-        className="top-bar"
-        style={{
-          background: isScrolled ? 'rgba(10, 14, 23, 0.95)' : 'transparent',
-          backdropFilter: isScrolled ? 'blur(10px)' : 'none',
-          position: isScrolled ? 'fixed' : 'relative',
-        }}
+        className={`top-bar ${isScrolled ? 'scrolled' : ''}`}
       >
         <div className="logo">
           <Link href="/">
@@ -34,6 +29,23 @@ export default function Header() {
             <span className="logo-accent">Streams</span>
           </Link>
         </div>
+        <ul className="nav-links">
+          <li>
+            <Link href="/live-matches">
+              Live
+            </Link>
+          </li>
+          <li>
+            <a href="#" onClick={(e) => { e.preventDefault(); alert('Coming soon!'); }}>
+              Upcoming
+            </a>
+          </li>
+          <li>
+            <Link href="/faq">
+              FAQ
+            </Link>
+          </li>
+        </ul>
         <div className="nav-actions">
           <Link href="/sports">
             <button className="watch-now-btn rolex">
