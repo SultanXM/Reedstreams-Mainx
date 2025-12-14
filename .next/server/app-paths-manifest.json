@@ -1,0 +1,13 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/clean-stream/route": "app/api/clean-stream/route.js",
+  "/api/matches/route": "app/api/matches/route.js",
+  "/api/sports/route": "app/api/sports/route.js",
+  "/api/stream/[source]/[id]/route": "app/api/stream/[source]/[id]/route.js",
+  "/faq/page": "app/faq/page.js",
+  "/live-matches/page": "app/live-matches/page.js",
+  "/match/[id]/page": "app/match/[id]/page.js",
+  "/page": "app/page.js",
+  "/sports/page": "app/sports/page.js"
+}

@@ -61,8 +61,15 @@ async function GET() {
         if (!res.ok) {
             throw new Error(`HTTP ${res.status}`);
         }
-        const matches = await res.json();
-        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(Array.isArray(matches) ? matches : []);
+        const data = await res.json();
+        const matches = Array.isArray(data) ? data : [];
+        // SANITIZE: Force all IDs to be Strings
+        const sanitizedMatches = matches.map((m)=>({
+                ...m,
+                id: String(m.id),
+                date: m.date || new Date().toISOString()
+            }));
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(sanitizedMatches);
     } catch (error) {
         console.error("Error fetching matches:", error);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json([]);

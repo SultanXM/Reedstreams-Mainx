@@ -1,0 +1,321 @@
+/* [project]/styles/match-grid-cards.css [app-client] (css) */
+.match-grid-card {
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  min-height: 120px;
+  transition: transform .2s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px #0006;
+}
+
+.card-poster {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  transition: transform .3s;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.match-grid-card:hover .card-poster {
+  transform: scale(1.05);
+}
+
+.card-overlay {
+  background: linear-gradient(#0009 0%, #000000e6 100%);
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.card-top {
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+  display: flex;
+}
+
+.card-badge {
+  object-fit: cover;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+}
+
+.card-vs {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+@media (max-width: 1024px) {
+  .match-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .match-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 10px;
+  }
+
+  .match-grid-section {
+    padding: 10px 10px 40px;
+  }
+
+  .match-title-grid {
+    max-width: 65%;
+    font-size: 13px;
+  }
+
+  .card-badge {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.match-grid-section {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 20px 60px;
+}
+
+.gradient-type-2 {
+  background: linear-gradient(0deg, #8db90233 0%, #0f111500 15% 85%, #8db90233 100%);
+  border-width: 1px;
+  border-color: #8db902;
+}
+
+.card-top {
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+}
+
+.card-vs {
+  color: #fff;
+  text-shadow: 0 0 5px #000;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+@media (max-width: 1024px) {
+  .match-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .match-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 10px;
+  }
+
+  .match-top {
+    gap: 10px;
+  }
+
+  .card-badge {
+    border-width: 2px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .match-title-grid {
+    font-size: 13px;
+  }
+}
+
+.schedule-section-grouped {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+.sport-group-header-grid {
+  color: #fff;
+  text-transform: uppercase;
+  border-bottom: 2px solid #2a2e38;
+  margin-top: 40px;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.match-grid {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  display: grid;
+}
+
+.grid-card-link {
+  text-decoration: none;
+  display: block;
+}
+
+.match-grid-card {
+  aspect-ratio: 16 / 9;
+  background-color: #000;
+  border: 1px solid #161920;
+  border-radius: 12px;
+  min-height: 120px;
+  transition: transform .2s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px #00000080;
+}
+
+.match-grid-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px #8db90266;
+}
+
+.gradient-type-1 {
+  background: radial-gradient(circle at 50% 10%, #8db9024d 0%, #000 70%);
+}
+
+.gradient-type-2 {
+  background: linear-gradient(135deg, #ff45004d 0%, #000 50% 100%);
+}
+
+.gradient-type-3 {
+  background: radial-gradient(circle at 0 100%, #0032c840 0%, #000 50%), radial-gradient(circle at 100% 0, #9600c840 0%, #000 50%);
+}
+
+.gradient-type-4 {
+  background: linear-gradient(#c8c8c81a 0%, #000 30%);
+}
+
+.gradient-type-5 {
+  background: linear-gradient(90deg, #ffd70033 0%, #000 25% 75%, #ffd70033 100%);
+  border-color: #ffd70080;
+}
+
+.gradient-type-6 {
+  background: linear-gradient(90deg, #8db9021a 0%, #000 100%);
+  border-left: 5px solid #8db902;
+}
+
+.gradient-type-7 {
+  background: linear-gradient(90deg, #f003 0%, #000 50%, #00f3 100%);
+}
+
+.gradient-type-8 {
+  background: radial-gradient(circle, #ffffff0d 0%, #000 40%);
+}
+
+.gradient-type-9 {
+  background-image: repeating-linear-gradient(45deg, #111 0 1px, #000 0 50%);
+  background-size: 10px 10px;
+}
+
+.gradient-type-10 {
+  background: radial-gradient(circle at 100% 100%, #ff8c0033 0%, #000 70%);
+}
+
+.card-content-overlay {
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.card-logos-center {
+  flex-grow: 1;
+  justify-content: space-around;
+  align-items: center;
+  padding-bottom: 20px;
+  display: flex;
+}
+
+.card-badge {
+  object-fit: cover;
+  background-color: #000;
+  border: 3px solid #ffffffe6;
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+  box-shadow: 0 0 15px #000c;
+}
+
+.card-vs {
+  color: #fff;
+  background: #00000080;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.card-footer {
+  color: #fff;
+  justify-content: space-between;
+  align-items: flex-end;
+  display: flex;
+}
+
+.match-title-grid {
+  color: #fff;
+  text-shadow: 0 0 5px #000;
+  max-width: 70%;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.card-status-badge {
+  text-transform: uppercase;
+  color: #0f1115;
+  background-color: #8db902;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+@media (max-width: 1024px) {
+  .match-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .match-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 10px;
+  }
+
+  .schedule-section-grouped {
+    padding: 10px 10px 40px;
+  }
+
+  .card-badge {
+    width: 45px;
+    height: 45px;
+  }
+
+  .card-vs {
+    font-size: 16px;
+  }
+}
+
+/*# sourceMappingURL=styles_match-grid-cards_css_bad6b30c._.single.css.map*/

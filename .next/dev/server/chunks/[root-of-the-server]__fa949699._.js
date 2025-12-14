@@ -54,20 +54,35 @@ const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'http
 async function GET(request, { params }) {
     try {
         const { source, id } = await params;
-        const res = await fetch(`${STREAMED_API_BASE}/stream/${source}/${id}`, {
+        // LOGGING START
+        console.log(`[STREAM API] Request received for Source: ${source}, ID: ${id}`);
+        const targetUrl = `${STREAMED_API_BASE}/stream/${source}/${id}`;
+        console.log(`[STREAM API] Fetching upstream: ${targetUrl}`);
+        // LOGGING END
+        const res = await fetch(targetUrl, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Referer': 'https://streamed.pk/'
+            },
             next: {
-                revalidate: 30
-            } // Cache for 30 seconds
+                revalidate: 0
+            } // No cache for debugging
         });
         if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`);
+            console.error(`[STREAM API] Upstream Error: ${res.status} ${res.statusText}`);
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                error: `Upstream error ${res.status}`
+            }, {
+                status: res.status
+            });
         }
         const streams = await res.json();
+        console.log(`[STREAM API] Success! Found ${Array.isArray(streams) ? streams.length : 0} streams.`);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(streams);
     } catch (error) {
-        console.error('Error fetching stream:', error);
+        console.error('[STREAM API] CRITICAL FAILURE:', error);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: 'Failed to fetch stream'
+            error: 'Internal Server Error'
         }, {
             status: 500
         });

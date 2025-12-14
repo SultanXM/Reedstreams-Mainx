@@ -1,0 +1,13 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/clean-stream/route": "/api/clean-stream",
+  "/api/matches/route": "/api/matches",
+  "/api/sports/route": "/api/sports",
+  "/api/stream/[source]/[id]/route": "/api/stream/[source]/[id]",
+  "/faq/page": "/faq",
+  "/live-matches/page": "/live-matches",
+  "/match/[id]/page": "/match/[id]",
+  "/page": "/",
+  "/sports/page": "/sports"
+}

@@ -1,91 +1,92 @@
-"use client";
+"use client"
 
-import '@/styles/match-info.css';
-import { getTeamBadgeUrl } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
+import "@/styles/match.css"
 
 interface Match {
-    id: string;
-    title: string;
-    date: string;
-    competition?: string;
-    teams?: {
-      home?: { name: string; badge?: string };
-      away?: { name: string; badge?: string };
-    };
-    sources?: Array<{ source: string; id: string }>;
+  id: string
+  title: string
+  date: string
+  // Assuming the API returns team info like this, otherwise we parse the title
+  homeTeam?: { name: string, logo: string }
+  awayTeam?: { name: string, logo: string }
 }
 
 export default function MatchInfo({ matchId }: { matchId: string }) {
-    const [match, setMatch] = useState<Match | null>(null);
+  const [match, setMatch] = useState<Match | null>(null)
+  const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        // Read match data from sessionStorage, which is set when a user clicks a match.
-        const storedMatch = sessionStorage.getItem("currentMatch");
-        if (storedMatch) {
-            const matchData: Match = JSON.parse(storedMatch);
-            // Ensure the stored match is the one for this page
-            if (matchData.id === matchId) {
-                setMatch(matchData);
+  useEffect(() => {
+    async function load() {
+      try {
+        // 1. Check Session Storage first (Speed)
+        const stored = sessionStorage.getItem("currentMatch");
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (String(parsed.id) === String(matchId)) {
+                setMatch(parsed);
+                setLoading(false);
+                return;
             }
         }
-    }, [matchId]);
 
-    if (!match) {
-        return <div className="lm-no-matches">Match information is currently unavailable.</div>;
+        // 2. Fetch from API if needed
+        const res = await fetch("/api/matches");
+        if(res.ok) {
+            const list = await res.json();
+            const found = list.find((m: Match) => String(m.id) === String(matchId));
+            if(found) setMatch(found);
+        }
+      } catch (e) {
+        console.error("Info Load Error", e);
+      } finally {
+        setLoading(false);
+      }
     }
+    load();
+  }, [matchId]);
 
-    const homeBadgeUrl = getTeamBadgeUrl(match.teams?.home?.badge);
-    const awayBadgeUrl = getTeamBadgeUrl(match.teams?.away?.badge);
+  if (loading || !match) return null; // Hide if loading/error to keep UI clean
 
-    const matchDate = new Date(match.date);
-    const timeStr = matchDate.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-    });
-    const dateStr = matchDate.toLocaleDateString('en-US', {
-        weekday: 'long',
-        month: 'short',
-        day: 'numeric',
-    });
+  // Helper to format date nicely
+  const dateObj = new Date(match.date);
+  const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const dayDate = dateObj.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
 
-    return (
-        <section className="match-info-section">
-            <h1 className="match-info-title">
-                {match.teams?.home?.name || "Home"} <span>vs</span> {match.teams?.away?.name || "Away"}
-            </h1>
-            <div className="match-info-details">
-                {/* Home Team */}
-                <div className="match-info-team">
-                    <img 
-                        src={homeBadgeUrl || '/images/placeholder-badge.png'} 
-                        alt={match.teams?.home?.name || 'Home Team'} 
-                        className="match-info-badge"
-                    />
-                    <span className="match-info-team-name">
-                        {match.teams?.home?.name || "HOME"}
-                    </span>
-                </div>
-    
-                {/* Match Time Info */}
-                <div className="match-info-time-section">
-                    <div className="match-info-time">{timeStr}</div>
-                    <div className="match-info-date">{dateStr}</div>
-                </div>
-    
-                {/* Away Team */}
-                <div className="match-info-team">
-                    <img 
-                        src={awayBadgeUrl || '/images/placeholder-badge.png'} 
-                        alt={match.teams?.away?.name || 'Away Team'} 
-                        className="match-info-badge"
-                    />
-                    <span className="match-info-team-name">
-                        {match.teams?.away?.name || "AWAY"}
-                    </span>
-                </div>
+  // PARSING TEAMS (If your API just gives a "Title" string like "Team A vs Team B")
+  // If your API gives real team objects, use those instead.
+  const teams = match.title.split(' vs ');
+  const homeName = teams[0] || "Home Team";
+  const awayName = teams[1] || "Away Team";
+
+  return (
+    <div className="match-info-strip">
+        {/* LEFT: MATCH STATUS / TIME */}
+        <div className="info-time-block">
+            <div className="info-time">{time}</div>
+            <div className="info-date">{dayDate}</div>
+        </div>
+
+        {/* MIDDLE: THE TEAMS */}
+        <div className="info-teams-block">
+            <div className="team-side home">
+                <span className="team-name">{homeName}</span>
+                {/* Placeholder Logos (Replace src with real data if you have it) */}
+                <div className="team-logo-placeholder">{homeName[0]}</div>
             </div>
-        </section>
-    );
+            
+            <div className="vs-tag">VS</div>
+            
+            <div className="team-side away">
+                <div className="team-logo-placeholder">{awayName[0]}</div>
+                <span className="team-name">{awayName}</span>
+            </div>
+        </div>
+
+        {/* RIGHT: LIVE BADGE */}
+        <div className="info-status-block">
+            <div className="live-badge">LIVE EVENT</div>
+        </div>
+    </div>
+  )
 }

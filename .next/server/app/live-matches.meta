@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/live-matches/layout,_N_T_/live-matches/page,_N_T_/live-matches"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/live-matches/__PAGE__",
+    "/live-matches",
+    "/_index",
+    "/_head"
+  ]
+}

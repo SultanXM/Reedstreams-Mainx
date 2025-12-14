@@ -1,0 +1,81 @@
+/* [project]/styles/Floatingimp.css [app-client] (css) */
+.notice-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 10px auto;
+  padding: 0 20px;
+  animation: .5s ease-out fadeIn;
+}
+
+.notice-box {
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  background: #16192099;
+  border: 1px solid #2a2e38;
+  border-left: 4px solid #8db902;
+  border-radius: 8px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 20px;
+  display: flex;
+}
+
+.notice-content {
+  color: #a0aec0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  display: flex;
+}
+
+.notice-badge {
+  color: #8db902;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  background: #8db9021a;
+  border: 1px solid #8db90233;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.notice-text {
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.notice-close-btn {
+  color: #666;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  transition: all .2s;
+  display: flex;
+}
+
+.notice-close-btn:hover {
+  color: #fff;
+  background: #ffffff0d;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*# sourceMappingURL=styles_Floatingimp_css_bad6b30c._.single.css.map*/

@@ -1,0 +1,172 @@
+/* styles/live-schedule.css (Refactored for Sleek, Borderless Logos) */
+
+.schedule-section-grouped {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px 60px 20px;
+}
+
+.sport-group-header-grid {
+  margin-top: 40px;
+  margin-bottom: 25px;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 900;
+  text-transform: uppercase;
+  border-bottom: 2px solid #2a2e38;
+  padding-bottom: 10px;
+}
+
+.match-grid {
+  display: grid;
+  /* Keep 4 columns for small laptops/desktop */
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px; /* Reduced gap for sleeker look */
+}
+
+/* --- CARD BASE DESIGN (Sleek Black) --- */
+.grid-card-link {
+  text-decoration: none;
+  display: block;
+}
+
+.match-grid-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px; /* Slightly tighter radius */
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); /* Lighter shadow */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  aspect-ratio: 16 / 9; 
+  min-height: 110px; /* Smaller overall size */
+  
+  background-color: #000; 
+  border: 1px solid #161920; 
+}
+
+.match-grid-card:hover {
+  transform: translateY(-3px); /* Less hover lift */
+  box-shadow: 0 6px 20px rgba(141, 185, 2, 0.4);
+}
+
+/* --- 10 UNIQUE GRADIENT TYPES (Keep them the same) --- */
+/* ... Gradient styles 1 through 10 remain unchanged ... */
+.gradient-type-1 { background: radial-gradient(circle at 50% 10%, rgba(141, 185, 2, 0.3) 0%, #000 70%); }
+.gradient-type-2 { background: linear-gradient(135deg, rgba(255, 69, 0, 0.3) 0%, #000 50%, #000 100%); }
+.gradient-type-3 { background: radial-gradient(circle at 0% 100%, rgba(0, 50, 200, 0.25) 0%, #000 50%), radial-gradient(circle at 100% 0%, rgba(150, 0, 200, 0.25) 0%, #000 50%); }
+.gradient-type-4 { background: linear-gradient(180deg, rgba(200, 200, 200, 0.1) 0%, #000 30%); }
+.gradient-type-5 { background: linear-gradient(90deg, rgba(255, 215, 0, 0.2) 0%, #000 25%, #000 75%, rgba(255, 215, 0, 0.2) 100%); border-color: rgba(255, 215, 0, 0.5); }
+.gradient-type-6 { background: linear-gradient(90deg, rgba(141, 185, 2, 0.1) 0%, #000 100%); border-left: 5px solid #8db902; }
+.gradient-type-7 { background: linear-gradient(90deg, rgba(255, 0, 0, 0.2) 0%, #000 50%, rgba(0, 0, 255, 0.2) 100%); }
+.gradient-type-8 { background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, #000 40%); }
+.gradient-type-9 { background-image: repeating-linear-gradient(45deg, #111 0, #111 1px, #000 0, #000 50%); background-size: 10px 10px; }
+.gradient-type-10 { background: radial-gradient(circle at bottom right, rgba(255, 140, 0, 0.2) 0%, #000 70%); }
+
+
+/* --- CARD CONTENT OVERLAY --- */
+.card-content-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 10px; /* Reduced padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* --- CENTER LOGO ALIGNMENT --- */
+.card-logos-center {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-grow: 1;
+  padding-bottom: 5px; /* Reduced bottom padding */
+}
+
+.card-badge {
+  width: 65px; /* BIGGER LOGO SIZE */
+  height: 65px;
+  /* REMOVED: Border and Border-radius: 50% */
+  object-fit: contain; /* Ensure logo fits without clipping */
+  background-color: transparent; /* Ensure transparent background */
+  box-shadow: none; /* Removed logo shadow */
+}
+
+.card-vs {
+  font-size: 18px; 
+  font-weight: 900;
+  color: #fff;
+  padding: 5px;
+  background: rgba(0, 0, 0, 0.5); 
+  border-radius: 4px;
+}
+
+/* --- CARD FOOTER/INFO --- */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  color: #fff;
+}
+
+.match-title-grid {
+  font-size: 13px; /* Smaller font for tighter fit */
+  font-weight: 600;
+  line-height: 1.2;
+  color: #fff;
+  margin: 0;
+  text-shadow: 0 0 3px #000;
+  max-width: 65%; /* Give status badge more room */
+}
+
+.card-status-badge {
+  font-size: 9px; /* Tiniest badge */
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  background-color: #8db902;
+  color: #0f1115;
+}
+
+
+/* --- RESPONSIVENESS REFACTORING (NO OVERLAP) --- */
+@media (max-width: 1024px) {
+  .match-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .match-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px; /* Reduced gap further */
+    padding: 0 10px;
+  }
+  .schedule-section-grouped {
+    padding: 10px 10px 40px 10px;
+  }
+  .card-badge {
+    width: 50px; /* Reduced logo size slightly for small screens */
+    height: 50px;
+  }
+  .card-content-overlay {
+    padding: 8px; /* Tightest padding */
+  }
+  .match-title-grid {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  /* Ultra-small phone fix */
+  .match-grid {
+    grid-template-columns: 1fr; /* Single column on tiny phones to prevent crushing */
+  }
+  .card-badge {
+    width: 60px; 
+    height: 60px;
+  }
+}

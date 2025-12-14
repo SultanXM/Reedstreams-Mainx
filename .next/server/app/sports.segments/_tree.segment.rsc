@@ -1,0 +1,12 @@
+:HL["/_next/static/chunks/8a80e7184ad3a13f.css","style"]
+:HL["/_next/static/chunks/7ab886f9c8e0f306.css","style"]
+:HL["/_next/static/chunks/ceb5452bc3f6d721.css","style"]
+:HL["/_next/static/chunks/07af3a60f6f72a82.css","style"]
+:HL["/_next/static/chunks/2a105c1beaee59c9.css","style"]
+:HL["/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/chunks/6e6e8241ce91ddf3.css","style"]
+:HL["https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css","style"]
+:HL["https://cdn.jsdelivr.net/npm/remixicon@4.7.0/fonts/remixicon.css","style"]
+:HL["https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap","style"]
+0:{"buildId":"jGZsKR43I5SZCPAV7onpo","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"sports","paramType":null,"paramKey":"sports","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}

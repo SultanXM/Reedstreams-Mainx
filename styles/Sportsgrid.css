@@ -1,0 +1,422 @@
+/* styles/Sportsgrid.css */
+
+:root {
+  --card-bg: #161920;
+  --card-border: #2a2e38;
+  --text-primary: #ffffff;
+  --text-muted: #a0aec0;
+  --brand-green: #8db902;
+  --btn-border: #3f4452; 
+  --main-bg: #020305; /* Deep Winter Black */
+}
+
+/* --- GLOBAL BACKGROUND --- */
+body {
+  background-color: var(--main-bg) !important;
+  color: #fff;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* --- MILLION DOLLAR BLIZZARD ENGINE --- */
+.snow-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  /* Premium Cold Glow at bottom */
+  background: radial-gradient(circle at 50% 100%, #0f1c30 0%, #020204 70%); 
+}
+
+.snow-layer {
+  position: absolute;
+  top: -100vh; /* Start way above */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  border-radius: 50%;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-name: snowfall;
+}
+
+/* INTENSE SNOW SHADOWS 
+   These creates hundreds of flakes using CSS shadows.
+*/
+
+/* Layer 1: Small, Dense, Slow (The Atmosphere) */
+.layer-1 {
+  width: 2px;
+  height: 2px;
+  opacity: 0.6;
+  box-shadow: 
+    10vw 10vh #fff, 60vw 40vh #fff, 15vw 80vh #fff, 80vw 10vh #fff, 
+    30vw 20vh #fff, 90vw 90vh #fff, 40vw 50vh #fff, 50vw 10vh #fff,
+    20vw 30vh #fff, 70vw 60vh #fff, 10vw 90vh #fff, 95vw 30vh #fff,
+    25vw 70vh #fff, 75vw 20vh #fff, 05vw 40vh #fff, 55vw 80vh #fff,
+    35vw 50vh #fff, 85vw 60vh #fff, 45vw 10vh #fff, 65vw 90vh #fff,
+    /* Duplicate for density */
+    12vw 12vh #fff, 62vw 42vh #fff, 17vw 82vh #fff, 82vw 12vh #fff, 
+    32vw 22vh #fff, 92vw 92vh #fff, 42vw 52vh #fff, 52vw 12vh #fff,
+    22vw 32vh #fff, 72vw 62vh #fff, 12vw 92vh #fff, 97vw 32vh #fff,
+    27vw 72vh #fff, 77vw 22vh #fff, 07vw 42vh #fff, 57vw 82vh #fff;
+  animation-duration: 20s; 
+}
+
+/* Layer 2: Medium, Mid-distance (Visible Flakes) */
+.layer-2 {
+  width: 3px;
+  height: 3px;
+  opacity: 0.8;
+  box-shadow: 
+    5vw 5vh rgba(255,255,255,0.8), 55vw 55vh rgba(255,255,255,0.8), 
+    25vw 25vh rgba(255,255,255,0.8), 75vw 75vh rgba(255,255,255,0.8), 
+    15vw 45vh rgba(255,255,255,0.8), 65vw 15vh rgba(255,255,255,0.8), 
+    35vw 85vh rgba(255,255,255,0.8), 85vw 35vh rgba(255,255,255,0.8),
+    45vw 65vh rgba(255,255,255,0.8), 95vw 95vh rgba(255,255,255,0.8),
+    /* Extra fill */
+    10vw 80vh rgba(255,255,255,0.8), 80vw 20vh rgba(255,255,255,0.8);
+  animation-duration: 12s;
+}
+
+/* Layer 3: Large, Close, Fast, Blurry (Cinematic Depth) */
+.layer-3 {
+  width: 6px;
+  height: 6px;
+  opacity: 0.9;
+  filter: blur(2px);
+  box-shadow: 
+    10vw 20vh #fff, 80vw 10vh #fff, 30vw 50vh #fff, 
+    90vw 80vh #fff, 50vw 90vh #fff, 20vw 40vh #fff,
+    70vw 30vh #fff, 40vw 70vh #fff;
+  animation-duration: 7s;
+}
+
+@keyframes snowfall {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100vh); }
+}
+
+
+/* --- SECTIONS --- */
+.sports-section {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 10px 20px 30px 20px; 
+  overflow: hidden;
+  background: transparent !important;
+}
+
+.matches-row-section {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px 30px 20px;
+  overflow: hidden;
+  background: transparent !important;
+}
+
+.loading-text {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 20px;
+}
+
+/* --- HEADER LAYOUT --- */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  width: 100%;
+}
+
+.title-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+
+/* --- TITLE FIX (Locked Green Bar) --- */
+.section-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1;
+  letter-spacing: 0.5px;
+  /* Flexbox to lock Bar next to Text */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* The Green Bar */
+.section-title::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 20px; 
+  background-color: #8db902;
+  border-radius: 2px;
+  /* CRITICAL: Never shrink, never move */
+  flex-shrink: 0; 
+  min-width: 4px;
+}
+
+.title-accent { display: none; }
+
+/* --- BUTTONS --- */
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-right: 20px;
+}
+
+.nav-btn {
+  background: transparent;
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  color: var(--text-muted);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.nav-btn:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-btn:active { transform: scale(0.95); }
+
+/* --- CAROUSEL CONTAINERS --- */
+.sports-carousel-container {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 10px;
+  padding-top: 5px;
+  padding-left: 5px; 
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.sports-carousel-container::-webkit-scrollbar { display: none; }
+
+.carousel-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* --- CARD TYPE 1: SPORT CATEGORY (Icons) --- */
+.sport-card-link {
+  text-decoration: none;
+  display: block;
+  flex-shrink: 0; 
+  width: 160px;
+}
+
+.sport-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: border-color 0.2s, background-color 0.2s;
+  height: 100%;
+  aspect-ratio: 1 / 1.1;
+}
+
+@media (hover: hover) {
+  .sport-card:hover {
+    border-color: var(--brand-green);
+    background-color: #1b1f29;
+  }
+}
+.sport-card:active { transform: scale(0.98); }
+
+.sport-card.active-live {
+  border-color: rgba(141, 185, 2, 0.4);
+  background: linear-gradient(180deg, var(--card-bg) 0%, rgba(141, 185, 2, 0.05) 100%);
+}
+
+.card-icon-wrapper { margin-bottom: 15px; }
+.sport-emoji { font-size: 38px; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2)); }
+.sport-title { font-size: 15px; font-weight: 700; text-transform: uppercase; color: #fff; margin: 0 0 8px 0; }
+
+.match-badge {
+  font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; 
+  justify-content: center; gap: 5px; padding: 4px 10px; border-radius: 4px; text-transform: uppercase;
+}
+.match-badge.offline { color: #666; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); }
+.match-badge.live { color: var(--brand-green); background: rgba(141, 185, 2, 0.1); border: 1px solid rgba(141, 185, 2, 0.2); }
+.live-dot { width: 6px; height: 6px; background-color: var(--brand-green); border-radius: 50%; box-shadow: 0 0 6px var(--brand-green); animation: pulse 2s infinite; }
+
+/* --- CARD TYPE 2: MATCH ROW (Rectangles) --- */
+.match-card-link {
+  text-decoration: none;
+  display: block;
+  flex-shrink: 0;
+  width: 260px;
+}
+
+.match-card {
+  background-color: #050505; 
+  border: 1px solid #1a1a1a;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  transform: none !important;
+}
+
+@media (hover: hover) {
+  .match-card:hover {
+    border-color: #444; 
+    background-color: #0c0c0c;
+  }
+}
+
+/* 15 Textured Shades */
+.card-shade-1, .card-shade-6, .card-shade-11 { background: repeating-linear-gradient(45deg, #050505, #050505 10px, #090909 10px, #090909 20px); border-color: #111; }
+.card-shade-2, .card-shade-7, .card-shade-12 { background: radial-gradient(circle at 50% 0%, #151515 0%, #050505 80%); }
+.card-shade-3, .card-shade-8, .card-shade-13 { background: linear-gradient(to bottom, #111 0%, #000 100%); border-top: 1px solid #222; }
+.card-shade-4, .card-shade-9, .card-shade-14 { background-color: #000; background-image: radial-gradient(#1a1a1a 15%, transparent 16%); background-size: 8px 8px; }
+.card-shade-5, .card-shade-10, .card-shade-15 { background: linear-gradient(90deg, #0a0a0a 0%, #000 100%); border-left: 2px solid #222; }
+
+/* Content */
+.match-teams { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; position: relative; z-index: 2; }
+.team-info { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 40%; text-align: center; }
+.team-logo { width: 42px; height: 42px; object-fit: contain; filter: drop-shadow(0 2px 0px rgba(0,0,0,0.8)); }
+.team-name { font-size: 12px; color: #e2e8f0; font-weight: 600; line-height: 1.1; text-transform: uppercase; }
+.vs-badge { font-size: 11px; color: #333; font-weight: 900; font-style: italic; }
+.match-meta { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; position: relative; z-index: 2; }
+.league-name { font-size: 10px; color: #8db902; font-weight: 700; text-transform: uppercase; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.time-badge { font-size: 10px; color: #888; background: #0f0f0f; padding: 3px 8px; border: 1px solid #1a1a1a; border-radius: 4px; font-weight: 600; }
+.live-badge-sm { color: #000; background: #8db902; border-color: #8db902; font-weight: 800; }
+
+/* --- MOBILE SPECIFIC FIXES --- */
+@media (max-width: 768px) {
+  .sports-section, .matches-row-section {
+    padding: 0 0 20px 0; 
+    margin-top: 10px;
+  }
+  
+  /* GRID HEADER: The Fix for Overlap */
+  .section-header {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    align-items: center !important;
+    gap: 10px;
+    width: 100%;
+    padding-left: 15px; 
+    padding-right: 15px;
+    margin-bottom: 12px;
+    border-bottom: none;
+  }
+
+  /* Title Group */
+  .title-group {
+    align-items: flex-start !important;
+    text-align: left !important;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .section-title {
+    font-size: 18px; 
+    margin: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left !important;
+    padding: 0;
+  }
+  
+  /* Lock Green Bar */
+  .section-title::before {
+    height: 16px;
+    width: 4px;
+    flex-shrink: 0; /* Ensures it never disappears */
+  }
+
+  .nav-controls {
+    margin-right: 0;
+    justify-content: flex-end;
+  }
+
+  /* Scroll Padding */
+  .sports-carousel-container {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: 0;
+    margin-right: 0;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sport-card-link { width: 130px; scroll-snap-align: start; }
+  .match-card-link { width: 220px; scroll-snap-align: start; }
+  .sport-card { padding: 12px 8px; min-height: 120px; }
+  .match-card { padding: 12px; min-height: 110px; }
+  .sport-emoji { font-size: 28px; }
+  .sport-title { font-size: 12px; }
+  .nav-btn { width: 32px; height: 32px; }
+}
+
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+/* --- SKELETON --- */
+.skeleton-shimmer { animation: shimmer 2s infinite linear; background: linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%); background-size: 1000px 100%; }
+.skeleton-title-bar { width: 120px; height: 24px; border-radius: 4px; }
+.skeleton-nav-btn { width: 36px; height: 36px; border-radius: 5px; }
+.skeleton-card { min-width: 170px; height: 160px; border-radius: 12px; border: 1px solid var(--card-border); flex-shrink: 0; animation: shimmer 2s infinite linear; background: linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%); background-size: 1000px 100%; }
+.match-skeleton-card { width: 260px; height: 130px; background: #111; border-radius: 10px; border: 1px solid #222; flex-shrink: 0; animation: shimmer 2s infinite linear; background: linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%); background-size: 1000px 100%; }
+@media (max-width: 768px) { .skeleton-card { min-width: 130px; width: 130px; height: 120px; } .match-skeleton-card { width: 220px; height: 110px; } }
+@keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+
+/* --- API ERROR TOAST --- */
+.api-error-toast { position: fixed; bottom: 30px; right: 30px; z-index: 10000; width: 320px; padding: 16px; background: rgba(15, 17, 21, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid #ff4444; border-radius: 6px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; gap: 8px; }
+.error-header { display: flex; align-items: center; justify-content: space-between; width: 100%; padding-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.error-title { color: #ff4444; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
+.error-content { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
+.error-subtitle { color: #8db902; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.error-subtitle::before { content: ''; display: block; width: 6px; height: 6px; background-color: #8db902; border-radius: 50%; box-shadow: 0 0 5px #8db902; }
+.error-message { color: #a0aec0; font-size: 12px; line-height: 1.4; }
+.error-close { background: transparent; border: none; color: #555; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.2s; }
+.error-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+@media (max-width: 768px) { .api-error-toast { bottom: 85px; right: 15px; left: 15px; width: auto; animation: slideUpMobile 0.4s ease-out; } }
+@keyframes slideUpMobile { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }

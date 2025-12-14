@@ -1,0 +1,116 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/api/stream/[source]/[id]",
+      "regex": "^/api/stream/([^/]+?)/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPsource": "nxtPsource",
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/stream/(?<nxtPsource>[^/]+?)/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/match/[id]",
+      "regex": "^/match/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/match/(?<nxtPid>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/api/clean-stream",
+      "regex": "^/api/clean\\-stream(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/clean\\-stream(?:/)?$"
+    },
+    {
+      "page": "/api/matches",
+      "regex": "^/api/matches(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/matches(?:/)?$"
+    },
+    {
+      "page": "/api/sports",
+      "regex": "^/api/sports(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/sports(?:/)?$"
+    },
+    {
+      "page": "/faq",
+      "regex": "^/faq(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/faq(?:/)?$"
+    },
+    {
+      "page": "/live-matches",
+      "regex": "^/live\\-matches(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/live\\-matches(?:/)?$"
+    },
+    {
+      "page": "/sports",
+      "regex": "^/sports(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/sports(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

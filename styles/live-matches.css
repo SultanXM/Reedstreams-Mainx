@@ -1,704 +1,449 @@
-/* Renamed all classes with lm- prefix to avoid CSS conflicts with other components */
+/* styles/matches-list.css */
 
-/* Transparent Header */
-.lm-header {
-  background: transparent;
-  padding: 1.5rem 3rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  transition: var(--transition);
+/* --- 1. PAGE CONTAINER --- */
+.matches-page-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  background-color: transparent;
+  /* CRITICAL: Prevents horizontal scrolling on the main page */
+  overflow-x: hidden; 
+  box-sizing: border-box;
 }
 
-.lm-header.scrolled {
-  background: rgba(10, 14, 23, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 1rem 3rem;
-  border-bottom: 1px solid rgba(141, 185, 2, 0.2);
-}
-
-.lm-header-hidden {
-  transform: translateY(-100%);
-}
-
-.lm-header-content {
+/* --- 2. HEADER SECTION --- */
+.matches-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  width: 100%; /* Ensure header doesn't stretch weirdly */
 }
 
-.lm-logo {
+.header-left {
   display: flex;
   align-items: center;
-  font-size: 1.8rem;
-  font-weight: 700;
-  letter-spacing: 1px;
+  gap: 15px;
 }
 
-.lm-logo-text {
-  color: var(--text-light);
-}
-
-.lm-logo-accent {
-  color: var(--primary-color);
-}
-
-.lm-nav-links {
+.back-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #333;
+  color: #a0aec0;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
   display: flex;
-  gap: 2rem;
-  list-style: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0; /* Prevents button squishing */
 }
 
-.lm-nav-links a {
-  color: var(--text-light);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 1rem;
-  position: relative;
-  padding: 0.5rem 0;
-  transition: var(--transition);
+.back-btn:hover {
+  background: #8db902;
+  color: #000;
+  border-color: #8db902;
 }
 
-.lm-nav-links a::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background-color: var(--primary-color);
-  transition: var(--transition);
+.page-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.lm-nav-links a:hover {
-  color: var(--primary-color);
+.page-title::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 24px;
+  background-color: #8db902;
+  border-radius: 2px;
 }
 
-.lm-nav-links a:hover::after {
+/* --- 3. FILTER BAR --- */
+.filter-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap; /* Allows filters to drop to next line on small screens */
+}
+
+.filter-pill {
+  background: #0f1115;
+  border: 1px solid #2a2e38;
+  color: #a0aec0;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  white-space: nowrap; /* Keeps text on one line */
+}
+
+.filter-pill:hover {
+  border-color: #8db902;
+  color: #fff;
+}
+
+.filter-pill.active {
+  background: #8db902;
+  color: #000;
+  border-color: #8db902;
+  font-weight: 800;
+  box-shadow: 0 0 15px rgba(141, 185, 2, 0.3);
+}
+
+/* --- 4. DATE DIVIDER --- */
+.date-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 40px 0 20px 0;
   width: 100%;
 }
 
-.lm-nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
+.date-divider svg {
+  color: #8db902;
+  flex-shrink: 0;
 }
 
-.lm-watch-now-btn {
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
-  border: none;
-  padding: 0.7rem 1.5rem;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: 0 4px 15px rgba(141, 185, 2, 0.3);
+.date-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
 }
 
-.lm-watch-now-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(141, 185, 2, 0.4);
+.date-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, #8db902 0%, rgba(255,255,255,0.05) 100%);
 }
 
-/* Live Hero Section */
-.lm-live-hero {
-  background: linear-gradient(
-      to top,
-      #0a0e17 0%,
-      rgba(10, 14, 23, 0.25) 70vh,
-      rgba(10, 14, 23, 0.5) 80vh,
-      rgba(10, 14, 23, 2) 90vh,
-      transparent 100%
-    ), url("/Images/BG.jpg") no-repeat center center / cover;
-  padding: 12rem 2rem 6rem;
-  text-align: center;
-  position: relative;
+/* --- 5. THE GRID (The Fix) --- */
+.matches-grid {
+  display: grid;
+  /* Creates a responsive grid. Cards will be at least 300px, but fill space. */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  width: 100%;
 }
 
-.lm-live-icon {
-  font-size: 3rem;
-  color: var(--primary-color);
-  margin-bottom: 2rem;
+/* CRITICAL OVERRIDE: 
+   Your Sportsgrid.css sets a fixed width on .match-card-link.
+   We must force it to be 100% inside this grid to prevent overflow.
+*/
+.matches-grid .match-card-link {
+  width: 100% !important;
+  max-width: 100% !important;
   display: block;
 }
 
-.lm-live-hero h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(to right, #ffffff, var(--primary-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.lm-hero-subtitle {
-  font-size: 1.2rem;
-  color: var(--text-muted);
-  margin-bottom: 3rem;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.lm-tab-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 2rem;
-}
-
-.lm-tab-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-light);
-  padding: 0.8rem 2rem;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.lm-tab-btn.active {
-  background: var(--primary-color);
-  color: var(--secondary-color);
-  border-color: var(--primary-color);
-}
-
-.lm-tab-btn:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Matches Section */
-.lm-matches-section {
-  padding: 2rem 1rem;
-  background: linear-gradient(45deg, transparent 0%, rgba(141, 185, 2, 0.03) 50%, transparent 100%);
-  position: relative;
-}
-
-/* Creative Title */
-.lm-creative-title {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.lm-creative-title h2 {
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: var(--text-light);
-  margin-bottom: 0.5rem;
-}
-
-.lm-creative-title .subtitle {
-  font-size: 1rem;
-  color: var(--text-muted);
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-/* Matches Grid */
-.lm-matches-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-/* Match Card */
-.lm-match-card {
-  position: relative;
-  overflow: visible;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(45deg, transparent 0%, rgba(141, 185, 2, 0.03) 50%, transparent 100%);
-  border-radius: 10px;
-  border: 2px solid var(--primary-color);
-  padding: 1.5rem 1rem 1rem;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  overflow: hidden;
-  min-height: 180px;
-}
-
-.lm-match-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(141, 185, 2, 0.2);
-  border-color: rgba(141, 185, 2, 0.8);
-}
-
-.lm-live-tag {
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  background: rgb(212, 32, 26);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 15px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  box-shadow: 0 4px 12px rgba(141, 185, 2, 0.5);
-  animation: lm-live-pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes lm-live-pulse {
-  0%,
-  100% {
-    opacity: 1;
-    box-shadow: 0 4px 12px rgba(141, 185, 2, 0.5);
-  }
-  50% {
-    opacity: 0.7;
-    box-shadow: 0 4px 20px rgba(141, 185, 2, 0.8);
-  }
-}
-
-/* Teams Container */
-.lm-teams-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
-  flex-grow: 1;
-}
-
-.lm-team {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  width: 30%;
-}
-
-.lm-team-badge-container {
-  width: 75px;
-  height: 75px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.lm-team-logo {
-  width: 75px;
-  height: 75px;
-  object-fit: contain;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 4px;
-}
-
-.lm-team-placeholder {
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  color: var(--text-muted);
-}
-
-.lm-team-abbr {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-light);
-  text-align: center;
-  max-width: 100%;
-  word-break: break-word;
-}
-
-.lm-match-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
-  width: 40%;
-  justify-content: center;
-}
-
-.lm-vs-line {
-  width: 40px;
-  height: 1px;
-  background-color: var(--text-muted);
-  margin: 0.3rem 0;
-}
-
-.lm-date {
-  font-size: 0.75rem;
-  color: var(--text-light);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 80px;
-  text-align: center;
-}
-
-.lm-time {
-  font-size: 0.75rem;
-  color: var(--primary-color);
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 80px;
-  text-align: center;
-}
-
-.lm-competition {
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Filter Buttons */
-.lm-filter-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  max-width: 1200px;
-  flex-wrap: wrap;
-}
-
-.lm-filter-btn {
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  min-width: 100px;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--primary-color);
-  background: transparent;
-  color: var(--text-light);
-}
-
-.lm-filter-btn.active {
-  background: var(--primary-color);
-  color: var(--secondary-color);
-  border-color: var(--primary-color);
-}
-
-.lm-filter-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
+/* Ensure the card itself handles sizing correctly */
+.matches-grid .match-card {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.6s ease;
+  box-sizing: border-box; /* Ensures padding doesn't increase width */
 }
 
-.lm-filter-btn:hover::before {
-  left: 100%;
-}
-
-.lm-filter-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(141, 185, 2, 0.4);
-}
-
-/* Date Separator */
-.lm-date-separator {
-  grid-column: 1 / -1;
-  margin: 30px 0 20px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  position: relative;
-}
-
-.lm-date-separator::before,
-.lm-date-separator::after {
-  content: "";
-  flex-grow: 1;
-  height: 1px;
-  background-color: rgba(141, 185, 2, 0.4);
-  max-width: 40%;
-}
-
-.lm-date-separator h3 {
-  margin: 0;
-  padding: 0 10px;
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--text-light);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.lm-date-separator i {
-  color: var(--primary-color);
-  font-size: 1.1rem;
-}
-
-/* Loading and Empty States */
-.lm-loading-message,
-.lm-error-message,
-.lm-no-matches {
-  text-align: center;
-  padding: 2rem;
-  color: var(--text-muted);
-  font-size: 1rem;
-  width: 100%;
-  grid-column: 1 / -1;
-}
-
-.lm-error-message {
-  color: #d4201a;
-}
-
-/* Mobile Navigation */
-.lm-mobile-nav {
-  z-index: 1000 !important;
-}
-
-.lm-overlay {
-  z-index: 999 !important;
-}
-
-.lm-mobile-menu-btn {
-  z-index: 1001 !important;
-}
-
-body.lm-sidebar-open {
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-}
-
-.lm-mobile-nav,
-.lm-overlay {
-  transition: all 0.3s ease;
-}
-
-/* Responsive Design */
-@media (min-width: 1200px) {
-  .lm-matches-grid {
-    grid-template-columns: repeat(4, 1fr);
+/* --- 6. MOBILE SPECIFIC (Width Issues Fixed Here) --- */
+@media (max-width: 768px) {
+  .matches-page-container {
+    padding: 15px; /* Reduce padding to give cards more room */
   }
-
-  .lm-date {
-    font-size: 0.8rem;
+  
+  .matches-header {
+    flex-direction: row; /* Keep header items in a row */
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
   }
-
-  .lm-time {
-    font-size: 0.8rem;
+  
+  .page-title {
+    font-size: 18px; /* Slightly smaller text */
   }
-}
-
-@media (min-width: 992px) and (max-width: 1199px) {
-  .lm-matches-grid {
-    grid-template-columns: repeat(3, 1fr);
+  
+  .filter-container {
+    justify-content: flex-start;
+    overflow-x: auto; /* Allow horizontal scroll for filters if needed */
+    padding-bottom: 5px;
+    flex-wrap: nowrap; /* Keep filters in one scrollable row on mobile */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
-
-  .lm-match-card {
-    min-height: 220px;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  .lm-matches-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .lm-match-card {
-    min-height: 200px;
-  }
-
-  .lm-team-logo {
-    width: 60px;
-    height: 60px;
-  }
-
-  .lm-team-badge-container {
-    width: 60px;
-    height: 60px;
-  }
-}
-
-/* ========================= */
-/*   MOBILE < 767px          */
-/* ========================= */
-@media (max-width: 767px) {
-
-  /* Header */
-  .lm-header {
-    padding: 0.9rem 1rem;
-  }
-
-  .lm-header.scrolled {
-    padding: 0.6rem 1rem;
-  }
-
-  .lm-nav-links {
+  
+  .filter-container::-webkit-scrollbar {
     display: none;
   }
-
-  /* Hero */
-  .lm-live-hero {
-    padding: 8rem 1rem 3.5rem;
-    background-size: cover;
+  
+  /* GRID RESET FOR MOBILE */
+  .matches-grid {
+    /* Force exactly 1 column. 1fr means "take up available space" */
+    grid-template-columns: 1fr; 
+    gap: 12px;
   }
 
-  .lm-live-hero h1 {
-    font-size: 1.9rem;
+  /* Extra safety to ensure no fixed width leaks through */
+  .matches-grid .match-card-link,
+  .matches-grid .match-card {
+    min-width: 0 !important; /* Resets any min-width */
+    width: 100% !important;
   }
+}
 
-  .lm-hero-subtitle {
-    font-size: 1rem;
-    max-width: 350px;
-  }
+/* --- 7. SKELETON LOADING --- */
+.loading-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
 
-  .lm-tab-buttons {
-    flex-direction: column;
-    gap: 0.7rem;
-  }
-
-  .lm-tab-btn {
-    width: 100%;
-    max-width: 260px;
-  }
-
-  /* Matches */
-  .lm-matches-grid {
+@media (max-width: 768px) {
+  .loading-grid {
     grid-template-columns: 1fr;
-    padding: 0 0.5rem;
-  }
-
-  .lm-match-card {
-    min-height: 190px;
-    padding: 1rem 0.8rem;
-    border-width: 2px;
-  }
-
-  .lm-teams-container {
-    gap: 0.4rem;
-    padding: 0.3rem;
-  }
-
-  .lm-team-logo,
-  .lm-team-badge-container {
-    width: 60px;
-    height: 60px;
-  }
-
-  .lm-team-abbr {
-    font-size: 0.7rem;
-  }
-
-  .lm-match-center {
-    gap: 0.2rem;
-  }
-
-  .lm-vs-line {
-    width: 60px;
-  }
-
-  .lm-date,
-  .lm-time {
-    font-size: 0.7rem;
-    max-width: 70px;
-  }
-
-  .lm-left-tag {
-    font-size: 0.7rem;
-  }
-
-  /* Filters */
-  .lm-filter-buttons {
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-
-  .lm-filter-btn {
-    min-width: auto;
-    padding: 0.5rem 0.9rem;
-    font-size: 0.8rem;
   }
 }
 
-@media (max-width: 480px) {
+.skeleton-box {
+  background: #0f1115;
+  height: 130px;
+  border-radius: 12px;
+  border: 1px solid #222;
+  width: 100%; /* Ensure skeleton is also fluid */
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right, #0f1115 4%, #1a1d24 25%, #0f1115 36%);
+  background-size: 1000px 100%;
+}
+/* styles/Sportsgrid.css */
 
-  .lm-live-hero h1 {
-    font-size: 1.7rem;
-  }
+/* =========================================
+   CARD TYPE 2: MATCH ROW (Rectangles)
+   ========================================= */
 
-  .lm-creative-title h2 {
-    font-size: 1.3rem;
-  }
+.match-card-link {
+  text-decoration: none;
+  display: block;
+  /* IMPORTANT: In a grid, width must be fluid, not fixed. */
+  width: 100%; 
+}
 
-  .lm-team {
-    width: 35%;
-  }
+.match-card {
+  /* --- CSS Variables set default theme --- */
+  --card-bg-pattern: #050505; /* Default solid if no shade */
+  --card-border-color: #1a1a1a;
+  --card-hover-border: #444;
 
-  .lm-match-center {
-    width: 30%;
-  }
+  /* Apply variables */
+  background: var(--card-bg-pattern);
+  border: 1px solid var(--card-border-color);
+  
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* We animate transform and shadow now, not background-color */
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box; /* Ensures padding doesn't break width */
+}
 
-  .lm-team-logo,
-  .lm-team-badge-container {
-    width: 50px;
-    height: 50px;
-  }
-
-  .lm-vs-line {
-    width: 45px;
-  }
-
-  .lm-competition {
-    font-size: 0.6rem;
-  }
-
-  .lm-match-card {
-    min-height: 170px;
+/* --- HOVER EFFECTS --- */
+/* Use a glow and lift effect instead of changing the solid background color, 
+   so we don't lose the cool patterns */
+@media (hover: hover) {
+  .match-card:hover {
+    border-color: var(--brand-green); /* Use your brand green for pop */
+    box-shadow: 0 4px 20px rgba(141, 185, 2, 0.15); /* Subtle green glow */
+    transform: translateY(-3px); /* Premium lift effect */
   }
 }
 
+/* =========================================
+   THE 15 CREATIVE BACKGROUNDS (REFACTORED)
+   These now just update the variables defined above.
+   ========================================= */
 
-@media (max-width: 360px) {
+/* Style 1: Diagonal Stripes */
+.card-shade-1, .card-shade-6, .card-shade-11 { 
+    --card-bg-pattern: repeating-linear-gradient(45deg, #050505, #050505 10px, #0d0d0d 10px, #0d0d0d 20px); 
+    --card-border-color: #222;
+}
 
-  .lm-live-hero h1 {
-    font-size: 1.4rem;
+/* Style 2: Top Spotlight */
+.card-shade-2, .card-shade-7, .card-shade-12 { 
+    --card-bg-pattern: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #050505 70%); 
+}
+
+/* Style 3: Deep Fade + Top Border Accent */
+.card-shade-3, .card-shade-8, .card-shade-13 { 
+    --card-bg-pattern: linear-gradient(to bottom, #111 0%, #020202 100%); 
+    border-top: 1px solid #333; /* Direct override stays */
+}
+
+/* Style 4: Polka Dots */
+.card-shade-4, .card-shade-9, .card-shade-14 { 
+    /* Complex backgrounds need the full shorthand property */
+    background: radial-gradient(#1a1a1a 15%, transparent 16%) #000;
+    background-size: 12px 12px;
+}
+
+/* Style 5: Side Fade + Left Border Accent */
+.card-shade-5, .card-shade-10, .card-shade-15 { 
+    --card-bg-pattern: linear-gradient(90deg, #0c0c0c 0%, #000 100%); 
+    border-left: 2px solid #333; /* Direct override stays */
+}
+
+
+/* --- Card Content Styling (Unchanged) --- */
+.match-teams { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; position: relative; z-index: 2; }
+.team-info { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 40%; text-align: center; }
+.team-logo { width: 42px; height: 42px; object-fit: contain; filter: drop-shadow(0 2px 0px rgba(0,0,0,0.8)); }
+.team-name { font-size: 12px; color: #e2e8f0; font-weight: 600; line-height: 1.1; text-transform: uppercase; }
+.vs-badge { font-size: 11px; color: #333; font-weight: 900; font-style: italic; }
+.match-meta { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; position: relative; z-index: 2; }
+.league-name { font-size: 10px; color: #8db902; font-weight: 700; text-transform: uppercase; }
+.time-badge { font-size: 10px; color: #888; background: #0f0f0f; padding: 3px 8px; border: 1px solid #1a1a1a; border-radius: 4px; font-weight: 600; }
+.live-badge-sm { color: #000; background: #8db902; border-color: #8db902; font-weight: 800; }
+
+/* --- MOBILE SPECIFIC FIXES --- */
+/* ... rest of your CSS ... */
+/* Add/Replace in styles/matches-list.css */
+
+/* The Header Layout */
+.matches-header {
+  display: flex;
+  align-items: flex-end; /* Aligns text to bottom for a clean look */
+  justify-content: space-between;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  width: 100%;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* The Muted Text Link (No Box, Just Sleek Text) */
+.home-link-muted {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666; /* Muted Grey */
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: color 0.2s ease;
+  padding-bottom: 5px; /* Align with title baseline */
+}
+
+.home-link-muted:hover {
+  color: #8db902; /* Turns bright green on hover */
+} 
+/* Add/Replace in styles/matches-list.css */
+
+/* The Header Layout */
+.matches-header {
+  display: flex;
+  align-items: flex-end; /* Aligns text to bottom for a clean look */
+  justify-content: space-between;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  width: 100%;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* The Muted Text Link (No Box, Just Sleek Text) */
+.home-link-muted {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666; /* Muted Grey */
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: color 0.2s ease;
+  padding-bottom: 5px; /* Align with title baseline */
+}
+
+.home-link-muted:hover {
+  color: #8db902; /* Turns bright green on hover */
+}
+/* --- FILTER BUTTON STYLES --- */
+.filter-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px; /* Space between buttons and grid */
+  flex-wrap: wrap; 
+}
+
+.filter-pill {
+  background: #0f1115; /* Dark background */
+  border: 1px solid #2a2e38; /* Subtle border */
+  color: #a0aec0; /* Grey text */
+  padding: 8px 20px;
+  border-radius: 50px; /* Pill shape */
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.filter-pill:hover {
+  border-color: #8db902;
+  color: #fff;
+}
+
+.filter-pill.active {
+  background: #8db902;   /* Bright Green */
+  color: #000;           /* Black Text */
+  border-color: #8db902;
+  font-weight: 800;
+  box-shadow: 0 0 15px rgba(141, 185, 2, 0.3); /* Green Glow */
+}
+
+/* Mobile Tweak: Allow scrolling if many buttons */
+@media (max-width: 768px) {
+  .filter-container {
+    padding-bottom: 5px;
+    overflow-x: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }
-
-  .lm-match-card {
-    padding: 0.7rem;
-    min-height: 150px;
-  }
-
-  .lm-team-logo,
-  .lm-team-badge-container {
-    width: 45px;
-    height: 45px;
-  }
-
-  .lm-team-abbr {
-    font-size: 0.6rem;
-  }
-
-  .lm-date,
-  .lm-time {
-    font-size: 0.55rem;
+  .filter-container::-webkit-scrollbar {
+    display: none;
   }
 }

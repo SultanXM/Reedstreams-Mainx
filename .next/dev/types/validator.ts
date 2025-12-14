@@ -92,10 +92,10 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
-// Validate ../../../app/api/matches/[sportId]/route.ts
+// Validate ../../../app/api/clean-stream/route.tsx
 {
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/matches/[sportId]">> = Specific
-  const handler = {} as typeof import("../../../app/api/matches/[sportId]/route.js")
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/clean-stream">> = Specific
+  const handler = {} as typeof import("../../../app/api/clean-stream/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

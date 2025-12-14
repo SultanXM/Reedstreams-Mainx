@@ -7,13 +7,17 @@ import "./globals.css"
 import "@/styles/main.css"
 import "@/styles/home.css"
 import "@/styles/responsive.css"
-import "@/styles/upcoming.css"
 import "@/styles/faq.css"
 import "@/styles/scroll.css"
 import "@/styles/sports.css"
 import "@/styles/live-matches.css"
 import "@/styles/match.css"
+import "@/styles/header.css"
 import Script from 'next/script' 
+import { Toaster } from "@/components/ui/toaster"
+
+// 🔥 NEW IMPORTS (Make sure you created these files!)
+import { LanguageProvider } from "@/context/language-context"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -44,10 +48,18 @@ export default function RootLayout({
         />
       </head>
       <body className={`font-sans antialiased`}>
-        <GoogleAnalytics />
-        <Script src="/scripts/ad-blocker.js" strategy="beforeInteractive" />
-        {children}
-        <Analytics />
+        
+        {/* WRAP EVERYTHING IN LANGUAGE PROVIDER */}
+        <LanguageProvider>
+            <GoogleAnalytics />
+            <Script src="/scripts/ad-blocker.js" strategy="beforeInteractive" />
+            
+            {children}
+            
+            <Analytics />
+            <Toaster />
+        </LanguageProvider>
+
       </body>
     </html>
   )

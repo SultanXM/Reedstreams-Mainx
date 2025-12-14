@@ -1,7 +1,6 @@
 import { Suspense } from 'react'
-import LiveMatchesHero from '@/components/live-matches/hero'
-import MatchesList from '@/components/live-matches/matches-list'
-import Footer from '@/components/layout/footer'
+import MatchesList from '@/components/live-matches/matches-list' // Ensure this path is correct!
+import Header from '@/components/layout/header'
 
 export const metadata = {
   title: 'Live Matches - ReedStreams',
@@ -10,18 +9,24 @@ export const metadata = {
 
 export default function LiveMatchesPage() {
   return (
-    <>
-      <LiveMatchesHero />
+    // Relative to contain content, transparent to show body bg
+    <main className="min-h-screen relative bg-transparent">
+      
+      {/* SNOWFALL LAYERS */}
+      <div className="snow-wrapper">
+         <div className="snow-layer layer-1"></div>
+         <div className="snow-layer layer-2"></div>
+         <div className="snow-layer layer-3"></div>
+      </div>
+
+      <Header />
+      
       <section className="matches-section">
-        <div className="lm-creative-title">
-          <h2>Live Now</h2>
-          <p className="subtitle">Real-time matches streaming live across all sports</p>
-        </div>
-        <Suspense fallback={<div className="loading-message">Loading matches...</div>}>
+        <Suspense fallback={<div className="lm-loading">Loading matches...</div>}>
           <MatchesList />
         </Suspense>
       </section>
-      <Footer />
-    </>
+      
+    </main>
   )
 }

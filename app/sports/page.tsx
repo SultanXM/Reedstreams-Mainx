@@ -1,25 +1,19 @@
-import { Suspense } from 'react'
-import SportsHero from '@/components/sports/sports-hero'
-import SportsGrid from '@/components/sports/sports-grid'
-import Footer from '@/components/layout/footer'
+import Header from '@/components/layout/header' // Import the Header
+import SportsGrid from '@/components/sports/Sportsgrid'
 
 export const metadata = {
-  title: 'Reedstreams - Select Sport',
-  description: 'Choose your favorite sport and dive into live matches, upcoming games, and premium streaming experience',
+  title: 'ReedStreams - Live Sports Streaming',
+  description: 'Watch live sports matches including Football, Cricket, MMA, and more.',
 }
 
-export default function SportsPage() {
+export default function Home() {
   return (
-    <>
-      <SportsHero />
-      <section className="sports-section">
-        <div className="gradient-accent accent-1"></div>
-        <div className="gradient-accent accent-2"></div>
-        <Suspense fallback={<div className="loading-message">Loading sports...</div>}>
-          <SportsGrid />
-        </Suspense>
-      </section>
-      <Footer />
-    </>
+    <main className="min-h-screen bg-[#0f1115]">
+      {/* 1. The Top Navigation Bar */}
+      <Header />
+      
+      {/* 2. The Main Content (Hero + Grid) */}
+      <SportsGrid />
+    </main>
   )
 }

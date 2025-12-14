@@ -1,0 +1,125 @@
+/* [project]/styles/Matchfilters.css [app-client] (css) */
+.filters-section {
+  z-index: 40;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto 10px;
+  padding: 0 20px;
+  position: sticky;
+  top: 70px;
+}
+
+.filters-bar {
+  -webkit-backdrop-filter: blur(12px);
+  background: #0f1115f2;
+  border: 1px solid #ffffff0d;
+  border-radius: 6px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 8px 12px;
+  display: flex;
+  box-shadow: 0 4px 20px #0009;
+}
+
+.sports-scroll-area {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  padding-right: 10px;
+  display: flex;
+  overflow-x: auto;
+}
+
+.sports-scroll-area::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-pill {
+  white-space: nowrap;
+  color: #a0aec0;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: none;
+  border: 1px solid #2a2e38;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all .2s;
+}
+
+.filter-pill:hover {
+  color: #fff;
+  background: #ffffff0d;
+  border-color: #fff;
+}
+
+.filter-pill.active {
+  color: #000;
+  background: #8db902;
+  border-color: #8db902;
+  font-weight: 800;
+  box-shadow: 0 0 10px #8db90233;
+}
+
+.separator {
+  background: #ffffff1a;
+  flex-shrink: 0;
+  width: 1px;
+  height: 20px;
+}
+
+.source-filter-btn {
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  background: #111;
+  border: 1px solid #3f4452;
+  border-radius: 4px;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all .2s;
+  display: flex;
+}
+
+.source-filter-btn:hover {
+  color: #8db902;
+  border-color: #8db902;
+}
+
+@media (max-width: 768px) {
+  .filters-section {
+    margin-bottom: 5px;
+    padding: 0;
+    top: 7vh;
+  }
+
+  .filters-bar {
+    background: #0f1115fa;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    padding: 8px 15px;
+  }
+
+  .filter-pill {
+    padding: 5px 12px;
+    font-size: 11px;
+  }
+
+  .source-filter-btn span {
+    display: none;
+  }
+
+  .source-filter-btn {
+    padding: 6px;
+  }
+}
+
+/*# sourceMappingURL=styles_Matchfilters_css_bad6b30c._.single.css.map*/
