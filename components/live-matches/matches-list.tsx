@@ -126,7 +126,16 @@ export default function MatchesList() {
 
   // --- STYLES ---
   const s = {
-    container: { width: '100%', maxWidth: '1400px', margin: '0 auto', padding: '20px', minHeight: '100vh', position: 'relative' as const, zIndex: 10 },
+    // 🔥 UPDATED CONTAINER: Removed border, kept margin top
+    container: { 
+      width: '100%', 
+      maxWidth: '1400px', 
+      margin: '5vh auto 0 auto', 
+      padding: '20px', 
+      minHeight: '100vh', 
+      position: 'relative' as const, 
+      zIndex: 10 
+    },
     headerWrapper: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '15px', flexWrap: 'wrap' as const, gap: '15px', position: 'relative' as const, zIndex: 50 },
     titleGroup: { display: 'flex', alignItems: 'center', gap: '15px' },
     titleText: { fontSize: '24px', fontWeight: 900, color: '#fff', textTransform: 'uppercase' as const, margin: 0, display: 'flex', alignItems: 'center', gap: '12px', lineHeight: 1 },
@@ -138,7 +147,18 @@ export default function MatchesList() {
         background: active ? '#8db902' : 'transparent', color: active ? '#000' : '#ffffff', border: active ? '1px solid #8db902' : '1px solid #ffffff', boxShadow: active ? '0 0 10px rgba(141, 185, 2, 0.4)' : 'none'
     }),
     grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '15px' },
-    card: { background: '#050505', border: '1px solid #1a1a1a', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column' as const, position: 'relative' as const, overflow: 'hidden', minHeight: '110px' },
+    
+    // 🔥 UPDATED CARD: Added Green Border here
+    card: { 
+      background: '#050505', 
+      borderRadius: '10px', 
+      padding: '12px', 
+      display: 'flex', 
+      flexDirection: 'column' as const, 
+      position: 'relative' as const, 
+      overflow: 'hidden', 
+      minHeight: '110px' 
+    },
     matchSkeletonCard: { background: 'linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%)', backgroundSize: '1000px 100%', animation: 'shimmer 2s infinite linear', borderRadius: '10px', border: '1px solid #222', height: '110px', width: '100%' },
     shimmer: { background: 'linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%)', backgroundSize: '1000px 100%', animation: 'shimmer 2s infinite linear' }
   };
@@ -244,7 +264,8 @@ export default function MatchesList() {
                                             <div style={{fontSize:'11px', color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', maxWidth:'65%'}}>{match.title || match.competition || 'Match'}</div>
                                             <div>
                                                 {isLive ? (
-                                                    <span style={{background:'#8db902', color:'#000', fontSize:'9px', fontWeight:800, padding:'2px 6px', borderRadius:'4px'}}>
+                                                    // 🔥 UPDATED LIVE BADGE: RED BACKGROUND, WHITE TEXT
+                                                    <span style={{background:'#ff0000', color:'#fff', fontSize:'9px', fontWeight:800, padding:'2px 6px', borderRadius:'4px'}}>
                                                         {t.live}
                                                     </span>
                                                 ) : (

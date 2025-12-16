@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { ChevronLeft, ChevronRight, AlertTriangle, X, Clock } from 'lucide-react'
 
 /* --- IMPORTS --- */
-import FloatingImp from '../layout/Floatingimp'
 import '../../styles/Sportsgrid.css'
 
 // 🔥 IMPORT LANGUAGE HOOK
@@ -256,7 +255,6 @@ export default function SportsGrid() {
   if (loading) {
     return (
       <section className="sports-section">
-        <FloatingImp />
         <div className="section-header">
           <div className="title-group"><div className="skeleton-title-bar skeleton-shimmer"></div><div className="title-accent"></div></div>
           <div className="nav-controls"><div className="skeleton-nav-btn skeleton-shimmer"></div></div>
@@ -276,7 +274,6 @@ export default function SportsGrid() {
 
   return (
     <>
-    <FloatingImp />
     
     {/* 1. SPORTS CATEGORIES CAROUSEL */}
     <section className="sports-section">

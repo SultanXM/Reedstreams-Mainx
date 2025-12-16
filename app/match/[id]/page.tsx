@@ -365,14 +365,6 @@ function MatchPageContent() {
     window.open(url, '_blank', 'width=600,height=400')
   }
 
-  const embedCode = `<iframe src="https://reedstreams.com/embed/${matchId}" width="100%" height="500" frameborder="0" allowfullscreen></iframe>`
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(embedCode)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
   // HANDLE FEEDBACK SUBMIT
   const handleFeedbackSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -545,44 +537,8 @@ function MatchPageContent() {
                          </div>
                       )}
                       
-                      {/* Embed Toggle */}
-                      {!cinemaMode && (
-                        <button 
-                          className="action-btn"
-                          onClick={() => setShowEmbed(!showEmbed)}
-                          style={{
-                            background: showEmbed ? '#222' : '#111', border: '1px solid #222', color: '#ccc',
-                            padding: '10px 14px', borderRadius: '6px', fontSize: '11px', fontWeight: 700,
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase',
-                            flex: 1, justifyContent: 'center'
-                          }}
-                        >
-                          <Share2 size={14} /> {t.embed || "Embed"}
-                        </button>
-                      )}
+                      
                    </div>
-
-                   {/* 📜 EMBED CODE BOX */}
-                   {showEmbed && !cinemaMode && (
-                      <div style={{width:'100%', animation:'fadeIn 0.3s'}}>
-                        <div style={{
-                          background:'#000', padding:'10px', borderRadius:'6px', border:'1px solid #222', 
-                          display:'flex', gap:'8px', alignItems:'center'
-                        }}>
-                          <input 
-                            readOnly 
-                            value={embedCode} 
-                            style={{background:'transparent', border:'none', color:'#888', width:'100%', fontSize:'11px', fontFamily:'monospace', outline:'none'}} 
-                          />
-                          <button onClick={handleCopy} style={{background:'transparent', border:'none', cursor:'pointer', color: copied ? '#8db902' : '#fff'}}>
-                            {copied ? <CheckCircle size={16} /> : <Copy size={16} />}
-                          </button>
-                          <button onClick={() => setShowEmbed(false)} style={{background:'transparent', border:'none', cursor:'pointer', color:'#444'}}>
-                            <X size={14} />
-                          </button>
-                        </div>
-                      </div>
-                   )}
                 </div>
 
               </div>

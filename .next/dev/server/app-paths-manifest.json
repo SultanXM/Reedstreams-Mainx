@@ -1,6 +1,5 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/api/matches/route": "app/api/matches/route.js",
   "/api/stream/[source]/[id]/route": "app/api/stream/[source]/[id]/route.js",
   "/live-matches/page": "app/live-matches/page.js",
   "/match/[id]/page": "app/match/[id]/page.js",

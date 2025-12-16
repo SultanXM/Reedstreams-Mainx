@@ -738,10 +738,6 @@
     display: inline;
   }
 
-  .inline-block {
-    display: inline-block;
-  }
-
   .inline-flex {
     display: inline-flex;
   }
@@ -1998,10 +1994,6 @@
     font-variant-numeric: var(--tw-ordinal, ) var(--tw-slashed-zero, ) var(--tw-numeric-figure, ) var(--tw-numeric-spacing, ) var(--tw-numeric-fraction, );
   }
 
-  .underline {
-    text-decoration-line: underline;
-  }
-
   .underline-offset-4 {
     text-underline-offset: 4px;
   }
@@ -2268,10 +2260,6 @@
 
   .\[--cell-size\:--spacing\(8\)\] {
     --cell-size: calc(var(--spacing) * 8);
-  }
-
-  .fade-in {
-    --tw-enter-opacity: 0;
   }
 
   .group-focus-within\/menu-item\:opacity-100:is(:where(.group\/menu-item):focus-within *) {

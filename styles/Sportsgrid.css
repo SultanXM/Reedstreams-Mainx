@@ -112,6 +112,11 @@ body {
   background: transparent !important;
 }
 
+.sports-section {
+  
+  margin-top: 5vh;
+
+}
 .matches-row-section {
   width: 100%;
   max-width: 1400px;
@@ -420,3 +425,10 @@ body {
 @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
 @media (max-width: 768px) { .api-error-toast { bottom: 85px; right: 15px; left: 15px; width: auto; animation: slideUpMobile 0.4s ease-out; } }
 @keyframes slideUpMobile { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 786px) {
+
+  .sports-section {
+    margin-top: 5vh;
+  }
+
+}

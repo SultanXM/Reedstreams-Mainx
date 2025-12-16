@@ -1,18 +1,18 @@
 {
   "app": {
-    "[project]/Reedstreams-Mainx/app/_not-found/page": [
+    "[project]/app/_not-found/page": [
       "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
       "static/media/797e433ab948586e-s.p.dbea232f.woff2"
     ],
-    "[project]/Reedstreams-Mainx/app/live-matches/page": [
+    "[project]/app/live-matches/page": [
       "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
       "static/media/797e433ab948586e-s.p.dbea232f.woff2"
     ],
-    "[project]/Reedstreams-Mainx/app/match/[id]/page": [
+    "[project]/app/match/[id]/page": [
       "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
       "static/media/797e433ab948586e-s.p.dbea232f.woff2"
     ],
-    "[project]/Reedstreams-Mainx/app/page": [
+    "[project]/app/page": [
       "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
       "static/media/797e433ab948586e-s.p.dbea232f.woff2"
     ]
