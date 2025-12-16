@@ -7,7 +7,7 @@ import { ChevronLeft, Calendar, AlertTriangle, RefreshCw, ArrowUpRight } from "l
 import { useLanguage } from "@/context/language-context";
 
 /* =========================================
-   1. THE "MILLION DOLLAR" BLIZZARD ENGINE
+   1. THE BLIZZARD ENGINE (Background)
    ========================================= */
 const globalCss = `
   /* GLOBAL SETTINGS */
@@ -37,15 +37,6 @@ const SPORT_ID_MAP: Record<string, string> = {
 function getBadgeUrl(badgeId: string | undefined): string {
   if (!badgeId) return '/placeholder-badge.webp' 
   return `${STREAMED_API_BASE}/images/badge/${badgeId}.webp`
-}
-
-function getCardShade(matchId: string): string {
-  let hash = 0;
-  for (let i = 0; i < matchId.length; i++) {
-    hash = matchId.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const seed = (Math.abs(hash) % 15) + 1;
-  return `card-shade-${seed}`;
 }
 
 interface Match {
@@ -126,7 +117,6 @@ export default function MatchesList() {
 
   // --- STYLES ---
   const s = {
-    // 🔥 UPDATED CONTAINER: Removed border, kept margin top
     container: { 
       width: '100%', 
       maxWidth: '1400px', 
@@ -148,16 +138,21 @@ export default function MatchesList() {
     }),
     grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '15px' },
     
-    // 🔥 UPDATED CARD: Added Green Border here
+    // 🔥 FIXED: UNIFORM CARD STYLE (NO RANDOM COLORS)
     card: { 
-      background: '#050505', 
-      borderRadius: '10px', 
-      padding: '12px', 
+      // Solid Dark Grey Background (Lighter than body #020305)
+      background: '#1e1e1e', 
+      // Subtle Border
+      border: '1px solid #333333',
+      borderRadius: '12px', 
+      padding: '14px', 
       display: 'flex', 
       flexDirection: 'column' as const, 
       position: 'relative' as const, 
       overflow: 'hidden', 
-      minHeight: '110px' 
+      minHeight: '115px',
+      boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+      transition: 'all 0.2s ease'
     },
     matchSkeletonCard: { background: 'linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%)', backgroundSize: '1000px 100%', animation: 'shimmer 2s infinite linear', borderRadius: '10px', border: '1px solid #222', height: '110px', width: '100%' },
     shimmer: { background: 'linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%)', backgroundSize: '1000px 100%', animation: 'shimmer 2s infinite linear' }
@@ -171,10 +166,8 @@ export default function MatchesList() {
     </>
   );
 
-  // 🔥 UPDATED LOADING STATE: Now creates skeletons for Header & Filter Bar too
   if (loading) return ( 
     <PageWrapper>
-      {/* Header Skeleton */}
       <div style={s.headerWrapper}>
         <div style={{display: 'flex', gap: '15px', alignItems: 'center'}}>
            <div style={{width:'4px', height:'24px', background:'#222', borderRadius:'2px'}}></div>
@@ -182,15 +175,11 @@ export default function MatchesList() {
         </div>
         <div style={{...s.shimmer, width: '120px', height: '20px', borderRadius: '4px'}}></div>
       </div>
-
-      {/* Filter Bar Skeleton */}
       <div style={s.filterBar}>
         <div style={{...s.shimmer, width: '100px', height: '40px', borderRadius: '8px'}}></div>
         <div style={{...s.shimmer, width: '120px', height: '40px', borderRadius: '8px'}}></div>
         <div style={{...s.shimmer, width: '100px', height: '40px', borderRadius: '8px'}}></div>
       </div>
-
-      {/* Grid Skeleton */}
       <div style={s.grid}>
         {[...Array(12)].map((_, i) => <div key={i} style={s.matchSkeletonCard}></div>)}
       </div>
@@ -231,9 +220,7 @@ export default function MatchesList() {
                             const now = new Date();
                             const mDate = new Date(match.date!);
                             const isLive = mDate <= now && mDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
-                            const shade = getCardShade(match.id);
-                            const bgStyle = shade.includes('1') ? 'repeating-linear-gradient(45deg, #050505, #050505 10px, #0d0d0d 10px, #0d0d0d 20px)' : '#050505';
-
+                            
                             return (
                                 <Link 
                                     key={match.id} 
@@ -246,30 +233,32 @@ export default function MatchesList() {
                                         }));
                                     }}
                                 >
-                                    <div style={{...s.card, background: bgStyle}}>
-                                        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'8px' }}>
+                                    <div style={s.card}>
+                                        {/* Glass Overlay for Texture (Kept it subtle) */}
+                                        <div style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(255,255,255,0.02)', pointerEvents: 'none'}}></div>
+
+                                        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'8px', zIndex: 2 }}>
                                             <div style={{display:'flex', flexDirection:'column', alignItems:'center', width:'40%'}}>
-                                                <img src={getBadgeUrl(match.teams?.home?.badge)} style={{width:'32px', height:'32px', objectFit:'contain'}} alt="Home" />
-                                                <span style={{fontSize:'11px', color:'#eee', marginTop:'4px', fontWeight:600}}>{match.teams?.home?.name || t.team_home}</span>
+                                                <img src={getBadgeUrl(match.teams?.home?.badge)} style={{width:'36px', height:'36px', objectFit:'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))'}} alt="Home" />
+                                                <span style={{fontSize:'12px', color:'#fff', marginTop:'6px', fontWeight:700, textShadow:'0 1px 2px rgba(0,0,0,0.5)'}}>{match.teams?.home?.name || t.team_home}</span>
                                             </div>
                                             
-                                            <div style={{fontSize:'10px', fontWeight:900, color:'#444', fontStyle:'italic'}}>{t.vs_badge}</div>
+                                            <div style={{fontSize:'10px', fontWeight:900, color: '#444', fontStyle:'italic', opacity: 0.8}}>{t.vs_badge}</div>
                                             
                                             <div style={{display:'flex', flexDirection:'column', alignItems:'center', width:'40%'}}>
-                                                <img src={getBadgeUrl(match.teams?.away?.badge)} style={{width:'32px', height:'32px', objectFit:'contain'}} alt="Away" />
-                                                <span style={{fontSize:'11px', color:'#eee', marginTop:'4px', fontWeight:600}}>{match.teams?.away?.name || t.team_away}</span>
+                                                <img src={getBadgeUrl(match.teams?.away?.badge)} style={{width:'36px', height:'36px', objectFit:'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))'}} alt="Away" />
+                                                <span style={{fontSize:'12px', color:'#fff', marginTop:'6px', fontWeight:700, textShadow:'0 1px 2px rgba(0,0,0,0.5)'}}>{match.teams?.away?.name || t.team_away}</span>
                                             </div>
                                         </div>
-                                        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', borderTop:'1px solid #222', paddingTop:'8px', marginTop:'auto' }}>
-                                            <div style={{fontSize:'11px', color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', maxWidth:'65%'}}>{match.title || match.competition || 'Match'}</div>
+                                        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', borderTop:`1px solid #333`, paddingTop:'8px', marginTop:'auto', zIndex: 2 }}>
+                                            <div style={{fontSize:'11px', color:'#bbb', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', maxWidth:'65%'}}>{match.title || match.competition || 'Match'}</div>
                                             <div>
                                                 {isLive ? (
-                                                    // 🔥 UPDATED LIVE BADGE: RED BACKGROUND, WHITE TEXT
-                                                    <span style={{background:'#ff0000', color:'#fff', fontSize:'9px', fontWeight:800, padding:'2px 6px', borderRadius:'4px'}}>
+                                                    <span style={{background:'#e63946', color:'#fff', fontSize:'9px', fontWeight:800, padding:'3px 8px', borderRadius:'4px', boxShadow:'0 0 10px rgba(230, 57, 70, 0.4)'}}>
                                                         {t.live}
                                                     </span>
                                                 ) : (
-                                                    <span style={{background:'#111', color:'#888', fontSize:'9px', fontWeight:600, padding:'2px 6px', borderRadius:'4px', border:'1px solid #222'}}>
+                                                    <span style={{background:'rgba(0,0,0,0.3)', color:'#aaa', fontSize:'9px', fontWeight:600, padding:'3px 8px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.1)'}}>
                                                         {new Date(match.date!).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
                                                     </span>
                                                 )}
