@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, AlertTriangle, X, Clock } from 'lucide-react'
+import { ChevronLeft, ChevronRight, AlertTriangle, X } from 'lucide-react'
 
 /* --- IMPORTS --- */
 import '../../styles/Sportsgrid.css'
@@ -20,9 +20,10 @@ interface APIMatch {
 }
 
 // --- CONSTANTS ---
+// 🔥 FIXED: MMA and Boxing are now placed BEFORE Tennis
 const SPORT_PRIORITY = [
   'basketball', 'football', 'americanfootball', 'hockey', 'baseball', 
-  'motorsport', 'mma', 'tennis', 'rugby', 'golf', 'darts', 'cricket'
+  'motorsport', 'mma', 'boxing', 'tennis', 'rugby', 'golf', 'darts', 'cricket'
 ];
 
 const FALLBACK_SPORTS = [
@@ -31,8 +32,9 @@ const FALLBACK_SPORTS = [
   { id: 'american-football', name: 'americanfootball' },
   { id: 'hockey', name: 'hockey' },
   { id: 'baseball', name: 'baseball' },
+  { id: 'mma', name: 'MMA' },
+  { id: 'boxing', name: 'Boxing' },
   { id: 'motorsport', name: 'motorsport' },
-  { id: 'mma', name: 'mma' },
   { id: 'tennis', name: 'tennis' },
   { id: 'rugby', name: 'rugby' },
   { id: 'golf', name: 'golf' },
@@ -42,7 +44,7 @@ const FALLBACK_SPORTS = [
 
 const sportIcons: Record<string, string> = {
   football: '⚽', americanfootball: '🏈', basketball: '🏀', baseball: '⚾',
-  hockey: '🏒', tennis: '🎾', mma: '🥊', boxing: '🥊', cricket: '🏏',
+  hockey: '🏒', mma: '🥊', boxing: '🥊', tennis: '🎾',  cricket: '🏏',
   rugby: '🏉', motorsport: '🏁', motorsports: '🏎️', volleyball: '🏐',
   golf: '⛳', darts: '🎯',
 }
@@ -58,18 +60,23 @@ const sportNames: Record<string, string> = {
 // --- HELPERS ---
 function normalizeSportKey(sportName: string) {
   if (!sportName) return ''
-  return sportName.toLowerCase().replace(/\s+/g, '').replace(/[()]/g, '')
+  let key = sportName.toLowerCase().replace(/\s+/g, '').replace(/[()]/g, '')
+  
+  // 🔥 THE "DOCTOR STRANGE" FIX: Map variations to standard keys
+  if (key.includes('fight') || key.includes('ufc') || key.includes('mma') || key.includes('mixedmartial')) return 'mma'
+  if (key.includes('box')) return 'boxing'
+  if (key.includes('soccer')) return 'football'
+  
+  return key
 }
 
 function getSportIcon(sportName: string) {
   const normalizedKey = normalizeSportKey(sportName)
-  if (normalizedKey.includes('fight')) return sportIcons.mma
   return sportIcons[normalizedKey] || undefined
 }
 
 function getDisplaySportName(sport: string) {
   const normalizedKey = normalizeSportKey(sport)
-  if (normalizedKey.includes('fight')) return sportNames.mma
   return sportNames[normalizedKey] || sport.charAt(0).toUpperCase() + sport.slice(1)
 }
 
@@ -99,16 +106,22 @@ function getRandomShade(index: number) {
   return `card-shade-${seed}`;
 }
 
+// 🔥 RE-WRITTEN SORTING: Uses normalized keys to match the priority list
 function sortSportsList(data: any[]) {
-  return data.sort((a: any, b: any) => {
-      const keyA = normalizeSportKey(a.name);
-      const keyB = normalizeSportKey(b.name);
-      const indexA = SPORT_PRIORITY.indexOf(keyA);
-      const indexB = SPORT_PRIORITY.indexOf(keyB);
-      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-      if (indexA !== -1) return -1;
-      if (indexB !== -1) return 1;
-      return 0;
+  return [...data].sort((a, b) => {
+    const keyA = normalizeSportKey(a.name);
+    const keyB = normalizeSportKey(b.name);
+    
+    const indexA = SPORT_PRIORITY.indexOf(keyA);
+    const indexB = SPORT_PRIORITY.indexOf(keyB);
+
+    // If both are in priority list, sort by index
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    // Put priority items first
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    // Default to alphabetical
+    return a.name.localeCompare(b.name);
   });
 }
 
@@ -150,7 +163,6 @@ function MatchesRow({ title, matches }: { title: string, matches: APIMatch[] }) 
             const shade = getRandomShade(index)
             
             return (
-              // 🔥 FIXED LINK: Point to /match/ID and Save Data
               <Link 
                 key={match.id} 
                 href={`/match/${match.id}`} 
@@ -201,6 +213,8 @@ export default function SportsGrid() {
         const sportsRes = await fetch(`${STREAMED_API_BASE}/sports`)
         if (!sportsRes.ok) throw new Error('API Error')
         let sportsData = await sportsRes.json()
+        
+        // 🔥 SORT THE LIST BEFORE SETTING STATE
         sportsData = sortSportsList(sportsData);
 
         const matchesRes = await fetch(`${STREAMED_API_BASE}/matches/all-today`)
@@ -213,7 +227,7 @@ export default function SportsGrid() {
 
         const sportsWithCounts = sportsData.map((sport: any) => {
            const sportMatches = validMatches.filter(m => {
-             return m.category === sport.id || normalizeSportKey(m.category) === normalizeSportKey(sport.name)
+             return normalizeSportKey(m.category) === normalizeSportKey(sport.name)
            })
            const activeCount = sportMatches.filter(m => isCurrentlyActive(m.date)).length
            return { ...sport, matchCount: activeCount }
@@ -222,7 +236,6 @@ export default function SportsGrid() {
         setApiError(false)
 
       } catch (error) {
-        console.warn('Using Fallback Data', error)
         setApiError(true)
         const sortedFallback = sortSportsList([...FALLBACK_SPORTS]);
         const fallbackWithCounts = sortedFallback.map(sport => ({ ...sport, matchCount: 0 }))
@@ -244,13 +257,13 @@ export default function SportsGrid() {
     }
   }
 
-  const nflMatches = allMatches.filter(m => m.category === 'americanfootball')
-  const basketballMatches = allMatches.filter(m => m.category === 'basketball')
-  const soccerMatches = allMatches.filter(m => m.category === 'football')
-  const hockeyMatches = allMatches.filter(m => m.category === 'hockey')
-  const cricketMatches = allMatches.filter(m => m.category === 'cricket')
-  const f1Matches = allMatches.filter(m => m.category === 'motorsport' || m.category === 'motorsports')
-
+  // Filter groups for row displays
+  const nflMatches = allMatches.filter(m => normalizeSportKey(m.category) === 'americanfootball')
+  const basketballMatches = allMatches.filter(m => normalizeSportKey(m.category) === 'basketball')
+  const soccerMatches = allMatches.filter(m => normalizeSportKey(m.category) === 'football')
+  const hockeyMatches = allMatches.filter(m => normalizeSportKey(m.category) === 'hockey')
+  const cricketMatches = allMatches.filter(m => normalizeSportKey(m.category) === 'cricket')
+  const mmaMatches = allMatches.filter(m => normalizeSportKey(m.category) === 'mma' || normalizeSportKey(m.category) === 'boxing')
 
   if (loading) {
     return (
@@ -262,20 +275,13 @@ export default function SportsGrid() {
         <div className="sports-carousel-container" style={{ overflow: 'hidden' }}>
           {[...Array(8)].map((_, i) => <div key={i} className="skeleton-card"></div>)}
         </div>
-        <div style={{ marginTop: '30px' }}>
-             <div className="skeleton-title-bar skeleton-shimmer" style={{ marginBottom: '15px' }}></div>
-             <div className="sports-carousel-container" style={{ overflow: 'hidden' }}>
-                {[...Array(4)].map((_, i) => <div key={i} className="match-skeleton-card"></div>)}
-             </div>
-        </div>
       </section>
     )
   }
 
   return (
     <>
-    
-    {/* 1. SPORTS CATEGORIES CAROUSEL */}
+    {/* 1. CATEGORIES CAROUSEL */}
     <section className="sports-section">
       <div className="section-header">
         <div className="title-group">
@@ -295,7 +301,6 @@ export default function SportsGrid() {
             const isLive = sport.matchCount > 0
             if (!icon) return null
             return (
-              // 🔥 CORRECT LINK FOR CATEGORIES: /live-matches?sportId=...
               <Link 
                 key={sport.id}
                 href={`/live-matches?sportId=${sport.id}&sportName=${encodeURIComponent(sport.name)}`}
@@ -322,23 +327,18 @@ export default function SportsGrid() {
 
     {/* 2. MATCH ROWS */}
     <MatchesRow title={t.top_matches} matches={allMatches.slice(0, 10)} />
-    
+    {mmaMatches.length > 0 && <MatchesRow title="MMA & Boxing" matches={mmaMatches} />}
     {nflMatches.length > 0 && <MatchesRow title={t.nfl} matches={nflMatches} />}
     {basketballMatches.length > 0 && <MatchesRow title={t.basketball} matches={basketballMatches} />}
     {soccerMatches.length > 0 && <MatchesRow title={t.soccer} matches={soccerMatches} />}
     {hockeyMatches.length > 0 && <MatchesRow title={t.hockey} matches={hockeyMatches} />}
     {cricketMatches.length > 0 && <MatchesRow title={t.cricket} matches={cricketMatches} />}
-    {f1Matches.length > 0 && <MatchesRow title={t.f1} matches={f1Matches} />}
 
     {apiError && (
       <div className="api-error-toast">
         <div className="error-header">
           <span className="error-title"><AlertTriangle size={14} /> {t.server_error}</span>
           <button className="error-close" onClick={() => setApiError(false)}><X size={14} /></button>
-        </div>
-        <div className="error-content">
-          <span className="error-subtitle">{t.offline}</span>
-          <span className="error-message">{t.home}</span>
         </div>
       </div>
     )}
