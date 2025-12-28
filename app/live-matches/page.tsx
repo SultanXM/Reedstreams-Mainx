@@ -11,15 +11,13 @@ export default function LiveMatchesPage() {
   return (
     // Relative to contain content, transparent to show body bg
     <main className="min-h-screen relative bg-transparent">
-      
+      <Header />
       {/* SNOWFALL LAYERS */}
       <div className="snow-wrapper">
          <div className="snow-layer layer-1"></div>
          <div className="snow-layer layer-2"></div>
          <div className="snow-layer layer-3"></div>
       </div>
-
-      <Header />
       
       <section className="matches-section">
         <Suspense fallback={<div className="lm-loading">Loading matches...</div>}>

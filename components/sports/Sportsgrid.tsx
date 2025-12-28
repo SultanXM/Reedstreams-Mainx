@@ -2,44 +2,43 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, AlertTriangle, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, AlertTriangle, X, PlayCircle } from 'lucide-react'
 
 /* --- IMPORTS --- */
 import '../../styles/Sportsgrid.css'
-
-// 🔥 IMPORT LANGUAGE HOOK
 import { useLanguage } from "@/context/language-context"
 
-const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'https://streamed.pk/api'
+const STREAMED_BASE_URL = 'https://streamed.pk' 
+const STREAMED_API_BASE = 'https://streamed.pk/api' 
 
-// --- TYPES ---
-interface Team { name: string; badge: string; }
-interface APIMatch {
-    id: string; title: string; category: string; date: number;
-    teams?: { home?: Team; away?: Team; }; sources: any[];
+// GENERIC FALLBACK IMAGE (NFL THEMED STADIUM)
+const GENERIC_NFL_BG = "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?q=80&w=1000&auto=format&fit=crop";
+
+interface APITeam {
+  name: string;
+  badge: string; 
 }
 
-// --- CONSTANTS ---
-// 🔥 FIXED: MMA and Boxing are now placed BEFORE Tennis
+interface APIMatch {
+    id: string;
+    title: string;
+    category: string;
+    date: number;
+    poster?: string; 
+    popular: boolean;
+    teams?: {
+        home?: APITeam;
+        away?: APITeam;
+    };
+    sources: {
+        source: string;
+        id: string;
+    }[];
+}
+
 const SPORT_PRIORITY = [
   'basketball', 'football', 'americanfootball', 'hockey', 'baseball', 
   'motorsport', 'mma', 'boxing', 'tennis', 'rugby', 'golf', 'darts', 'cricket'
-];
-
-const FALLBACK_SPORTS = [
-  { id: 'basketball', name: 'basketball' },
-  { id: 'football', name: 'football' },
-  { id: 'american-football', name: 'americanfootball' },
-  { id: 'hockey', name: 'hockey' },
-  { id: 'baseball', name: 'baseball' },
-  { id: 'mma', name: 'MMA' },
-  { id: 'boxing', name: 'Boxing' },
-  { id: 'motorsport', name: 'motorsport' },
-  { id: 'tennis', name: 'tennis' },
-  { id: 'rugby', name: 'rugby' },
-  { id: 'golf', name: 'golf' },
-  { id: 'darts', name: 'darts' },
-  { id: 'cricket', name: 'cricket' }
 ];
 
 const sportIcons: Record<string, string> = {
@@ -57,16 +56,19 @@ const sportNames: Record<string, string> = {
   golf: 'Golf', darts: 'Darts',
 }
 
-// --- HELPERS ---
+function getMatchBackground(match: APIMatch) {
+  if (match.poster) {
+    return `${STREAMED_BASE_URL}${match.poster}.webp`;
+  }
+  return null;
+}
+
 function normalizeSportKey(sportName: string) {
   if (!sportName) return ''
-  let key = sportName.toLowerCase().replace(/\s+/g, '').replace(/[()]/g, '')
-  
-  // 🔥 THE "DOCTOR STRANGE" FIX: Map variations to standard keys
-  if (key.includes('fight') || key.includes('ufc') || key.includes('mma') || key.includes('mixedmartial')) return 'mma'
+  let key = sportName.toLowerCase().replace(/[\s-]/g, '').replace(/[()]/g, '')
+  if (key.includes('fight') || key.includes('ufc') || key.includes('mma')) return 'mma'
   if (key.includes('box')) return 'boxing'
   if (key.includes('soccer')) return 'football'
-  
   return key
 }
 
@@ -82,14 +84,8 @@ function getDisplaySportName(sport: string) {
 
 function getBadgeUrl(badgeId: string | undefined): string {
   if (!badgeId) return '/placeholder-badge.webp' 
+  if (badgeId.startsWith('http')) return badgeId;
   return `${STREAMED_API_BASE}/images/badge/${badgeId}.webp`
-}
-
-function isMatchToday(timestamp: number): boolean {
-    const now = new Date();
-    const todayUTC = now.toISOString().slice(0, 10);
-    const matchDayUTC = new Date(timestamp).toISOString().slice(0, 10);
-    return todayUTC === matchDayUTC;
 }
 
 function isCurrentlyActive(timestamp: number): boolean {
@@ -101,31 +97,128 @@ function formatTime(timestamp: number): string {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
 }
 
-function getRandomShade(index: number) {
-  const seed = (index % 12) + 1; 
-  return `card-shade-${seed}`;
-}
-
-// 🔥 RE-WRITTEN SORTING: Uses normalized keys to match the priority list
 function sortSportsList(data: any[]) {
   return [...data].sort((a, b) => {
     const keyA = normalizeSportKey(a.name);
     const keyB = normalizeSportKey(b.name);
-    
     const indexA = SPORT_PRIORITY.indexOf(keyA);
     const indexB = SPORT_PRIORITY.indexOf(keyB);
-
-    // If both are in priority list, sort by index
     if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-    // Put priority items first
     if (indexA !== -1) return -1;
     if (indexB !== -1) return 1;
-    // Default to alphabetical
     return a.name.localeCompare(b.name);
   });
 }
 
-// --- SUB-COMPONENT: Match Row ---
+function getGradientClass(id: string) {
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+        hash = id.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % 15;
+    return `gradient-${index}`;
+}
+
+// --- FEATURED BANNER COMPONENT ---
+function FeaturedBanner({ matches }: { matches: APIMatch[] }) {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const { t } = useLanguage()
+
+  // Rotate every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % matches.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [matches.length])
+
+  if (!matches || matches.length === 0) return null
+
+  const match = matches[currentIndex]
+  const bgImage = getMatchBackground(match)
+  const home = match.teams?.home
+  const away = match.teams?.away
+  const hasLogos = home?.badge && away?.badge
+  const matchTitle = (home && away) ? `${home.name} vs ${away.name}` : match.title
+  
+  // LOGIC: Banner -> Logos (Gradient) -> Generic NFL Image
+  let cardStyle: React.CSSProperties = {}
+  let cardClass = "featured-hero"
+
+  if (bgImage) {
+      // 1. Has specific banner
+      cardStyle = { backgroundImage: `url(${bgImage})` }
+  } else if (hasLogos) {
+      // 2. Has Logos -> Show Gradient
+      cardStyle = { backgroundColor: 'rgba(2,3,5,0.8)' }
+      const gradientClass = getGradientClass(match.id)
+      cardClass += ` has-logos ${gradientClass}`
+  } else {
+      // 3. Last Resort -> Generic NFL Image
+      cardStyle = { backgroundImage: `url(${GENERIC_NFL_BG})` }
+      cardClass += " is-generic"
+  }
+
+  return (
+    <div className="featured-section">
+      {/* WRAPPER LINK: 
+         1. Href points to match page
+         2. onClick saves match data to session storage (same as regular cards)
+         3. Styles ensure it fills the space
+      */}
+      <Link 
+        href={`/match/${match.id}`} 
+        onClick={() => sessionStorage.setItem("currentMatch", JSON.stringify(match))}
+        style={{ display: 'block', width: '100%', textDecoration: 'none' }}
+      >
+          <div className={cardClass} style={cardStyle}>
+            
+            {/* Only show center logos if we are in state 2 (No Banner, But Has Logos) */}
+            {!bgImage && hasLogos ? (
+                 <div className="featured-logos">
+                    <img src={getBadgeUrl(home?.badge)} alt="Home" className="card-team-logo" />
+                    <span className="card-vs-text">VS</span>
+                    <img src={getBadgeUrl(away?.badge)} alt="Away" className="card-team-logo" />
+                 </div>
+            ) : null}
+
+            <div className="featured-overlay">
+              <div className="featured-info">
+                <span className="featured-label">Featured Match</span>
+                <h1 className="featured-title">{matchTitle}</h1>
+                <div className="featured-meta">
+                  <span style={{color: '#8db902'}}>{match.category}</span>
+                  <span>•</span>
+                  <span>{isCurrentlyActive(match.date) ? t.live : formatTime(match.date)}</span>
+                </div>
+              </div>
+              
+              {/* Changed from Link to Div to avoid nested <a> tags */}
+              <div className="featured-btn">
+                 <PlayCircle size={20} /> Watch Now
+              </div>
+            </div>
+            
+            <div className="featured-indicators">
+              {matches.map((_, idx) => (
+                <div 
+                  key={idx} 
+                  className={`indicator-dot ${idx === currentIndex ? 'active' : ''}`}
+                  onClick={(e) => {
+                      // IMPORTANT: Stop propagation so clicking a dot doesn't navigate to the page
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setCurrentIndex(idx);
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+      </Link>
+    </div>
+  )
+}
+
 function MatchesRow({ title, matches }: { title: string, matches: APIMatch[] }) {
   const rowRef = useRef<HTMLDivElement>(null)
   const { t } = useLanguage()
@@ -134,7 +227,7 @@ function MatchesRow({ title, matches }: { title: string, matches: APIMatch[] }) 
 
   const scroll = (direction: 'left' | 'right') => {
     if (rowRef.current) {
-      const scrollAmount = 300
+      const scrollAmount = 260 
       rowRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth'
@@ -147,21 +240,38 @@ function MatchesRow({ title, matches }: { title: string, matches: APIMatch[] }) 
       <div className="section-header">
         <div className="title-group">
           <h2 className="section-title">{title}</h2>
-          <div className="title-accent"></div>
         </div>
         <div className="nav-controls">
           <button className="nav-btn" onClick={() => scroll('left')}><ChevronLeft width={20} /></button>
           <button className="nav-btn" onClick={() => scroll('right')}><ChevronRight width={20} /></button>
         </div>
       </div>
+      
       <div className="carousel-wrapper">
         <div className="sports-carousel-container" ref={rowRef}>
-          {matches.map((match, index) => {
+          {matches.map((match) => {
             const live = isCurrentlyActive(match.date)
             const home = match.teams?.home
             const away = match.teams?.away
-            const shade = getRandomShade(index)
+            const bgImage = getMatchBackground(match);
+            const hasLogos = home?.badge && away?.badge;
             
+            const matchTitle = (home && away) ? `${home.name} vs ${away.name}` : match.title;
+
+            let cardStyle: React.CSSProperties = {};
+            let cardClass = "match-card-visual";
+
+            if (bgImage) {
+                cardStyle = { backgroundImage: `url(${bgImage})` };
+            } else if (hasLogos) {
+                cardStyle = { backgroundColor: '#020305' }; 
+                const gradientClass = getGradientClass(match.id);
+                cardClass += ` has-logos ${gradientClass}`;
+            } else {
+                cardStyle = { backgroundColor: '#0a0a0a' }; 
+                cardClass += " is-fallback";
+            }
+
             return (
               <Link 
                 key={match.id} 
@@ -169,23 +279,32 @@ function MatchesRow({ title, matches }: { title: string, matches: APIMatch[] }) 
                 className="match-card-link"
                 onClick={() => sessionStorage.setItem("currentMatch", JSON.stringify(match))}
               >
-                <div className={`match-card ${shade}`}>
-                  <div className="match-teams">
-                    <div className="team-info">
-                       <img src={getBadgeUrl(home?.badge)} alt={home?.name} className="team-logo" />
-                       <span className="team-name line-clamp-1">{home?.name || 'Home'}</span>
+                <div className={cardClass} style={cardStyle}>
+                  <div className="match-card-overlay"></div>
+                  
+                  {live && <span className="card-live-badge">{t.live}</span>}
+
+                  {!bgImage && hasLogos ? (
+                    <div className="match-logos-container">
+                      <img src={getBadgeUrl(home?.badge)} alt="Home" className="card-team-logo" loading="lazy" />
+                      <span className="card-vs-text">VS</span>
+                      <img src={getBadgeUrl(away?.badge)} alt="Away" className="card-team-logo" loading="lazy" />
                     </div>
-                    <span className="vs-badge">VS</span>
-                    <div className="team-info">
-                       <img src={getBadgeUrl(away?.badge)} alt={away?.name} className="team-logo" />
-                       <span className="team-name line-clamp-1">{away?.name || 'Away'}</span>
+                  ) : !bgImage && !hasLogos ? (
+                    <div className="fallback-content">
+                       <span className="reed-logo-text">REED<span className="reed-highlight">STREAMS</span></span>
+                       <div className="reed-underline"></div>
+                       <span className="fallback-category">{match.category}</span>
                     </div>
-                  </div>
-                  <div className="match-meta">
-                    <span className="league-name">{match.category || 'Match'}</span>
-                    <span className={`time-badge ${live ? 'live-badge-sm' : ''}`}>
-                       {live ? t.live : formatTime(match.date)}
-                    </span>
+                  ) : null}
+                </div>
+
+                <div className="match-card-info">
+                  <span className="match-card-title">{matchTitle}</span>
+                  <div className="match-card-sub">
+                     <span className="match-league-name">{match.category}</span>
+                     <span className="sub-sep">•</span>
+                     <span>{live ? t.live : formatTime(match.date)}</span>
                   </div>
                 </div>
               </Link>
@@ -197,7 +316,6 @@ function MatchesRow({ title, matches }: { title: string, matches: APIMatch[] }) 
   )
 }
 
-// --- MAIN COMPONENT ---
 export default function SportsGrid() {
   const [sports, setSports] = useState<any[]>([])
   const [allMatches, setAllMatches] = useState<APIMatch[]>([])
@@ -211,35 +329,29 @@ export default function SportsGrid() {
     async function fetchData() {
       try {
         const sportsRes = await fetch(`${STREAMED_API_BASE}/sports`)
-        if (!sportsRes.ok) throw new Error('API Error')
+        if (!sportsRes.ok) throw new Error('Sports API Error')
         let sportsData = await sportsRes.json()
-        
-        // 🔥 SORT THE LIST BEFORE SETTING STATE
         sportsData = sortSportsList(sportsData);
 
         const matchesRes = await fetch(`${STREAMED_API_BASE}/matches/all-today`)
+        if (!matchesRes.ok) throw new Error('Matches API Error')
         const matchesData: APIMatch[] = await matchesRes.json()
         
-        const validMatches = matchesData.filter(m => 
-             isMatchToday(m.date) && m.sources && m.sources.length > 0
-        )
+        const validMatches = matchesData.filter(m => m.sources && m.sources.length > 0)
         setAllMatches(validMatches)
 
         const sportsWithCounts = sportsData.map((sport: any) => {
-           const sportMatches = validMatches.filter(m => {
-             return normalizeSportKey(m.category) === normalizeSportKey(sport.name)
-           })
+           const sportMatches = validMatches.filter(m => normalizeSportKey(m.category) === normalizeSportKey(sport.name))
            const activeCount = sportMatches.filter(m => isCurrentlyActive(m.date)).length
            return { ...sport, matchCount: activeCount }
         })
+
         setSports(sportsWithCounts)
         setApiError(false)
 
       } catch (error) {
+        console.error("API Fetch Error:", error);
         setApiError(true)
-        const sortedFallback = sortSportsList([...FALLBACK_SPORTS]);
-        const fallbackWithCounts = sortedFallback.map(sport => ({ ...sport, matchCount: 0 }))
-        setSports(fallbackWithCounts)
       } finally {
         setLoading(false)
       }
@@ -249,7 +361,7 @@ export default function SportsGrid() {
 
   const scroll = (direction: 'left' | 'right') => {
     if (containerRef.current) {
-      const scrollAmount = 350
+      const scrollAmount = 300
       containerRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth'
@@ -257,7 +369,7 @@ export default function SportsGrid() {
     }
   }
 
-  // Filter groups for row displays
+  // --- LOGIC FOR FILTERING MATCHES ---
   const nflMatches = allMatches.filter(m => normalizeSportKey(m.category) === 'americanfootball')
   const basketballMatches = allMatches.filter(m => normalizeSportKey(m.category) === 'basketball')
   const soccerMatches = allMatches.filter(m => normalizeSportKey(m.category) === 'football')
@@ -265,28 +377,55 @@ export default function SportsGrid() {
   const cricketMatches = allMatches.filter(m => normalizeSportKey(m.category) === 'cricket')
   const mmaMatches = allMatches.filter(m => normalizeSportKey(m.category) === 'mma' || normalizeSportKey(m.category) === 'boxing')
 
+  // --- FEATURED MATCHES LOGIC (NFL Priority) ---
+  // 1. Get all NFL matches
+  // 2. Get everything else
+  // 3. Combine and slice top 6
+  const featuredMatches = [
+    ...allMatches.filter(m => normalizeSportKey(m.category) === 'americanfootball'),
+    ...allMatches.filter(m => normalizeSportKey(m.category) !== 'americanfootball')
+  ].slice(0, 6);
+
   if (loading) {
     return (
-      <section className="sports-section">
-        <div className="section-header">
-          <div className="title-group"><div className="skeleton-title-bar skeleton-shimmer"></div><div className="title-accent"></div></div>
-          <div className="nav-controls"><div className="skeleton-nav-btn skeleton-shimmer"></div></div>
-        </div>
-        <div className="sports-carousel-container" style={{ overflow: 'hidden' }}>
-          {[...Array(8)].map((_, i) => <div key={i} className="skeleton-card"></div>)}
-        </div>
-      </section>
+      <div style={{minHeight: '100vh'}}>
+         {/* 1. Banner Skeleton */}
+        <div className="skeleton-banner skeleton-shimmer"></div>
+
+         {/* 2. Sports Skeleton */}
+        <section className="sports-section">
+            <div className="section-header">
+                <div className="skeleton-title-bar skeleton-shimmer"></div>
+            </div>
+            <div className="sports-carousel-container" style={{ overflow: 'hidden', paddingBottom: '20px' }}>
+              {[...Array(8)].map((_, i) => <div key={i} className="skeleton-card skeleton-sport"></div>)}
+            </div>
+        </section>
+        
+        {/* 3. Match Rows Skeletons (3 Rows to fill page) */}
+        {[...Array(3)].map((_, rowIdx) => (
+            <section key={rowIdx} className="matches-row-section" style={{marginTop: '30px'}}>
+                <div className="section-header">
+                    <div className="skeleton-title-bar skeleton-shimmer"></div>
+                </div>
+                <div className="sports-carousel-container" style={{ overflow: 'hidden' }}>
+                {[...Array(4)].map((_, i) => <div key={i} className="skeleton-card skeleton-match"></div>)}
+                </div>
+            </section>
+        ))}
+      </div>
     )
   }
 
   return (
     <>
-    {/* 1. CATEGORIES CAROUSEL */}
+    {/* Featured Banner (Above Sports) */}
+    {featuredMatches.length > 0 && <FeaturedBanner matches={featuredMatches} />}
+
     <section className="sports-section">
       <div className="section-header">
         <div className="title-group">
           <h2 className="section-title">{t.sports_heading}</h2>
-          <div className="title-accent"></div>
         </div>
         <div className="nav-controls">
           <button className="nav-btn" onClick={() => scroll('left')}><ChevronLeft width={20} /></button>
@@ -325,13 +464,17 @@ export default function SportsGrid() {
       </div>
     </section>
 
-    {/* 2. MATCH ROWS */}
+    {/* Top 10 Matches (Any Sport) */}
     <MatchesRow title={t.top_matches} matches={allMatches.slice(0, 10)} />
-    {mmaMatches.length > 0 && <MatchesRow title="MMA & Boxing" matches={mmaMatches} />}
+    
+    {/* Explicit Order */}
     {nflMatches.length > 0 && <MatchesRow title={t.nfl} matches={nflMatches} />}
     {basketballMatches.length > 0 && <MatchesRow title={t.basketball} matches={basketballMatches} />}
     {soccerMatches.length > 0 && <MatchesRow title={t.soccer} matches={soccerMatches} />}
     {hockeyMatches.length > 0 && <MatchesRow title={t.hockey} matches={hockeyMatches} />}
+
+    {/* Remaining Categories */}
+    {mmaMatches.length > 0 && <MatchesRow title="MMA & Boxing" matches={mmaMatches} />}
     {cricketMatches.length > 0 && <MatchesRow title={t.cricket} matches={cricketMatches} />}
 
     {apiError && (

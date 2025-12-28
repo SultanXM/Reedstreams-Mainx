@@ -1,408 +1,271 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, Search, Globe, MessageCircle, X, Send, AlertOctagon } from 'lucide-react'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-  SheetTrigger,
-} from '@/components/ui/sheet'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-
-import { useLanguage, Language } from '@/context/language-context'
+import { useRouter } from 'next/navigation'
+import { Search, Menu, X, AlertOctagon } from 'lucide-react'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import '../../styles/header.css'
 
-const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'https://streamed.pk/api'
+const API_BASE = 'https://streamed.pk/api'
 
-// Custom Discord Icon
-const DiscordIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M20.317 4.36981C18.796 3.63481 17.153 3.11181 15.442 2.81581C15.442 2.81581 15.373 2.92181 15.303 3.02781C13.849 2.50481 12.325 2.50481 10.87 3.02781C10.8 2.92181 10.731 2.81581 10.731 2.81581C9.02 3.11181 7.377 3.63481 5.856 4.36981C2.503 8.00081 1.631 11.4588 2.474 14.7718C4.582 17.8428 7.822 19.6648 11.532 19.6648C11.532 19.6648 11.602 19.5588 11.671 19.4528C11.39 19.1568 11.109 18.8258 10.897 18.4598C10.054 18.8258 9.142 19.1218 8.16 19.3478C8.16 19.3478 8.09 19.2418 8.021 19.1358C8.443 18.9098 8.865 18.6488 9.218 18.3178C9.218 18.3178 9.288 18.2478 9.357 18.1788C11.465 19.1218 13.714 19.1218 15.822 18.1788C15.892 18.2478 15.961 18.3178 15.961 18.3178C16.314 18.6488 16.736 18.9098 17.158 19.1358C17.089 19.2418 17.019 19.3478 17.019 19.3478C16.037 19.1218 15.125 18.8258 14.282 18.4598C14.07 18.8258 13.789 19.1568 13.508 19.4528C13.578 19.5588 13.647 19.6648 13.647 19.6648C17.357 19.6648 20.597 17.8428 22.705 14.7718C23.548 11.4588 22.677 8.00081 20.317 4.36981ZM9.673 14.0728C8.83 14.0728 8.16 13.3378 8.16 12.4248C8.16 11.5118 8.83 10.7768 9.673 10.7768C10.516 10.7768 11.186 11.5118 11.116 12.4248C11.116 13.3378 10.516 14.0728 9.673 14.0728ZM15.511 14.0728C14.668 14.0728 13.998 13.3378 13.998 12.4248C13.998 11.5118 14.668 10.7768 15.511 10.7768C16.354 10.7768 17.024 11.5118 16.954 12.4248C16.954 13.3378 16.354 14.0728 15.511 14.0728Z" />
-  </svg>
-)
-
-function formatTime(timestamp: number): string {
-  const date = new Date(timestamp)
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
+// 1. CLEAN DISPLAY NAMES
+const DISPLAY_MAP: Record<string, string> = {
+  'american-football': 'NFL',
+  'football': 'Soccer',
+  'basketball': 'NBA',
+  'mma': 'UFC',
+  'boxing': 'Boxing',
+  'cricket': 'Cricket',
+  'motorsports': 'F1',
+  'baseball': 'MLB',
+  'hockey': 'NHL',
+  'rugby': 'Rugby',
+  'tennis': 'Tennis',
+  'golf': 'Golf',
+  'darts': 'Darts'
 }
 
-const LANGUAGES: { code: Language; label: string }[] = [
-    { code: 'en', label: 'English' },
-    { code: 'de', label: 'Deutsch' },
-    { code: 'es', label: 'Español' },
-    { code: 'zh', label: '中文 (Chinese)' },
-    { code: 'hi', label: 'हिन्दी (Hindi)' },
-    { code: 'ur', label: 'اردو (Urdu)' },
+// 2. FORCED ORDER
+const SORT_ORDER = [
+  'american-football', 
+  'football', 
+  'basketball', 
+  'mma', 
+  'boxing', 
+  'cricket', 
+  'motorsports', 
+  'baseball', 
+  'hockey'
 ]
 
 export default function Header() {
-  const [isMounted, setIsMounted] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [allMatches, setAllMatches] = useState<any[]>([])
-  const [filteredMatches, setFilteredMatches] = useState<any[]>([])
-  const [showResults, setShowResults] = useState(false)
-  
-  // FEEDBACK STATE
-  const [showFeedback, setShowFeedback] = useState(false)
-  const [feedbackText, setFeedbackText] = useState('')
-  
-  const { t, lang, setLanguage } = useLanguage()
+  const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+  const [sports, setSports] = useState<any[]>([]) 
+  const [showSearch, setShowSearch] = useState(false)
+  const [showReport, setShowReport] = useState(false)
+  const [query, setQuery] = useState('')
+  const [reportText, setReportText] = useState('')
+  const [matches, setMatches] = useState<any[]>([])
+  const [results, setResults] = useState<any[]>([])
 
   useEffect(() => {
-    setIsMounted(true)
-    async function fetchMatches() {
-      try {
-        const res = await fetch(`${STREAMED_API_BASE}/matches/all-today`)
-        if (res.ok) {
-          const data = await res.json()
-          setAllMatches(data)
-        }
-      } catch (e) {
-        console.error("Search pre-fetch failed", e)
-      }
-    }
-    fetchMatches()
+    setMounted(true)
+
+    // Fetch Matches
+    fetch(`${API_BASE}/matches/all-today`)
+      .then(res => res.json())
+      .then(data => setMatches(data))
+      .catch(e => console.error(e))
+
+    // Fetch Sports
+    fetch(`${API_BASE}/sports`)
+      .then(res => res.json())
+      .then(data => {
+        const sorted = data.sort((a: any, b: any) => {
+           const idxA = SORT_ORDER.indexOf(a.id)
+           const idxB = SORT_ORDER.indexOf(b.id)
+           if (idxA !== -1 && idxB !== -1) return idxA - idxB
+           if (idxA !== -1) return -1
+           if (idxB !== -1) return 1
+           return a.name.localeCompare(b.name)
+        })
+        setSports(sorted)
+      })
+      .catch(e => console.error(e))
   }, [])
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value
-    setSearchQuery(query)
-
-    if (query.length > 0) {
-      const lowerQuery = query.toLowerCase()
-      const results = allMatches.filter((match: any) => 
-        match.title.toLowerCase().includes(lowerQuery) ||
-        (match.teams?.home?.name && match.teams.home.name.toLowerCase().includes(lowerQuery)) ||
-        (match.teams?.away?.name && match.teams.away.name.toLowerCase().includes(lowerQuery))
-      )
-      setFilteredMatches(results)
-      setShowResults(true)
+  const handleSearch = (val: string) => {
+    setQuery(val)
+    if (val.length > 0) {
+      setResults(matches.filter(m => m.title.toLowerCase().includes(val.toLowerCase())))
     } else {
-      setShowResults(false)
+      setResults([])
     }
   }
 
-  const closeSearch = () => {
-    setShowResults(false)
-    setSearchQuery('')
+  const handleResultClick = (e: any, matchId: string) => {
+    e.preventDefault(); 
+    setShowSearch(false);
+    window.open("https://google.com", '_blank');
+    router.push(`/match/${matchId}`);
   }
 
-  const handleSendFeedback = () => {
-    if (!feedbackText) return
-    const subject = encodeURIComponent("ReedStreams Feedback")
-    const body = encodeURIComponent(feedbackText)
-    window.location.href = `mailto:reedstreams000@gmail.com?subject=${subject}&body=${body}`
-    setShowFeedback(false)
-    setFeedbackText('')
+  const sendReport = () => {
+    window.location.href = `mailto:reedstreams000@gmail.com?subject=ISSUE&body=${encodeURIComponent(reportText)}`
+    setShowReport(false)
   }
 
-  const handleNavClick = (e: React.MouseEvent, action: string) => {
-    e.preventDefault()
-    if (action === 'feedback') setShowFeedback(true)
-    if (action === 'discord') window.open('https://discord.gg/yourcode', '_blank')
-  }
+  // --- BRAND COMPONENT (REEDSTREAMS LOGO) ---
+  const BrandLogo = ({ size = 18 }: { size?: number }) => (
+    <Link href="/" className="logo-text" style={{ fontSize: `${size}px` }}>
+      REED<span style={{ color: '#8db902' }}>STREAMS</span>
+    </Link>
+  )
+
+  if (!mounted) return null
 
   return (
-    <header className="site-header">
-      
-      {/* FEEDBACK MODAL */}
-      {showFeedback && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-          background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(5px)', zIndex: 9999,
-          display: 'flex', alignItems: 'center', justifyContent: 'center'
-        }}>
-          <div style={{
-            background: '#111', border: '1px solid #222', padding: '25px', borderRadius: '12px',
-            width: '90%', maxWidth: '400px', position: 'relative', boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
-          }}>
-            <button 
-              onClick={() => setShowFeedback(false)}
-              style={{position:'absolute', top:'15px', right:'15px', background:'none', border:'none', color:'#666', cursor:'pointer'}}
-            >
-              <X size={20} />
-            </button>
+    <>
+      <header className="site-header">
+        
+        {/* DESKTOP BAR (Top Strip) */}
+        <div className="top-bar desktop-only">
+          <BrandLogo />
+          <nav className="sports-links">
+            {sports.slice(0, 8).map(sport => (
+              <Link 
+                key={sport.id} 
+                href={`/live-matches?sportId=${sport.id}&sportName=${encodeURIComponent(sport.name)}`} 
+                className="sport-link"
+              >
+                {DISPLAY_MAP[sport.id] || sport.name}
+              </Link>
+            ))}
+          </nav>
+          <div style={{width: '20px'}}></div>
+        </div>
+
+        {/* MAIN BAR */}
+        <div className="main-bar">
+          <div className="nav-left">
             
-            <div style={{display:'flex', alignItems:'center', gap:'10px', marginBottom:'15px'}}>
-               <AlertOctagon color="#8db902" size={24} />
-               <h3 style={{margin:0, color:'#fff', fontSize:'18px', fontWeight:'800'}}>Feedback / Report</h3>
+            {/* MOBILE HAMBURGER */}
+            <div className="mobile-visible"> 
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button className="icon-btn"><Menu size={24} /></button>
+                </SheetTrigger>
+                <SheetContent side="left" style={{background:'#020305', borderRight:'1px solid #2a2e38', color:'#fff', width:'300px'}}>
+                  <div style={{display:'flex', flexDirection:'column', gap:'20px', marginTop:'20px'}}>
+                    <BrandLogo size={22} />
+                    <div style={{height:'1px', background:'#2a2e38', width:'100%'}}></div>
+                    <Link href="/" className="mobile-menu-link" style={{color: '#fff', textDecoration: 'none', fontWeight: 'bold'}}>HOME</Link>
+                    <Link href="/schedule" className="mobile-menu-link" style={{color: '#fff', textDecoration: 'none', fontWeight: 'bold'}}>SCHEDULE</Link>
+                    
+                    <div style={{marginTop:'10px', display:'flex', flexDirection:'column', gap:'15px'}}>
+                        <span style={{color:'#8db902', fontSize:'12px', fontWeight:'bold', textTransform:'uppercase'}}>Sports</span>
+                        {sports.map(sport => (
+                             <Link 
+                                key={sport.id} 
+                                href={`/live-matches?sportId=${sport.id}&sportName=${encodeURIComponent(sport.name)}`}
+                                className="mobile-menu-link"
+                                style={{fontSize:'14px', marginLeft:'10px', color: '#a0aec0', textDecoration: 'none'}}
+                             >
+                                {DISPLAY_MAP[sport.id] || sport.name}
+                             </Link>
+                        ))}
+                    </div>
+
+                    <div style={{height:'1px', background:'#2a2e38', width:'100%', marginTop:'20px'}}></div>
+                    <button className="sidebar-report-btn" onClick={() => setShowReport(true)}>
+                      <AlertOctagon size={18} style={{marginRight:'10px', verticalAlign:'middle'}} />
+                      REPORT ISSUE
+                    </button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+
+            {/* LIVE INDICATOR (Desktop) */}
+            <div className="watch-indicator desktop-only">
+              <div className="live-dot"></div> LIVE
             </div>
             
-            <p style={{color:'#888', fontSize:'12px', marginBottom:'15px'}}>
-              Tell us about any bugs or suggestions.
-            </p>
+            <nav className="main-links desktop-only">
+              <Link href="/" className="main-link active">Home</Link>
+              <Link href="/schedule" className="main-link">Schedule</Link>
+            </nav>
+          </div>
 
-            <textarea 
-              value={feedbackText}
-              onChange={(e) => setFeedbackText(e.target.value)}
-              placeholder="Type your message..."
-              rows={4}
-              style={{
-                width: '100%', background: '#050505', border: '1px solid #333', 
-                color: '#fff', padding: '12px', borderRadius: '6px', fontSize: '13px', 
-                outline: 'none', marginBottom: '15px', resize: 'none'
-              }}
-            />
+          {/* MOBILE LOGO (CENTERED) */}
+          <div className="mobile-center-logo mobile-visible">
+            <BrandLogo size={20} />
+          </div>
 
-            <button 
-              onClick={handleSendFeedback}
-              style={{
-                width: '100%', background: '#8db902', color: '#000', border: 'none',
-                padding: '12px', borderRadius: '6px', fontWeight: '800', fontSize: '13px',
-                cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px',
-                textTransform: 'uppercase'
-              }}
-            >
-              <Send size={14} /> Send Email
+          <div className="nav-right">
+            <button className="icon-btn" onClick={() => setShowSearch(true)}>
+              <Search size={22} />
             </button>
+            <button className="report-btn desktop-only" onClick={() => setShowReport(true)}>
+              Report
+            </button>
+          </div>
+        </div>
+
+        {/* MOBILE PILLS (Clean Names) */}
+        <div className="mobile-sports-bar mobile-visible">
+            {sports.map(sport => (
+              <Link 
+                key={sport.id} 
+                href={`/live-matches?sportId=${sport.id}&sportName=${encodeURIComponent(sport.name)}`} 
+                className="mobile-sport-pill"
+              >
+                {DISPLAY_MAP[sport.id] || sport.name}
+              </Link>
+            ))}
+        </div>
+      </header>
+      
+      {/* THE FIX: INVISIBLE SPACER DIVS 
+         These push the content down so the header doesn't cover it.
+      */}
+      <div className="header-spacer-desktop"></div>
+      <div className="header-spacer-mobile"></div>
+
+      {/* --- SEARCH MODAL --- */}
+      {showSearch && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <span className="modal-title">SEARCH MATCH</span>
+              <button className="icon-btn" onClick={() => setShowSearch(false)}><X /></button>
+            </div>
+            <input 
+              autoFocus
+              className="search-input-lg" 
+              placeholder="TYPE TEAM OR SPORT..."
+              value={query}
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+            <div style={{maxHeight:'300px', overflowY:'auto'}}>
+              {results.map(m => (
+                <div 
+                  key={m.id} 
+                  onClick={(e) => handleResultClick(e, m.id)}
+                  className="result-row"
+                  style={{cursor:'pointer'}}
+                >
+                  {m.title}
+                </div>
+              ))}
+              {query && results.length === 0 && <div style={{color:'#666', textAlign:'center', padding:'20px'}}>No matches found</div>}
+            </div>
           </div>
         </div>
       )}
 
-      {/* DESKTOP LAYOUT */}
-      <div className="desktop-layout">
-        <div className="header-left">
-          <Link href="/" className="site-logo">
-            <span className="logo-accent">🎅🏻reed</span>
-            <span className="logo-white">streams</span>
-          </Link>
-          <nav className="desktop-nav">
-            <Link href="/" className="nav-link">{t.home}</Link>
-            <a href="#" onClick={(e) => handleNavClick(e, 'feedback')} className="nav-link">Feedback</a>
-            <a href="#" onClick={(e) => handleNavClick(e, 'discord')} className="nav-link">Discord</a>
-          </nav>
-          
-          <div className="search-wrapper-desktop">
-            <div className="static-search-bar desktop-search">
-               <Search className="search-icon" width={18} />
-               <input 
-                 type="text" 
-                 placeholder={t.search} 
-                 className="static-search-input" 
-                 value={searchQuery}
-                 onChange={handleSearch}
-                 onFocus={() => searchQuery.length > 0 && setShowResults(true)}
-               />
-               {searchQuery && (
-                 <X className="search-clear-icon" width={14} onClick={closeSearch} />
-               )}
+      {/* --- REPORT MODAL --- */}
+      {showReport && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <span className="modal-title">REPORT SIGNAL</span>
+              <button className="icon-btn" onClick={() => setShowReport(false)}><X /></button>
             </div>
-
-            {showResults && (
-              <div className="search-dropdown">
-                {filteredMatches.length > 0 ? (
-                  filteredMatches.map((match) => (
-                    // 🔥 UPDATED LINK LOGIC:
-                    // 1. Point to /match/ID
-                    // 2. Save match to session storage so page loads correct data
-                    <Link 
-                      key={match.id} 
-                      href={`/match/${match.id}`} 
-                      className="search-result-item"
-                      onClick={() => {
-                        sessionStorage.setItem("currentMatch", JSON.stringify(match))
-                        closeSearch()
-                      }}
-                    >
-                      <span className="result-time">{formatTime(match.date)}</span>
-                      <span className="result-title">{match.title}</span>
-                    </Link>
-                  ))
-                ) : (
-                  <div className="search-no-results">No matches found</div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="header-right">
-          <a href="https://discord.com" target="_blank" rel="noopener noreferrer" className="boxed-btn">
-            <DiscordIcon />
-          </a>
-          
-          <button className="boxed-btn" onClick={() => setShowFeedback(true)} title="Send Feedback">
-            <MessageCircle width={18} />
-          </button>
-          
-          {/* LANGUAGE DROPDOWN */}
-          {isMounted ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="boxed-btn">
-                  <Globe width={18} />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align="end" 
-                className="lang-dropdown-content"
-                style={{
-                  background: '#111', 
-                  border: '1px solid #222', 
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-                  minWidth: '150px'
-                }}
-              >
-                {LANGUAGES.map((l) => (
-                    <DropdownMenuItem 
-                        key={l.code} 
-                        onClick={() => setLanguage(l.code)}
-                        style={{
-                          color: lang === l.code ? '#8db902' : '#ccc',
-                          fontWeight: lang === l.code ? '800' : '500',
-                          cursor: 'pointer',
-                          fontSize: '13px',
-                          padding: '10px 15px'
-                        }}
-                    >
-                        {l.label}
-                    </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <button className="boxed-btn">
-              <Globe width={18} />
+            <textarea 
+              className="report-area" 
+              placeholder="Describe issue..."
+              value={reportText}
+              onChange={(e) => setReportText(e.target.value)}
+            />
+            <button className="report-btn" style={{width:'100%', justifyContent: 'center'}} onClick={sendReport}>
+              SEND REPORT
             </button>
-          )}
-        </div>
-      </div>
-
-      {/* MOBILE LAYOUT */}
-      <div className="mobile-layout">
-        
-        {isMounted ? (
-          <Sheet>
-            <SheetTrigger asChild>
-              <button className="boxed-btn mobile-menu-btn">
-                <Menu width={20} />
-              </button>
-            </SheetTrigger>
-            
-            <SheetContent side="left" className="sidebar-panel">
-              <SheetHeader>
-                <SheetTitle className="sr-only">Menu</SheetTitle>
-                <SheetDescription className="sr-only">Nav</SheetDescription>
-              </SheetHeader>
-              
-              <div className="sidebar-header-row">
-                 <Link href="/" className="mobile-sidebar-logo">
-                    <span style={{ color: '#8db902' }}>reed</span>
-                    <span style={{ color: 'white' }}>streams</span>
-                 </Link>
-              </div>
-
-              <div className="sidebar-nav-list">
-                 <Link href="/" className="mobile-link">{t.home}</Link>
-                 <a href="#" onClick={(e) => handleNavClick(e, 'feedback')} className="mobile-link">Feedback</a>
-                 <a href="#" onClick={(e) => handleNavClick(e, 'discord')} className="mobile-link">Discord</a>
-              </div>
-            </SheetContent>
-          </Sheet>
-        ) : (
-          <button className="boxed-btn mobile-menu-btn">
-            <Menu width={20} />
-          </button>
-        )}
-
-        <button className="boxed-btn" onClick={() => setShowFeedback(true)}>
-          <MessageCircle width={20} />
-        </button>
-
-        <div className="search-wrapper-mobile">
-          <div className="static-search-bar mobile-search">
-             <Search className="search-icon" width={16} />
-             <input 
-                type="text" 
-                placeholder={t.search} 
-                className="static-search-input" 
-                value={searchQuery}
-                onChange={handleSearch}
-                onFocus={() => searchQuery.length > 0 && setShowResults(true)}
-             />
-             {searchQuery && (
-                <X className="search-clear-icon" width={14} onClick={closeSearch} />
-             )}
           </div>
-
-          {showResults && (
-            <div className="search-dropdown mobile-dropdown">
-              {filteredMatches.length > 0 ? (
-                filteredMatches.map((match) => (
-                  <Link 
-                    key={match.id} 
-                    href={`/match/${match.id}`} 
-                    className="search-result-item"
-                    onClick={() => {
-                        sessionStorage.setItem("currentMatch", JSON.stringify(match))
-                        closeSearch()
-                    }}
-                  >
-                    <span className="result-time">{formatTime(match.date)}</span>
-                    <span className="result-title">{match.title}</span>
-                  </Link>
-                ))
-              ) : (
-                <div className="search-no-results">No matches found</div>
-              )}
-            </div>
-          )}
         </div>
-
-        <a href="https://discord.com" target="_blank" rel="noopener noreferrer" className="boxed-btn">
-          <DiscordIcon />
-        </a>
-
-        {/* MOBILE LANGUAGE DROPDOWN */}
-        {isMounted ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="boxed-btn">
-                <Globe width={20} />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent 
-              align="end" 
-              style={{
-                background: '#111', 
-                border: '1px solid #222', 
-                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-                minWidth: '150px'
-              }}
-            >
-                {LANGUAGES.map((l) => (
-                    <DropdownMenuItem 
-                        key={l.code} 
-                        onClick={() => setLanguage(l.code)}
-                        style={{
-                          color: lang === l.code ? '#8db902' : '#ccc',
-                          fontWeight: lang === l.code ? '800' : '500',
-                          cursor: 'pointer',
-                          fontSize: '13px',
-                          padding: '10px 15px'
-                        }}
-                    >
-                        {l.label}
-                    </DropdownMenuItem>
-                ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <button className="boxed-btn">
-            <Globe width={20} />
-          </button>
-        )}
-
-      </div>
-    </header>
+      )}
+    </>
   )
 }

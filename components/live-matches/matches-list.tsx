@@ -3,30 +3,26 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, Calendar, AlertTriangle, RefreshCw, ArrowUpRight } from "lucide-react";
+import { Calendar, AlertTriangle, ArrowUpRight } from "lucide-react";
 import { useLanguage } from "@/context/language-context";
 
+// 🔥 Import the new CSS file
+import '../../styles/live-matches.css'
+
 /* =========================================
-   1. THE BLIZZARD ENGINE (Background)
+   BLIZZARD ENGINE (Global Background)
    ========================================= */
 const globalCss = `
-  /* GLOBAL SETTINGS */
   body { background-color: #020305 !important; margin: 0; overflow-x: hidden; }
-
-  /* SNOW WRAPPER */
   .snow-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 0; pointer-events: none; background: radial-gradient(circle at 50% 100%, #0f1c30 0%, #020305 70%); }
   .snow-layer { position: absolute; top: -100vh; left: 0; right: 0; bottom: 0; background: transparent; border-radius: 50%; animation: snowfall linear infinite; }
-
-  /* LAYERS */
-  .layer-1 { width: 2px; height: 2px; opacity: 0.6; animation-duration: 20s; box-shadow: 10vw 10vh #fff, 60vw 40vh #fff, 15vw 80vh #fff, 80vw 10vh #fff, 30vw 20vh #fff, 90vw 90vh #fff, 40vw 50vh #fff, 50vw 10vh #fff, 20vw 30vh #fff, 70vw 60vh #fff, 10vw 90vh #fff, 95vw 30vh #fff, 25vw 70vh #fff, 75vw 20vh #fff, 05vw 40vh #fff, 55vw 80vh #fff, 35vw 50vh #fff, 85vw 60vh #fff, 45vw 10vh #fff, 65vw 90vh #fff; }
-  .layer-2 { width: 3px; height: 3px; opacity: 0.8; animation-duration: 12s; box-shadow: 5vw 5vh rgba(255,255,255,0.8), 55vw 55vh rgba(255,255,255,0.8), 25vw 25vh rgba(255,255,255,0.8), 75vw 75vh rgba(255,255,255,0.8), 15vw 45vh rgba(255,255,255,0.8), 65vw 15vh rgba(255,255,255,0.8), 35vw 85vh rgba(255,255,255,0.8), 85vw 35vh rgba(255,255,255,0.8); }
-  .layer-3 { width: 6px; height: 6px; opacity: 0.9; filter: blur(2px); animation-duration: 7s; box-shadow: 10vw 20vh #fff, 80vw 10vh #fff, 30vw 50vh #fff, 90vw 80vh #fff, 50vw 90vh #fff, 20vw 40vh #fff, 70vw 30vh #fff, 40vw 70vh #fff; }
-  
+  .layer-1 { width: 2px; height: 2px; opacity: 0.6; animation-duration: 20s; box-shadow: 10vw 10vh #fff, 60vw 40vh #fff, 15vw 80vh #fff; }
+  .layer-2 { width: 3px; height: 3px; opacity: 0.8; animation-duration: 12s; box-shadow: 5vw 5vh rgba(255,255,255,0.8), 55vw 55vh rgba(255,255,255,0.8); }
   @keyframes snowfall { 0% { transform: translateY(0); } 100% { transform: translateY(100vh); } }
-  @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
 `;
 
 const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'https://streamed.pk/api'
+const STREAMED_BASE_URL = 'https://streamed.pk' 
 
 const SPORT_ID_MAP: Record<string, string> = {
   "1": "Football", "2": "Basketball", "3": "Cricket", "4": "Tennis", "5": "Rugby", 
@@ -39,10 +35,28 @@ function getBadgeUrl(badgeId: string | undefined): string {
   return `${STREAMED_API_BASE}/images/badge/${badgeId}.webp`
 }
 
+function getMatchBackground(match: any) {
+  if (match.poster) {
+    return `${STREAMED_BASE_URL}${match.poster}.webp`;
+  }
+  return null;
+}
+
+// Deterministic Gradient for "Logo Only" cards
+function getGradientClass(id: string) {
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+        hash = id.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % 15;
+    return `gradient-${index}`;
+}
+
 interface Match {
   id: string; title?: string; date?: string; competition?: string; category?: string;
   teams?: { home?: { name?: string; badge?: string }; away?: { name?: string; badge?: string }; };
   sources?: any[];
+  poster?: string;
 }
 
 export default function MatchesList() {
@@ -93,7 +107,6 @@ export default function MatchesList() {
     const result = matches.filter(match => {
         if (!match.date) return filter === "all"; 
         const matchDate = new Date(match.date);
-        
         const isLive = matchDate <= now && matchDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
         const isUpcoming = matchDate > now;
 
@@ -115,73 +128,25 @@ export default function MatchesList() {
       return acc;
   }, {} as Record<string, Match[]>);
 
-  // --- STYLES ---
-  const s = {
-    container: { 
-      width: '100%', 
-      maxWidth: '1400px', 
-      margin: '5vh auto 0 auto', 
-      padding: '20px', 
-      minHeight: '100vh', 
-      position: 'relative' as const, 
-      zIndex: 10 
-    },
-    headerWrapper: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '15px', flexWrap: 'wrap' as const, gap: '15px', position: 'relative' as const, zIndex: 50 },
-    titleGroup: { display: 'flex', alignItems: 'center', gap: '15px' },
-    titleText: { fontSize: '24px', fontWeight: 900, color: '#fff', textTransform: 'uppercase' as const, margin: 0, display: 'flex', alignItems: 'center', gap: '12px', lineHeight: 1 },
-    greenBar: { width: '4px', height: '24px', background: '#8db902', borderRadius: '2px' },
-    homeLink: { display: 'flex', alignItems: 'center', gap: '6px', color: '#888', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase' as const, textDecoration: 'none' },
-    filterBar: { display: 'flex', gap: '10px', marginBottom: '30px', flexWrap: 'wrap' as const, position: 'relative' as const, zIndex: 50 },
-    btn: (active: boolean) => ({
-        padding: '10px 24px', borderRadius: '8px', fontSize: '12px', fontWeight: active ? 800 : 600, textTransform: 'uppercase' as const, letterSpacing: '0.5px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s ease', minWidth: '100px',
-        background: active ? '#8db902' : 'transparent', color: active ? '#000' : '#ffffff', border: active ? '1px solid #8db902' : '1px solid #ffffff', boxShadow: active ? '0 0 10px rgba(141, 185, 2, 0.4)' : 'none'
-    }),
-    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '15px' },
-    
-    // 🔥 FIXED: UNIFORM CARD STYLE (NO RANDOM COLORS)
-    card: { 
-      // Solid Dark Grey Background (Lighter than body #020305)
-      background: '#1e1e1e', 
-      // Subtle Border
-      border: '1px solid #333333',
-      borderRadius: '12px', 
-      padding: '14px', 
-      display: 'flex', 
-      flexDirection: 'column' as const, 
-      position: 'relative' as const, 
-      overflow: 'hidden', 
-      minHeight: '115px',
-      boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-      transition: 'all 0.2s ease'
-    },
-    matchSkeletonCard: { background: 'linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%)', backgroundSize: '1000px 100%', animation: 'shimmer 2s infinite linear', borderRadius: '10px', border: '1px solid #222', height: '110px', width: '100%' },
-    shimmer: { background: 'linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%)', backgroundSize: '1000px 100%', animation: 'shimmer 2s infinite linear' }
-  };
-
+  // Helper Wrapper for Global Styles
   const PageWrapper = ({ children }: { children: React.ReactNode }) => (
     <>
         <style dangerouslySetInnerHTML={{ __html: globalCss }} />
-        <div className="snow-wrapper"><div className="snow-layer layer-1"></div><div className="snow-layer layer-2"></div><div className="snow-layer layer-3"></div></div>
-        <div style={s.container}>{children}</div>
+        <div className="snow-wrapper"><div className="snow-layer layer-1"></div><div className="snow-layer layer-2"></div></div>
+        <div className="live-matches-container">{children}</div>
     </>
   );
 
   if (loading) return ( 
     <PageWrapper>
-      <div style={s.headerWrapper}>
+      <div className="page-header">
         <div style={{display: 'flex', gap: '15px', alignItems: 'center'}}>
-           <div style={{width:'4px', height:'24px', background:'#222', borderRadius:'2px'}}></div>
-           <div style={{...s.shimmer, width: '200px', height: '30px', borderRadius: '4px'}}></div>
+           <div className="skeleton-shimmer" style={{width:'4px', height:'24px', background:'#222', borderRadius:'2px'}}></div>
+           <div className="skeleton-shimmer" style={{width: '200px', height: '30px', borderRadius: '4px'}}></div>
         </div>
-        <div style={{...s.shimmer, width: '120px', height: '20px', borderRadius: '4px'}}></div>
       </div>
-      <div style={s.filterBar}>
-        <div style={{...s.shimmer, width: '100px', height: '40px', borderRadius: '8px'}}></div>
-        <div style={{...s.shimmer, width: '120px', height: '40px', borderRadius: '8px'}}></div>
-        <div style={{...s.shimmer, width: '100px', height: '40px', borderRadius: '8px'}}></div>
-      </div>
-      <div style={s.grid}>
-        {[...Array(12)].map((_, i) => <div key={i} style={s.matchSkeletonCard}></div>)}
+      <div className="matches-grid">
+        {[...Array(8)].map((_, i) => <div key={i} className="skeleton-card skeleton-shimmer"></div>)}
       </div>
     </PageWrapper> 
   )
@@ -190,15 +155,15 @@ export default function MatchesList() {
 
   return (
     <PageWrapper>
-        <div style={s.headerWrapper}>
-            <div style={s.titleGroup}><h1 style={s.titleText}><span style={s.greenBar}></span>{displaySportName}</h1></div>
-            <Link href="/" style={s.homeLink}>{t.back_to_home} <ArrowUpRight size={14} /></Link>
+        <div className="page-header">
+            <div className="page-title"><span className="title-bar"></span>{displaySportName}</div>
+            <Link href="/" className="back-link">{t.back_to_home} <ArrowUpRight size={14} /></Link>
         </div>
         
-        <div style={s.filterBar}>
-            <button style={s.btn(filter === 'live')} onClick={() => setFilter('live')}>{t.live}</button>
-            <button style={s.btn(filter === 'upcoming')} onClick={() => setFilter('upcoming')}>{t.upcoming}</button>
-            <button style={s.btn(filter === 'all')} onClick={() => setFilter('all')}>{t.filter_all}</button>
+        <div className="filter-bar">
+            <button className={`filter-btn ${filter === 'live' ? 'active' : ''}`} onClick={() => setFilter('live')}>{t.live}</button>
+            <button className={`filter-btn ${filter === 'upcoming' ? 'active' : ''}`} onClick={() => setFilter('upcoming')}>{t.upcoming}</button>
+            <button className={`filter-btn ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>{t.filter_all}</button>
         </div>
 
         {Object.keys(grouped).length === 0 ? (
@@ -210,22 +175,44 @@ export default function MatchesList() {
         ) : (
             Object.entries(grouped).map(([date, dateMatches]) => (
                 <div key={date}>
-                    <div style={{display:'flex', alignItems:'center', gap:'10px', margin:'30px 0 15px 0', color:'#fff'}}>
+                    <div className="date-header">
                         <Calendar size={16} color="#8db902" />
-                        <span style={{fontWeight:700, fontSize:'14px', textTransform:'uppercase'}}>{date}</span>
-                        <div style={{flex:1, height:'1px', background:'linear-gradient(90deg, #8db902 0%, rgba(255,255,255,0.05) 100%)'}}></div>
+                        <span className="date-text">{date}</span>
+                        <div className="date-line"></div>
                     </div>
-                    <div style={s.grid}>
+                    
+                    <div className="matches-grid">
                         {dateMatches.map(match => {
                             const now = new Date();
                             const mDate = new Date(match.date!);
                             const isLive = mDate <= now && mDate >= new Date(now.getTime() - 4 * 60 * 60 * 1000);
                             
+                            const bgImage = getMatchBackground(match);
+                            const home = match.teams?.home;
+                            const away = match.teams?.away;
+                            const hasLogos = home?.badge && away?.badge;
+                            const matchTitle = (home?.name && away?.name) ? `${home.name} vs ${away.name}` : match.title;
+
+                            // EXACT SPORTSGRID LOGIC
+                            let cardStyle: React.CSSProperties = {};
+                            let cardClass = "match-card-visual";
+
+                            if (bgImage) {
+                                cardStyle = { backgroundImage: `url(${bgImage})` };
+                            } else if (hasLogos) {
+                                cardStyle = { backgroundColor: '#020305' }; 
+                                const gradientClass = getGradientClass(match.id);
+                                cardClass += ` has-logos ${gradientClass}`;
+                            } else {
+                                cardStyle = { backgroundColor: '#0a0a0a' }; 
+                                cardClass += " is-fallback";
+                            }
+
                             return (
                                 <Link 
                                     key={match.id} 
                                     href={`/match/${match.id}?sportName=${encodeURIComponent(displaySportName)}`}
-                                    style={{textDecoration:'none', display:'block'}}
+                                    className="match-card-link"
                                     onClick={() => {
                                         sessionStorage.setItem("currentMatch", JSON.stringify({
                                             ...match, 
@@ -233,36 +220,34 @@ export default function MatchesList() {
                                         }));
                                     }}
                                 >
-                                    <div style={s.card}>
-                                        {/* Glass Overlay for Texture (Kept it subtle) */}
-                                        <div style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(255,255,255,0.02)', pointerEvents: 'none'}}></div>
+                                    {/* --- CARD VISUAL --- */}
+                                    <div className={cardClass} style={cardStyle}>
+                                        <div className="match-card-overlay"></div>
+                                        
+                                        {isLive && <span className="card-live-badge">{t.live}</span>}
 
-                                        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'8px', zIndex: 2 }}>
-                                            <div style={{display:'flex', flexDirection:'column', alignItems:'center', width:'40%'}}>
-                                                <img src={getBadgeUrl(match.teams?.home?.badge)} style={{width:'36px', height:'36px', objectFit:'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))'}} alt="Home" />
-                                                <span style={{fontSize:'12px', color:'#fff', marginTop:'6px', fontWeight:700, textShadow:'0 1px 2px rgba(0,0,0,0.5)'}}>{match.teams?.home?.name || t.team_home}</span>
+                                        {!bgImage && hasLogos ? (
+                                            <div className="match-logos-container">
+                                                <img src={getBadgeUrl(home?.badge)} alt="Home" className="card-team-logo" loading="lazy" />
+                                                <span className="card-vs-text">VS</span>
+                                                <img src={getBadgeUrl(away?.badge)} alt="Away" className="card-team-logo" loading="lazy" />
                                             </div>
-                                            
-                                            <div style={{fontSize:'10px', fontWeight:900, color: '#444', fontStyle:'italic', opacity: 0.8}}>{t.vs_badge}</div>
-                                            
-                                            <div style={{display:'flex', flexDirection:'column', alignItems:'center', width:'40%'}}>
-                                                <img src={getBadgeUrl(match.teams?.away?.badge)} style={{width:'36px', height:'36px', objectFit:'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))'}} alt="Away" />
-                                                <span style={{fontSize:'12px', color:'#fff', marginTop:'6px', fontWeight:700, textShadow:'0 1px 2px rgba(0,0,0,0.5)'}}>{match.teams?.away?.name || t.team_away}</span>
+                                        ) : !bgImage && !hasLogos ? (
+                                            <div className="fallback-content">
+                                                <span className="reed-logo-text">REED<span className="reed-highlight">STREAMS</span></span>
+                                                <div className="reed-underline"></div>
+                                                <span className="fallback-category">{match.category || match.competition || 'MATCH'}</span>
                                             </div>
-                                        </div>
-                                        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', borderTop:`1px solid #333`, paddingTop:'8px', marginTop:'auto', zIndex: 2 }}>
-                                            <div style={{fontSize:'11px', color:'#bbb', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', maxWidth:'65%'}}>{match.title || match.competition || 'Match'}</div>
-                                            <div>
-                                                {isLive ? (
-                                                    <span style={{background:'#e63946', color:'#fff', fontSize:'9px', fontWeight:800, padding:'3px 8px', borderRadius:'4px', boxShadow:'0 0 10px rgba(230, 57, 70, 0.4)'}}>
-                                                        {t.live}
-                                                    </span>
-                                                ) : (
-                                                    <span style={{background:'rgba(0,0,0,0.3)', color:'#aaa', fontSize:'9px', fontWeight:600, padding:'3px 8px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.1)'}}>
-                                                        {new Date(match.date!).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
-                                                    </span>
-                                                )}
-                                            </div>
+                                        ) : null}
+                                    </div>
+
+                                    {/* --- CARD INFO --- */}
+                                    <div className="match-card-info">
+                                        <span className="match-card-title">{matchTitle}</span>
+                                        <div className="match-card-sub">
+                                            <span className="match-league-name">{match.competition || match.category}</span>
+                                            <span className="sub-sep">•</span>
+                                            <span>{isLive ? t.live : mDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12: false})}</span>
                                         </div>
                                     </div>
                                 </Link>

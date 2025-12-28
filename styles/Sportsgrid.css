@@ -7,7 +7,7 @@
   --text-muted: #a0aec0;
   --brand-green: #8db902;
   --btn-border: #3f4452; 
-  --main-bg: #020305; /* Deep Winter Black */
+  --main-bg: #020305;
 }
 
 /* --- GLOBAL BACKGROUND --- */
@@ -20,415 +20,376 @@ body {
 
 /* --- MILLION DOLLAR BLIZZARD ENGINE --- */
 .snow-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: 0;
-  pointer-events: none;
-  /* Premium Cold Glow at bottom */
+  position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+  z-index: 0; pointer-events: none;
   background: radial-gradient(circle at 50% 100%, #0f1c30 0%, #020204 70%); 
 }
 
 .snow-layer {
-  position: absolute;
-  top: -100vh; /* Start way above */
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: transparent;
-  border-radius: 50%;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  animation-name: snowfall;
+  position: absolute; top: -100vh; left: 0; right: 0; bottom: 0;
+  background: transparent; border-radius: 50%;
+  animation-iteration-count: infinite; animation-timing-function: linear; animation-name: snowfall;
 }
 
-/* INTENSE SNOW SHADOWS 
-   These creates hundreds of flakes using CSS shadows.
-*/
+/* Snow Shadows */
+.layer-1 { width: 2px; height: 2px; opacity: 0.6; box-shadow: 10vw 10vh #fff, 60vw 40vh #fff, 15vw 80vh #fff, 80vw 10vh #fff, 30vw 20vh #fff, 90vw 90vh #fff, 40vw 50vh #fff, 50vw 10vh #fff, 20vw 30vh #fff, 70vw 60vh #fff, 10vw 90vh #fff, 95vw 30vh #fff, 25vw 70vh #fff, 75vw 20vh #fff, 05vw 40vh #fff, 55vw 80vh #fff, 35vw 50vh #fff, 85vw 60vh #fff, 45vw 10vh #fff, 65vw 90vh #fff; animation-duration: 20s; }
+.layer-2 { width: 3px; height: 3px; opacity: 0.8; box-shadow: 5vw 5vh rgba(255,255,255,0.8), 55vw 55vh rgba(255,255,255,0.8), 25vw 25vh rgba(255,255,255,0.8), 75vw 75vh rgba(255,255,255,0.8), 15vw 45vh rgba(255,255,255,0.8), 65vw 15vh rgba(255,255,255,0.8), 35vw 85vh rgba(255,255,255,0.8), 85vw 35vh rgba(255,255,255,0.8); animation-duration: 12s; }
+.layer-3 { width: 6px; height: 6px; opacity: 0.9; filter: blur(2px); box-shadow: 10vw 20vh #fff, 80vw 10vh #fff, 30vw 50vh #fff, 90vw 80vh #fff, 50vw 90vh #fff, 20vw 40vh #fff, 70vw 30vh #fff, 40vw 70vh #fff; animation-duration: 7s; }
 
-/* Layer 1: Small, Dense, Slow (The Atmosphere) */
-.layer-1 {
-  width: 2px;
-  height: 2px;
-  opacity: 0.6;
-  box-shadow: 
-    10vw 10vh #fff, 60vw 40vh #fff, 15vw 80vh #fff, 80vw 10vh #fff, 
-    30vw 20vh #fff, 90vw 90vh #fff, 40vw 50vh #fff, 50vw 10vh #fff,
-    20vw 30vh #fff, 70vw 60vh #fff, 10vw 90vh #fff, 95vw 30vh #fff,
-    25vw 70vh #fff, 75vw 20vh #fff, 05vw 40vh #fff, 55vw 80vh #fff,
-    35vw 50vh #fff, 85vw 60vh #fff, 45vw 10vh #fff, 65vw 90vh #fff,
-    /* Duplicate for density */
-    12vw 12vh #fff, 62vw 42vh #fff, 17vw 82vh #fff, 82vw 12vh #fff, 
-    32vw 22vh #fff, 92vw 92vh #fff, 42vw 52vh #fff, 52vw 12vh #fff,
-    22vw 32vh #fff, 72vw 62vh #fff, 12vw 92vh #fff, 97vw 32vh #fff,
-    27vw 72vh #fff, 77vw 22vh #fff, 07vw 42vh #fff, 57vw 82vh #fff;
-  animation-duration: 20s; 
+@keyframes snowfall { 0% { transform: translateY(0); } 100% { transform: translateY(100vh); } }
+
+/* --- SECTIONS (Global Spacing) --- */
+.sports-section, .matches-row-section {
+  width: 100%; max-width: 1400px; margin: 0 auto;
+  padding: 5px 20px 10px 20px; 
+  overflow: hidden; background: transparent !important;
 }
-
-/* Layer 2: Medium, Mid-distance (Visible Flakes) */
-.layer-2 {
-  width: 3px;
-  height: 3px;
-  opacity: 0.8;
-  box-shadow: 
-    5vw 5vh rgba(255,255,255,0.8), 55vw 55vh rgba(255,255,255,0.8), 
-    25vw 25vh rgba(255,255,255,0.8), 75vw 75vh rgba(255,255,255,0.8), 
-    15vw 45vh rgba(255,255,255,0.8), 65vw 15vh rgba(255,255,255,0.8), 
-    35vw 85vh rgba(255,255,255,0.8), 85vw 35vh rgba(255,255,255,0.8),
-    45vw 65vh rgba(255,255,255,0.8), 95vw 95vh rgba(255,255,255,0.8),
-    /* Extra fill */
-    10vw 80vh rgba(255,255,255,0.8), 80vw 20vh rgba(255,255,255,0.8);
-  animation-duration: 12s;
-}
-
-/* Layer 3: Large, Close, Fast, Blurry (Cinematic Depth) */
-.layer-3 {
-  width: 6px;
-  height: 6px;
-  opacity: 0.9;
-  filter: blur(2px);
-  box-shadow: 
-    10vw 20vh #fff, 80vw 10vh #fff, 30vw 50vh #fff, 
-    90vw 80vh #fff, 50vw 90vh #fff, 20vw 40vh #fff,
-    70vw 30vh #fff, 40vw 70vh #fff;
-  animation-duration: 7s;
-}
-
-@keyframes snowfall {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(100vh); }
-}
-
-
-/* --- SECTIONS --- */
-.sports-section {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 10px 20px 30px 20px; 
-  overflow: hidden;
-  background: transparent !important;
-}
-
-.sports-section {
-  
-  margin-top: 5vh;
-
-}
-.matches-row-section {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px 30px 20px;
-  overflow: hidden;
-  background: transparent !important;
-}
-
-.loading-text {
-  color: var(--text-muted);
-  text-align: center;
-  padding: 20px;
-}
+.sports-section { margin-top: 5vh; }
 
 /* --- HEADER LAYOUT --- */
 .section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 15px; padding-bottom: 5px;
   border-bottom: 1px solid rgba(255,255,255,0.05);
-  width: 100%;
 }
 
-.title-group {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex: 1;
-  min-width: 0;
-}
+.title-group { display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; }
 
-/* --- TITLE FIX (Locked Green Bar) --- */
 .section-title {
-  font-size: 24px;
-  font-weight: 900;
-  color: var(--text-primary);
-  text-transform: uppercase;
-  margin: 0;
-  line-height: 1;
-  letter-spacing: 0.5px;
-  /* Flexbox to lock Bar next to Text */
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  font-size: 24px; font-weight: 900; color: var(--text-primary);
+  text-transform: uppercase; margin: 0; line-height: 1; letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 12px;
+  white-space: nowrap; 
 }
 
-/* The Green Bar */
 .section-title::before {
-  content: '';
-  display: block;
-  width: 4px;
-  height: 20px; 
-  background-color: #8db902;
-  border-radius: 2px;
-  /* CRITICAL: Never shrink, never move */
-  flex-shrink: 0; 
-  min-width: 4px;
+  content: ''; display: block; width: 4px; height: 20px; 
+  background-color: #8db902; border-radius: 2px; flex-shrink: 0; 
 }
-
-.title-accent { display: none; }
 
 /* --- BUTTONS --- */
-.nav-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  margin-right: 20px;
-}
-
+.nav-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .nav-btn {
-  background: transparent;
-  border: 1px solid var(--btn-border);
-  border-radius: 5px;
-  color: var(--text-muted);
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 0;
+  background: transparent; border: 1px solid var(--btn-border); border-radius: 5px;
+  color: var(--text-muted); width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s ease; padding: 0;
 }
-
-.nav-btn:hover {
-  border-color: var(--text-primary);
-  color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.nav-btn:active { transform: scale(0.95); }
+.nav-btn:hover { border-color: var(--text-primary); color: var(--text-primary); background-color: rgba(255, 255, 255, 0.05); }
 
 /* --- CAROUSEL CONTAINERS --- */
 .sports-carousel-container {
-  display: flex;
-  gap: 15px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding-bottom: 10px;
-  padding-top: 5px;
-  padding-left: 5px; 
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  display: flex; gap: 15px; overflow-x: auto; scroll-behavior: smooth;
+  padding-bottom: 10px; scrollbar-width: none; -ms-overflow-style: none;
 }
 .sports-carousel-container::-webkit-scrollbar { display: none; }
+.carousel-wrapper { position: relative; width: 100%; }
 
-.carousel-wrapper {
-  position: relative;
-  width: 100%;
-}
 
-/* --- CARD TYPE 1: SPORT CATEGORY (Icons) --- */
-.sport-card-link {
-  text-decoration: none;
-  display: block;
-  flex-shrink: 0; 
-  width: 160px;
-}
+/* ---------------------------------------------------- */
+/* --- CARD TYPE 1: SPORT CATEGORY (UPDATED: PRO STYLE) --- */
+/* ---------------------------------------------------- */
+.sport-card-link { text-decoration: none; display: block; flex-shrink: 0; width: 140px; transition: transform 0.2s ease; }
+.sport-card-link:active { transform: scale(0.96); }
 
 .sport-card {
-  background-color: var(--card-bg);
-  border: 1px solid var(--card-border);
+  background-color: #1a1a1a;   /* ✅ SOLID DARK GREY (ESPN STYLE) */
+  border: none;                /* ❌ NO NEON BORDERS */
   border-radius: 12px;
-  padding: 20px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  padding: 15px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center;
-  transition: border-color 0.2s, background-color 0.2s;
-  height: 100%;
-  aspect-ratio: 1 / 1.1;
+  height: 130px; 
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* PRO SHADOW */
 }
 
-@media (hover: hover) {
-  .sport-card:hover {
-    border-color: var(--brand-green);
-    background-color: #1b1f29;
-  }
+.sport-card:hover {
+  background-color: #252525;  /* ✅ SUBTLE HIGHLIGHT ON HOVER */
+  transform: translateY(-2px);
 }
-.sport-card:active { transform: scale(0.98); }
 
 .sport-card.active-live {
-  border-color: rgba(141, 185, 2, 0.4);
-  background: linear-gradient(180deg, var(--card-bg) 0%, rgba(141, 185, 2, 0.05) 100%);
+  background-color: #222;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); /* VERY SUBTLE HINT */
 }
 
-.card-icon-wrapper { margin-bottom: 15px; }
-.sport-emoji { font-size: 38px; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2)); }
-.sport-title { font-size: 15px; font-weight: 700; text-transform: uppercase; color: #fff; margin: 0 0 8px 0; }
+.card-icon-wrapper { margin-bottom: 10px; }
+.sport-emoji { font-size: 34px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
 
-.match-badge {
-  font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; 
-  justify-content: center; gap: 5px; padding: 4px 10px; border-radius: 4px; text-transform: uppercase;
+.sport-title { 
+  font-size: 13px; font-weight: 700; text-transform: uppercase; 
+  color: #fff; margin: 0; letter-spacing: 0.5px;
 }
-.match-badge.offline { color: #666; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); }
-.match-badge.live { color: var(--brand-green); background: rgba(141, 185, 2, 0.1); border: 1px solid rgba(141, 185, 2, 0.2); }
-.live-dot { width: 6px; height: 6px; background-color: var(--brand-green); border-radius: 50%; box-shadow: 0 0 6px var(--brand-green); animation: pulse 2s infinite; }
 
-/* --- CARD TYPE 2: MATCH ROW (Rectangles) --- */
+.match-badge { 
+  font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; 
+  padding: 3px 8px; border-radius: 10px; text-transform: uppercase; margin-top: 6px;
+}
+.match-badge.offline { color: #666; background: rgba(255, 255, 255, 0.05); }
+.match-badge.live { color: #000; background: #8db902; }
+.live-dot { width: 5px; height: 5px; background-color: #fff; border-radius: 50%; animation: pulse 2s infinite; }
+
+
+/* ---------------------------------------------------- */
+/* --- CARD TYPE 2: MATCH CARDS (ORIGINAL SIZES) --- */
+/* ---------------------------------------------------- */
 .match-card-link {
-  text-decoration: none;
-  display: block;
-  flex-shrink: 0;
-  width: 260px;
+  text-decoration: none; display: block; flex-shrink: 0;
+  width: 170px; /* RESTORED SIZE */
+  transition: transform 0.2s ease; cursor: pointer;
+}
+.match-card-link:hover .match-card-visual { border-color: var(--brand-green); box-shadow: 0 0 15px rgba(141, 185, 2, 0.15); }
+.match-card-link:active { transform: scale(0.97); }
+
+.match-card-visual {
+  width: 100%; aspect-ratio: 16 / 9; border-radius: 12px;
+  position: relative; overflow: hidden; border: 1px solid #2a2e38;
+  display: flex; align-items: center; justify-content: center; gap: 15px;
+  background-size: cover; background-position: center; transition: all 0.2s ease;
 }
 
-.match-card {
-  background-color: #050505; 
-  border: 1px solid #1a1a1a;
-  border-radius: 10px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-  height: 100%;
+.card-live-badge {
+  position: absolute; top: 8px; right: 8px; z-index: 10;
+  background: #8db902; color: #000; font-size: 9px; font-weight: 800;
+  padding: 2px 6px; border-radius: 4px; text-transform: uppercase;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5); animation: pulse 2s infinite;
+}
+
+.match-card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+  z-index: 1;
+}
+
+.match-card-info { margin-top: 10px; padding: 0 2px; }
+.match-card-title {
+  font-size: 13px; color: #e2e8f0; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 4px; display: block;
+}
+.match-card-sub { font-size: 11px; color: #888; display: flex; align-items: center; gap: 6px; }
+.match-league-name { color: #8db902; font-weight: 700; text-transform: uppercase; font-size: 10px; }
+.sub-sep { color: var(--brand-green); font-weight: bold; margin: 0 4px; }
+
+/* ---------------------------------------------------- */
+/* --- SULTAN'S HIGH-CONTRAST SPORT GRADIENTS --- */
+/* ---------------------------------------------------- */
+.match-card-visual.has-logos {
+  background-color: #020305 !important;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.match-card-visual.has-logos::before {
+  content: ''; position: absolute; inset: 0; z-index: 1;
+  opacity: 0.5; pointer-events: none;
+}
+
+/* 15 Unique Dual-Tone Sport Styles */
+.gradient-0::before { background: radial-gradient(circle at 0% 0%, #ff0000 0%, transparent 55%), radial-gradient(circle at 100% 100%, #7b0000 0%, transparent 55%); }
+.gradient-1::before { background: radial-gradient(circle at 0% 0%, #0044ff 0%, transparent 55%), radial-gradient(circle at 100% 100%, #001a61 0%, transparent 55%); }
+.gradient-2::before { background: radial-gradient(circle at 0% 0%, #00ff44 0%, transparent 55%), radial-gradient(circle at 100% 100%, #004d15 0%, transparent 55%); }
+.gradient-3::before { background: radial-gradient(circle at 0% 0%, #a200ff 0%, transparent 55%), radial-gradient(circle at 100% 100%, #3e0061 0%, transparent 55%); }
+.gradient-4::before { background: radial-gradient(circle at 0% 0%, #ff6600 0%, transparent 55%), radial-gradient(circle at 100% 100%, #612600 0%, transparent 55%); }
+.gradient-5::before { background: radial-gradient(circle at 0% 0%, #00f2ff 0%, transparent 55%), radial-gradient(circle at 100% 100%, #005c61 0%, transparent 55%); }
+.gradient-6::before { background: radial-gradient(circle at 0% 0%, #ff0077 0%, transparent 55%), radial-gradient(circle at 100% 100%, #61002d 0%, transparent 55%); }
+.gradient-7::before { background: radial-gradient(circle at 0% 0%, #ffee00 0%, transparent 55%), radial-gradient(circle at 100% 100%, #615a00 0%, transparent 55%); }
+.gradient-8::before { background: radial-gradient(circle at 0% 0%, #00ffcc 0%, transparent 55%), radial-gradient(circle at 100% 100%, #00614e 0%, transparent 55%); }
+.gradient-9::before { background: radial-gradient(circle at 0% 0%, #ff00ea 0%, transparent 55%), radial-gradient(circle at 100% 100%, #610058 0%, transparent 55%); }
+.gradient-10::before { background: radial-gradient(circle at 0% 0%, #0084ff 0%, transparent 55%), radial-gradient(circle at 100% 100%, #003261 0%, transparent 55%); }
+.gradient-11::before { background: radial-gradient(circle at 0% 0%, #8db902 0%, transparent 55%), radial-gradient(circle at 100% 100%, #3a4d01 0%, transparent 55%); }
+.gradient-12::before { background: radial-gradient(circle at 0% 0%, #ffffff 0%, transparent 45%), radial-gradient(circle at 100% 100%, #333333 0%, transparent 55%); }
+.gradient-13::before { background: radial-gradient(circle at 0% 0%, #ffcc00 0%, transparent 55%), radial-gradient(circle at 100% 100%, #614e00 0%, transparent 55%); }
+.gradient-14::before { background: radial-gradient(circle at 0% 0%, #ff3300 0%, transparent 55%), radial-gradient(circle at 100% 100%, #611300 0%, transparent 55%); }
+
+.match-logos-container {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: center; gap: 15px;
+}
+.card-team-logo {
+  width: 50px; height: 50px; filter: drop-shadow(0 0 12px rgba(0,0,0,1));
+}
+.card-vs-text {
+  font-size: 14px; font-weight: 900; color: #fff; opacity: 0.7;
+}
+
+/* ---------------------------------------------------- */
+/* --- FALLBACK STATE (CREATIVE TYPOGRAPHY) --- */
+/* ---------------------------------------------------- */
+.is-fallback {
+  background: radial-gradient(circle at 50% 100%, #0d121c 0%, #000 70%) !important;
+}
+
+.fallback-content {
+  z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+
+.reed-logo-text {
+  font-family: 'Arial Black', sans-serif;
+  font-size: 16px; /* Reduced slightly to fit well */
+  font-weight: 900; letter-spacing: 1px; color: #fff;
+  text-transform: uppercase;
+}
+
+.reed-highlight { color: #8db902; }
+
+.reed-underline {
+  width: 20px; height: 2px; background-color: #8db902;
+  margin-top: 4px; margin-bottom: 4px; border-radius: 2px;
+}
+
+.fallback-category {
+  font-size: 9px; color: #666; text-transform: uppercase; font-weight: 700; letter-spacing: 2px;
+}
+
+/* ---------------------------------------------------- */
+/* --- SKELETON UPDATES --- */
+/* ---------------------------------------------------- */
+.skeleton-shimmer { animation: shimmer 2s infinite linear; background: linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%); background-size: 1000px 100%; }
+.skeleton-title-bar { width: 120px; height: 24px; border-radius: 4px; margin-bottom: 20px; margin-left: 20px;}
+.skeleton-nav-btn { width: 36px; height: 36px; border-radius: 5px; }
+
+/* General Skeleton Wrapper */
+.skeleton-card { border-radius: 12px; border: 1px solid var(--card-border); flex-shrink: 0; animation: shimmer 2s infinite linear; background: linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%); background-size: 1000px 100%; }
+
+/* Specific Shapes - MATCHED TO EXACT CARD SIZES */
+.skeleton-sport { width: 140px; height: 130px; }
+.skeleton-match { width: 260px; aspect-ratio: 16/9; }
+.skeleton-banner { width: 100%; max-width: 1400px; margin: 20px auto; height: 380px; border-radius: 16px; }
+
+@keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+
+/* ---------------------------------------------------- */
+/* --- NEW FEATURED BANNER STYLES --- */
+/* ---------------------------------------------------- */
+.featured-section {
+  width: 100%; max-width: 1400px; margin: 0 auto;
+  margin-top: 20px; padding: 0 20px;
   position: relative;
-  overflow: hidden;
-  transform: none !important;
+  background: transparent;
 }
 
-@media (hover: hover) {
-  .match-card:hover {
-    border-color: #444; 
-    background-color: #0c0c0c;
-  }
+.featured-hero {
+  width: 100%; height: 380px;
+  border-radius: 16px;
+  position: relative; overflow: hidden;
+  border: 1px solid var(--card-border);
+  background-size: cover; background-position: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  display: flex; flex-direction: column; justify-content: flex-end;
 }
 
-/* 15 Textured Shades */
-.card-shade-1, .card-shade-6, .card-shade-11 { background: repeating-linear-gradient(45deg, #050505, #050505 10px, #090909 10px, #090909 20px); border-color: #111; }
-.card-shade-2, .card-shade-7, .card-shade-12 { background: radial-gradient(circle at 50% 0%, #151515 0%, #050505 80%); }
-.card-shade-3, .card-shade-8, .card-shade-13 { background: linear-gradient(to bottom, #111 0%, #000 100%); border-top: 1px solid #222; }
-.card-shade-4, .card-shade-9, .card-shade-14 { background-color: #000; background-image: radial-gradient(#1a1a1a 15%, transparent 16%); background-size: 8px 8px; }
-.card-shade-5, .card-shade-10, .card-shade-15 { background: linear-gradient(90deg, #0a0a0a 0%, #000 100%); border-left: 2px solid #222; }
+/* For fallback generic image */
+.featured-hero.is-generic {
+  background-position: center;
+  background-size: cover;
+}
 
-/* Content */
-.match-teams { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; position: relative; z-index: 2; }
-.team-info { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 40%; text-align: center; }
-.team-logo { width: 42px; height: 42px; object-fit: contain; filter: drop-shadow(0 2px 0px rgba(0,0,0,0.8)); }
-.team-name { font-size: 12px; color: #e2e8f0; font-weight: 600; line-height: 1.1; text-transform: uppercase; }
-.vs-badge { font-size: 11px; color: #333; font-weight: 900; font-style: italic; }
-.match-meta { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; position: relative; z-index: 2; }
-.league-name { font-size: 10px; color: #8db902; font-weight: 700; text-transform: uppercase; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.time-badge { font-size: 10px; color: #888; background: #0f0f0f; padding: 3px 8px; border: 1px solid #1a1a1a; border-radius: 4px; font-weight: 600; }
-.live-badge-sm { color: #000; background: #8db902; border-color: #8db902; font-weight: 800; }
+/* Featured Logos Container (Desktop) */
+.featured-logos {
+  position: absolute; 
+  top: 40%; left: 50%; 
+  transform: translate(-50%, -50%) scale(1.5); /* Big on Desktop */
+  z-index: 2;
+  display: flex; align-items: center; justify-content: center; gap: 20px;
+  width: 100%; pointer-events: none;
+}
 
-/* --- MOBILE SPECIFIC FIXES --- */
+.featured-overlay {
+  background: linear-gradient(0deg, #020305 0%, rgba(2,3,5,0.9) 25%, transparent 100%);
+  padding: 30px; width: 100%; box-sizing: border-box;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  z-index: 5;
+}
+
+.featured-info { max-width: 60%; }
+.featured-label {
+  background: var(--brand-green); color: #000;
+  font-size: 11px; font-weight: 800; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 10px;
+}
+.featured-title {
+  font-size: 32px; font-weight: 900; color: #fff;
+  text-transform: uppercase; line-height: 1.1; margin: 0 0 10px 0;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+}
+.featured-meta { display: flex; align-items: center; gap: 15px; color: #ccc; font-size: 14px; font-weight: 600; }
+.featured-btn {
+  background: var(--brand-green); color: #000;
+  border: none; padding: 12px 24px; border-radius: 8px;
+  font-weight: 800; text-transform: uppercase; font-size: 14px;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  transition: transform 0.2s; text-decoration: none;
+}
+.featured-btn:hover { transform: scale(1.05); }
+
+.featured-indicators {
+  position: absolute; bottom: 20px; right: 30px;
+  display: flex; gap: 8px; z-index: 10;
+}
+.indicator-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.3); cursor: pointer;
+  transition: all 0.2s;
+}
+.indicator-dot.active { background: var(--brand-green); width: 24px; border-radius: 4px; }
+
+/* ---------------------------------------------------- */
+/* --- MOBILE ADJUSTMENTS (FULL FORCE ATTACK) --- */
+/* ---------------------------------------------------- */
 @media (max-width: 768px) {
-  .sports-section, .matches-row-section {
-    padding: 0 0 20px 0; 
-    margin-top: 10px;
+  /* 1. FORCE THE BANNER TO BE COMPACT AND TIGHT */
+  .featured-section { 
+    width: 100%;
+    margin-top: 10px !important;    /* Small gap from header */
+    margin-bottom: 0px !important;  /* Zero gap to next section */
+    padding: 0 10px !important;     /* Only side padding */
+    height: auto !important;        /* Allow it to collapse */
+    min-height: 0 !important;       /* Remove any minimums */
+    display: block !important;
+  }
+
+  .featured-hero { 
+    height: 190px !important;       /* Hard lock the height */
+    width: 100%; 
+    margin: 0 !important;
+  }
+
+  /* 2. FORCE THE NEXT SECTION (SPORTS) TO PULL UP */
+  .sports-section {
+    margin-top: 10px !important;    /* Override the global 5vh */
+    padding-top: 0 !important;
   }
   
-  /* GRID HEADER: The Fix for Overlap */
-  .section-header {
-    display: grid !important;
-    grid-template-columns: 1fr auto !important;
-    align-items: center !important;
+  .matches-row-section {
+    margin-top: 5px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* 3. LOGO SCALING */
+  .featured-logos {
+    transform: translate(-50%, -50%) scale(0.85);
+    top: 35%; 
     gap: 10px;
     width: 100%;
-    padding-left: 15px; 
-    padding-right: 15px;
-    margin-bottom: 12px;
-    border-bottom: none;
-  }
-
-  /* Title Group */
-  .title-group {
-    align-items: flex-start !important;
-    text-align: left !important;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .section-title {
-    font-size: 18px; 
-    margin: 0;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-align: left !important;
-    padding: 0;
   }
   
-  /* Lock Green Bar */
-  .section-title::before {
-    height: 16px;
-    width: 4px;
-    flex-shrink: 0; /* Ensures it never disappears */
-  }
+  .featured-logos .card-team-logo { width: 40px; height: 40px; }
 
-  .nav-controls {
-    margin-right: 0;
-    justify-content: flex-end;
-  }
-
-  /* Scroll Padding */
-  .sports-carousel-container {
-    padding-left: 15px;
-    padding-right: 15px;
-    margin-left: 0;
-    margin-right: 0;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .sport-card-link { width: 130px; scroll-snap-align: start; }
-  .match-card-link { width: 220px; scroll-snap-align: start; }
-  .sport-card { padding: 12px 8px; min-height: 120px; }
-  .match-card { padding: 12px; min-height: 110px; }
-  .sport-emoji { font-size: 28px; }
-  .sport-title { font-size: 12px; }
-  .nav-btn { width: 32px; height: 32px; }
+  /* 4. TEXT ADJUSTMENTS */
+  .featured-title { font-size: 16px; line-height: 1.2; max-width: 90%; }
+  .featured-info { max-width: 100%; }
+  .featured-overlay { padding: 15px; flex-direction: column; align-items: flex-start; }
+  .featured-btn { display: none; } 
+  .featured-label { font-size: 9px; padding: 2px 6px; margin-bottom: 6px; }
+  .featured-meta { font-size: 11px; gap: 8px; }
+  
+  /* 5. SKELETON FIXES */
+  .skeleton-banner { height: 190px; margin-bottom: 10px; }
 }
 
 @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-/* --- SKELETON --- */
-.skeleton-shimmer { animation: shimmer 2s infinite linear; background: linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%); background-size: 1000px 100%; }
-.skeleton-title-bar { width: 120px; height: 24px; border-radius: 4px; }
-.skeleton-nav-btn { width: 36px; height: 36px; border-radius: 5px; }
-.skeleton-card { min-width: 170px; height: 160px; border-radius: 12px; border: 1px solid var(--card-border); flex-shrink: 0; animation: shimmer 2s infinite linear; background: linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%); background-size: 1000px 100%; }
-.match-skeleton-card { width: 260px; height: 130px; background: #111; border-radius: 10px; border: 1px solid #222; flex-shrink: 0; animation: shimmer 2s infinite linear; background: linear-gradient(to right, #161920 4%, #20242e 25%, #161920 36%); background-size: 1000px 100%; }
-@media (max-width: 768px) { .skeleton-card { min-width: 130px; width: 130px; height: 120px; } .match-skeleton-card { width: 220px; height: 110px; } }
-@keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
-
-/* --- API ERROR TOAST --- */
-.api-error-toast { position: fixed; bottom: 30px; right: 30px; z-index: 10000; width: 320px; padding: 16px; background: rgba(15, 17, 21, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid #ff4444; border-radius: 6px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; gap: 8px; }
-.error-header { display: flex; align-items: center; justify-content: space-between; width: 100%; padding-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-.error-title { color: #ff4444; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
-.error-content { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
-.error-subtitle { color: #8db902; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 6px; }
-.error-subtitle::before { content: ''; display: block; width: 6px; height: 6px; background-color: #8db902; border-radius: 50%; box-shadow: 0 0 5px #8db902; }
-.error-message { color: #a0aec0; font-size: 12px; line-height: 1.4; }
-.error-close { background: transparent; border: none; color: #555; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.2s; }
-.error-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
-@keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
-@media (max-width: 768px) { .api-error-toast { bottom: 85px; right: 15px; left: 15px; width: auto; animation: slideUpMobile 0.4s ease-out; } }
-@keyframes slideUpMobile { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
-@media (max-width: 786px) {
-
-  .sports-section {
-    margin-top: 5vh;
-  }
-
-}

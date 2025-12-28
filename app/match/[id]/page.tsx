@@ -21,6 +21,7 @@ import {
   Send
 } from "lucide-react"
 import "@/styles/match.css"
+import Header from "@/components/layout/header"
 
 // 🔥 IMPORT LANGUAGE HOOK
 import { useLanguage } from "@/context/language-context"
@@ -289,6 +290,7 @@ function MatchPageLoading() {
   return (
     <>
       <style jsx global>{pageStyles}</style>
+      <Header />
       <div className="match-page-container">
         <div className="top-nav">
            <div className="nav-back-wrapper">
