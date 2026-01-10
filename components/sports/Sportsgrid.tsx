@@ -21,7 +21,6 @@ interface APIMatch {
 }
 
 const FIXED_SPORTS = [
-  { id: 'popular', name: 'Popular Today', icon: '🔥' },
   { id: 'american-football', name: 'Football 🔥', icon: '🏈' },
   { id: 'football', name: 'Soccer', icon: '⚽' },
   { id: 'basketball', name: 'Basketball', icon: '🏀' },
@@ -206,6 +205,11 @@ const SportsGrid: React.FC = () => {
   const { grouped, counts } = useMemo(() => {
     const grouped: Record<string, APIMatch[]> = {};
     const counts: Record<string, number> = {};
+    
+    // Explicitly add 'popular' to grouped even if not in FIXED_SPORTS array
+    grouped['popular'] = [];
+    counts['popular'] = 0;
+
     FIXED_SPORTS.forEach(s => { grouped[s.id] = []; counts[s.id] = 0; });
     
     matches.forEach(m => {
@@ -223,7 +227,11 @@ const SportsGrid: React.FC = () => {
     return { grouped, counts };
   }, [matches, hiddenMatches]);
 
-  const sportsWithData = FIXED_SPORTS.filter(s => grouped[s.id].length > 0);
+  // Ensure popular is still checked for rendering the row, even if not a pill
+  const sportsToDisplay = [
+      ...(grouped['popular'].length > 0 ? [{ id: 'popular', name: 'Popular Today' }] : []),
+      ...FIXED_SPORTS.filter(s => grouped[s.id].length > 0)
+  ];
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(`section-${id}`);
@@ -247,36 +255,19 @@ const SportsGrid: React.FC = () => {
             ) : (
                 FIXED_SPORTS.map(s => {
                     const count = counts[s.id];
-                    const isPopular = s.id === 'popular';
                     const isFootball = s.id === 'american-football';
                     
-                    if (isPopular) {
-                      return (
-                        <button
-                          key={s.id}
-                          onClick={() => scrollToSection(s.id)}
-                          className="selector-pill pill-popular"
-                          style={{ opacity: count > 0 ? 1 : 0.5, cursor: count > 0 ? 'pointer' : 'default' }}
-                          disabled={count === 0}
-                        >
-                          <span className="pill-icon">{s.icon}</span>
-                          <span className="pill-label">{s.name}</span>
-                          {count > 0 && <div className="pill-count-badge">{count}</div>}
-                        </button>
-                      )
-                    } else {
-                      return (
-                        <Link
-                          key={s.id}
-                          href={`/live-matches?sportId=${s.id}&sportName=${encodeURIComponent(s.name)}`}
-                          className={`selector-pill ${isFootball ? 'pill-football' : ''}`}
-                        >
-                          <span className="pill-icon">{s.icon}</span>
-                          <span className="pill-label">{s.name}</span>
-                          {count > 0 && <div className="pill-count-badge">{count}</div>}
-                        </Link>
-                      );
-                    }
+                    return (
+                      <Link
+                        key={s.id}
+                        href={`/live-matches?sportId=${s.id}&sportName=${encodeURIComponent(s.name)}`}
+                        className={`selector-pill ${isFootball ? 'pill-football' : ''}`}
+                      >
+                        <span className="pill-icon">{s.icon}</span>
+                        <span className="pill-label">{s.name}</span>
+                        {count > 0 && <div className="pill-count-badge">{count}</div>}
+                      </Link>
+                    );
                 })
             )}
           </div>
@@ -293,7 +284,7 @@ const SportsGrid: React.FC = () => {
           </div>
         ) : (
           <div className="matches-grid-container">
-            {sportsWithData.map(s => (
+            {sportsToDisplay.map(s => (
               <MatchesRow 
                 key={s.id} 
                 sport={s} 
@@ -303,7 +294,7 @@ const SportsGrid: React.FC = () => {
               />
             ))}
             
-            {sportsWithData.length === 0 && (
+            {sportsToDisplay.length === 0 && (
               <div className="empty-state">
                 <Clock size={48} style={{ marginBottom: '16px' }} />
                 <h3>No Matches Available</h3>
