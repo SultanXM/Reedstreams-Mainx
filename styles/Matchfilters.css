@@ -1,0 +1,139 @@
+/* styles/Matchfilters.css */
+
+.filters-section {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  margin-bottom: 10px;
+  
+  /* Sticky Positioning */
+  position: sticky; 
+  top: 70px; /* Matches Desktop Header Height */
+  z-index: 40;
+}
+
+.filters-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  
+  /* MATCHING HEADER COLOR EXACTLY */
+  background: rgba(15, 17, 21, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  /* BOX LOOK (No Round Corners) */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px; /* Sleek, slight radius, NOT round */
+  
+  padding: 8px 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* --- LEFT: SCROLLABLE SPORTS --- */
+.sports-scroll-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  flex: 1; 
+  
+  /* Hide Scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-right: 10px;
+}
+.sports-scroll-area::-webkit-scrollbar { display: none; }
+
+.filter-pill {
+  white-space: nowrap;
+  background: transparent;
+  border: 1px solid #2a2e38;
+  color: #a0aec0;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  
+  /* Boxy Buttons too */
+  border-radius: 4px; 
+  
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-pill:hover {
+  border-color: #fff;
+  color: #fff;
+  background: rgba(255,255,255,0.05);
+}
+
+.filter-pill.active {
+  background: #8db902;
+  color: #000;
+  border-color: #8db902;
+  font-weight: 800;
+  box-shadow: 0 0 10px rgba(141, 185, 2, 0.2);
+}
+
+/* --- RIGHT: SOURCE FILTER --- */
+.separator {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.source-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #111;
+  border: 1px solid #3f4452;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 4px; /* Boxy */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.source-filter-btn:hover {
+  border-color: #8db902;
+  color: #8db902;
+}
+
+/* --- MOBILE OPTIMIZATION --- */
+@media (max-width: 768px) {
+  .filters-section {
+    padding: 0; /* Full width flush */
+    /* Pull it closer to the header on mobile (7vh is approx 55-60px) */
+    top: 7vh; 
+    margin-bottom: 5px;
+  }
+  
+  .filters-bar {
+    border-radius: 0; /* Full flat bar on mobile */
+    border-left: none;
+    border-right: none;
+    background: rgba(15, 17, 21, 0.98); /* Almost solid to hide snow behind text */
+    padding: 8px 15px;
+  }
+  
+  .filter-pill {
+    padding: 5px 12px;
+    font-size: 11px;
+  }
+  
+  .source-filter-btn span {
+    display: none; /* Hide text on small screens */
+  }
+  
+  .source-filter-btn {
+    padding: 6px;
+  }
+}

@@ -1,0 +1,252 @@
+:root {
+  --bg-dark: #050505;
+  --accent-color: #8db902;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  
+  /* Layout Spacing */
+  --page-top-padding: 110px; 
+  --section-gap: 35px;       
+  --card-gap: 16px;
+  
+  --match-card-w: 280px;     
+  --sport-card-size: 160px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  /* EXACT BG FROM OLD CODE */
+  background: radial-gradient(circle at 50% 100%, #0f1c30 0%, #020204 70%) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  padding-top: 5vh;
+  overflow-x: hidden;
+}
+
+/* --- EXACT SNOWFALL FROM OLD CODE --- */
+.snow-wrapper {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+  z-index: 0; pointer-events: none;
+}
+
+.snow-layer {
+  position: absolute; top: -100vh; left: 0; right: 0; bottom: 0;
+  background: transparent; border-radius: 50%;
+  animation-iteration-count: infinite; animation-timing-function: linear; animation-name: snowfall;
+}
+
+.layer-1 { width: 2px; height: 2px; opacity: 0.6; box-shadow: 10vw 10vh #fff, 60vw 40vh #fff, 15vw 80vh #fff, 80vw 10vh #fff, 30vw 20vh #fff, 90vw 90vh #fff, 40vw 50vh #fff, 50vw 10vh #fff, 20vw 30vh #fff, 70vw 60vh #fff, 10vw 90vh #fff, 95vw 30vh #fff, 25vw 70vh #fff, 75vw 20vh #fff, 05vw 40vh #fff, 55vw 80vh #fff, 35vw 50vh #fff, 85vw 60vh #fff, 45vw 10vh #fff, 65vw 90vh #fff; animation-duration: 20s; }
+.layer-2 { width: 3px; height: 3px; opacity: 0.8; box-shadow: 5vw 5vh rgba(255,255,255,0.8), 55vw 55vh rgba(255,255,255,0.8), 25vw 25vh rgba(255,255,255,0.8), 75vw 75vh rgba(255,255,255,0.8), 15vw 45vh rgba(255,255,255,0.8), 65vw 15vh rgba(255,255,255,0.8), 35vw 85vh rgba(255,255,255,0.8), 85vw 35vh rgba(255,255,255,0.8); animation-duration: 12s; }
+.layer-3 { width: 6px; height: 6px; opacity: 0.9; filter: blur(2px); box-shadow: 10vw 20vh #fff, 80vw 10vh #fff, 30vw 50vh #fff, 90vw 80vh #fff, 50vw 90vh #fff, 20vw 40vh #fff, 70vw 30vh #fff, 40vw 70vh #fff; animation-duration: 7s; }
+
+@keyframes snowfall { 0% { transform: translateY(0); } 100% { transform: translateY(100vh); } }
+
+.dashboard-wrapper {
+  background: linear-gradient(180deg, rgba(18, 18, 18, 0.4) 0%, rgba(5, 5, 5, 0.8) 100%);
+  min-height: 100vh;
+  padding-top: var(--page-top-padding);
+  padding-bottom: 80px;
+  position: relative;
+}
+
+.content-container {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  margin-top: 1vh;
+  padding: 0 30px;
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+/* --- SELECTORS (UPDATED TO SULTAN STYLE) --- */
+.top-selector-area { margin-bottom: 2vh; }
+
+.selector-grid {
+  display: flex; gap: var(--card-gap);
+  overflow-x: auto; padding: 10px 4px 25px 4px;
+  scrollbar-width: none;
+}
+.selector-grid::-webkit-scrollbar { display: none; }
+
+/* Selector Pill Base Style - SOLID DARK GREY STYLE */
+.selector-pill {
+  flex: 0 0 160px;
+  height: var(--sport-card-size);
+  background: linear-gradient(#161920 0%, #8db9020d 100%);
+  background-color: #1c1c1c;  /* ✅ Solid Dark Grey from past code */
+  border-radius: 16px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  text-decoration: none;
+  padding: 0;
+  border: 1px solid rgba(141, 185, 2, 0.2);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* PRO SHADOW */
+}
+
+/* Hover State - Subtle Highlight */
+.selector-pill:hover {
+  background-color: #252525;  /* ✅ Subtle highlight on hover */
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+  border-color: var(--accent-color);
+}
+
+/* Active State */
+.selector-pill.active {
+  background: var(--accent-color);
+  box-shadow: 0 0 20px rgba(141, 185, 2, 0.4);
+}
+
+.selector-pill.active .pill-label, .selector-pill.active .pill-icon { color: #000; }
+
+.pill-icon { 
+    font-size: 44px; 
+    margin-bottom: 8px; 
+    transition: color 0.2s; 
+    color: var(--text-primary);
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); 
+}
+
+.pill-label { 
+    color: var(--text-secondary); 
+    font-size: 13px; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px; 
+    transition: color 0.2s; 
+}
+
+/* Popular Specific Style if needed */
+.selector-pill.pill-popular { 
+    background-color: #1c1c1c; 
+}
+
+.pill-count-badge {
+  position: absolute; top: -6px; right: -6px;
+  background: var(--accent-color); color: #000;
+  font-size: 12px; font-weight: 800;
+  padding: 4px 8px; border-radius: 12px;
+  border: 2px solid var(--bg-dark);
+}
+
+/* --- MATCHES SECTION (Preserved) --- */
+.matches-section { margin-bottom: 10px; } 
+
+.section-row-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px; padding-left: 12px;
+  border-left: 5px solid var(--accent-color); /* The "Stick" */
+}
+
+.title-block { display: flex; align-items: center; gap: 10px; }
+.section-title { 
+    font-size: 24px; 
+    font-weight: 700; 
+    color: #fff; 
+    margin: 0; 
+    letter-spacing: 0.5px; 
+    text-transform: uppercase; 
+}
+
+.live-count-tag {
+  color: #ff4d4d; font-weight: 800; font-size: 12px;
+  background: rgba(255,0,0,0.15); padding: 4px 8px; border-radius: 6px;
+}
+
+.nav-controls { display: flex; gap: 10px; }
+.nav-btn {
+  background: transparent; border: 1px solid rgba(255,255,255,0.2);
+  color: #fff; width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: 0.2s;
+}
+.nav-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+.carousel-track {
+  display: flex; gap: var(--card-gap);
+  overflow-x: auto; padding: 4px 4px 24px 4px;
+  scrollbar-width: none;
+}
+.carousel-track::-webkit-scrollbar { display: none; }
+
+.match-card-link { flex: 0 0 var(--match-card-w); text-decoration: none; }
+
+.match-card {
+  background: rgb(30, 30, 30);
+  border: 1px solid #1f1f1f;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  height: 100%;
+}
+
+.match-card:hover {
+  border-color: var(--accent-color);
+}
+
+.match-visual {
+  width: 100%; aspect-ratio: 16/9; 
+  position: relative; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at center, #222 0%, #0a0a0a 100%);
+  border-bottom: 1px solid #1f1f1f;
+}
+
+.card-top-row {
+  position: absolute; top: 12px; left: 12px; right: 12px;
+  display: flex; justify-content: space-between; z-index: 2;
+}
+
+.status-badge {
+  font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.status-badge.live { background: #e00; color: #fff; box-shadow: 0 0 10px rgba(220,0,0,0.5); }
+.status-badge.upcoming { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); color: #ddd; border: 1px solid rgba(255,255,255,0.1); }
+
+.logos-wrapper { display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%; }
+.team-logo {
+  width: 55px; height: 55px;
+  object-fit: contain; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.6));
+}
+.vs-divider { color: #555; font-weight: 900; font-size: 12px; }
+
+.match-info { padding: 10px 12px; }
+.match-main-title {
+  font-size: 15px; color: #fff; margin-bottom: 2px;
+  font-weight: 600; line-height: 1.3;
+  height: 38px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.match-sub-meta { font-size: 10px; color: var(--accent-color); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+
+@media (max-width: 768px) {
+  :root { 
+    --sport-card-size: 25vw; 
+    --match-card-w: 60vw; 
+    --page-top-padding: 90px;
+    --section-gap: 30px; 
+    --card-gap: 12px;
+  }
+  
+  .content-container { padding: 0 10px; }
+  .selector-grid, .carousel-track { padding-right: 1vh; }
+
+  .nav-controls { display: none; }
+  
+  .section-title { font-size: 20px; }
+  .pill-icon { font-size: 8vw; margin-bottom: 4px; }
+  .pill-label { font-size: 3vw; }
+  
+  .match-visual { aspect-ratio: 2.1 / 1; }
+  
+  .team-logo { width: 10vw; height: 10vw; }
+  .match-info { padding: 8px 10px; }
+  .match-main-title { font-size: 14px; height: 36px; margin-bottom: 0px; }
+  .content-container { margin-top: -5vh; }
+
+  .selector-pill {
+   height: 110px;
+  flex: 0 0 120px;
+  }
+}
