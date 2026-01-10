@@ -47,17 +47,7 @@ export default function Header() {
     const [searchResults, setSearchResults] = useState<Match[]>([])
     const [liveMatchesCount, setLiveMatchesCount] = useState(0)
 
-    // 1. CRITICAL: Prevent Hydration Mismatch
-    useEffect(() => {
-        setMounted(true)
-        const init = async () => {
-            await Promise.all([fetchSports(), fetchLiveCount()])
-        }
-        init()
-        const interval = setInterval(fetchLiveCount, 30000)
-        return () => clearInterval(interval)
-    }, [])
-
+    // 1. DATA FETCHING
     const fetchLiveCount = async () => {
         try {
             const response = await fetch(`${API_BASE}/matches/live`)
@@ -87,6 +77,17 @@ export default function Header() {
             setMatches(data)
         } catch (error) { console.error(error) }
     }, [matches.length])
+
+    // 2. HYDRATION AND INIT
+    useEffect(() => {
+        setMounted(true)
+        const init = async () => {
+            await Promise.all([fetchSports(), fetchLiveCount()])
+        }
+        init()
+        const interval = setInterval(fetchLiveCount, 30000)
+        return () => clearInterval(interval)
+    }, [])
 
     useEffect(() => {
         if (showSearch) fetchSearchMatches()
@@ -118,26 +119,23 @@ export default function Header() {
         return `/live-matches?sportId=${validId}&sportName=${encodeURIComponent(sport.name)}`
     }
 
-    // Logo click forces a clean navigation to home
     const forceHome = (e: React.MouseEvent) => {
         e.preventDefault()
         setShowSidebar(false)
         router.push('/')
     }
 
-    // 2. STICKY RENDER: If not mounted, render a null/empty shell that matches Server 100%
-    if (!mounted) {
-        return <div className="site-header" style={{ height: '110px', background: '#050505' }}></div>
-    }
-
+    // 🔥 THE FIX: 
+    // We render the FULL shell structure but keep dynamic parts hidden until mounted.
+    // This keeps the DOM tree stable so React doesn't crash trying to remove nodes.
     return (
         <>
-            <header className="site-header">
+            <header className="site-header" style={{ opacity: mounted ? 1 : 0 }}>
                 <div className="top-bar desktop-only">
                     <div className="top-bar-content">
                         <Link href="/" onClick={forceHome} className="logo-mini"><span className="accent-text">REED</span>STREAMS</Link>
                         <nav className="sports-mini-nav">
-                            {sports.map(sport => (
+                            {mounted && sports.map(sport => (
                                 <Link key={sport.id} href={getSportUrl(sport)} className="mini-sport-link">
                                     {getDisplayName(sport.id)}
                                 </Link>
@@ -152,7 +150,7 @@ export default function Header() {
                             <button className="icon-btn mobile-menu-btn" onClick={() => setShowSidebar(true)}><Menu size={24} /></button>
                             <div className="live-status desktop-only">
                                 <div className="pulsing-dot"></div>
-                                <span>{liveMatchesCount > 0 ? `${liveMatchesCount} LIVE` : 'OFFLINE'}</span>
+                                <span>{mounted ? (liveMatchesCount > 0 ? `${liveMatchesCount} LIVE` : 'OFFLINE') : '...'}</span>
                             </div>
                             <Link href="/" onClick={forceHome} className="main-logo desktop-only"><span className="accent-text">REED</span>STREAMS</Link>
                         </div>
@@ -181,7 +179,7 @@ export default function Header() {
                 </div>
             </header>
 
-            {/* MODALS RENDERED AS INDEPENDENT NODES TO PREVENT HIERARCHY ISSUES */}
+            {/* MODALS: Keep logic as-is, just ensures mounted check */}
             {mounted && showSidebar && (
                 <>
                     <div className="sidebar-overlay visible" onClick={() => setShowSidebar(false)} />
