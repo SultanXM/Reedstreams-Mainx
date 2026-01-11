@@ -21,7 +21,7 @@ import {
   Send
 } from "lucide-react"
 import "@/styles/match.css"
-import Header from "@/components/layout/header"
+import Header from "@/components/layout/headerformatch"
 
 // 🔥 IMPORT LANGUAGE HOOK
 import { useLanguage } from "@/context/language-context"
@@ -437,7 +437,12 @@ function MatchPageContent() {
       {/* 🛡️ THE REAL HEADER IMPORTED AND WRAPPED FOR CINEMA MODE */}
       {!cinemaMode && <Header />}
 
-      <div className="match-page-container" style={{ background: cinemaMode ? '#000' : '#050505', paddingTop: cinemaMode ? '0' : '20px' }}>
+      <div className="match-page-container" style={{ 
+    background: cinemaMode ? '#000' : '#050505', 
+    // 👇 CHANGE THIS LINE. 
+    // 70px (Header Height) + 10vh (The gap you want)
+    paddingTop: cinemaMode ? '0' : 'calc(0px + 10vh)' 
+}}>
         
         {/* 🔥 THE MAIN GRID */}
         <div className={`match-grid ${cinemaMode ? 'layout-cinema' : 'layout-standard'}`}>

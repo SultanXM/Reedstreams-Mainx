@@ -175,6 +175,7 @@ const MatchesRow: React.FC<{ sport: any, matches: APIMatch[], liveCount: number,
 const SportsGrid: React.FC = () => {
   const [matches, setMatches] = useState<APIMatch[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false)
   const [hiddenMatches, setHiddenMatches] = useState<Set<string>>(new Set());
 
   const handleImageError = (matchId: string) => {
@@ -186,6 +187,7 @@ const SportsGrid: React.FC = () => {
   };
 
   useEffect(() => {
+    setMounted(true)
     const fetchMatches = async () => {
       try {
         const res = await fetch(`${API_BASE}/matches/all-today`);
@@ -206,7 +208,6 @@ const SportsGrid: React.FC = () => {
     const grouped: Record<string, APIMatch[]> = {};
     const counts: Record<string, number> = {};
     
-    // Explicitly add 'popular' to grouped even if not in FIXED_SPORTS array
     grouped['popular'] = [];
     counts['popular'] = 0;
 
@@ -227,7 +228,6 @@ const SportsGrid: React.FC = () => {
     return { grouped, counts };
   }, [matches, hiddenMatches]);
 
-  // Ensure popular is still checked for rendering the row, even if not a pill
   const sportsToDisplay = [
       ...(grouped['popular'].length > 0 ? [{ id: 'popular', name: 'Popular Today' }] : []),
       ...FIXED_SPORTS.filter(s => grouped[s.id].length > 0)
@@ -250,7 +250,7 @@ const SportsGrid: React.FC = () => {
           </div>
           
           <div className="selector-grid">
-            {loading ? (
+            {mounted && (loading ? (
                 Array(8).fill(0).map((_, i) => <SkeletonPill key={i} />)
             ) : (
                 FIXED_SPORTS.map(s => {
@@ -269,40 +269,42 @@ const SportsGrid: React.FC = () => {
                       </Link>
                     );
                 })
-            )}
+            ))}
           </div>
         </section>
 
-        {loading ? (
-          <div className="matches-grid-container">
-            <div className="section-row-header" style={{ border: 'none', marginBottom: '20px' }}>
-                <div style={{ width: '150px', height: '24px', background: '#1c1c1c', borderRadius: '4px' }} className="skeleton-pulse" />
-            </div>
-            <div className="carousel-track">
-                {Array(5).fill(0).map((_, i) => <SkeletonMatchCard key={i} />)}
-            </div>
-          </div>
-        ) : (
-          <div className="matches-grid-container">
-            {sportsToDisplay.map(s => (
-              <MatchesRow 
-                key={s.id} 
-                sport={s} 
-                matches={grouped[s.id]} 
-                liveCount={counts[s.id]} 
-                onImageError={handleImageError}
-              />
-            ))}
-            
-            {sportsToDisplay.length === 0 && (
-              <div className="empty-state">
-                <Clock size={48} style={{ marginBottom: '16px' }} />
-                <h3>No Matches Available</h3>
-                <p>We couldn't find any scheduled games with valid team data.</p>
+        <div className="matches-grid-container">
+          {mounted && (loading ? (
+            <>
+              <div className="section-row-header" style={{ border: 'none', marginBottom: '20px' }}>
+                  <div style={{ width: '150px', height: '24px', background: '#1c1c1c', borderRadius: '4px' }} className="skeleton-pulse" />
               </div>
-            )}
-          </div>
-        )}
+              <div className="carousel-track">
+                  {Array(5).fill(0).map((_, i) => <SkeletonMatchCard key={i} />)}
+              </div>
+            </>
+          ) : (
+            <>
+              {sportsToDisplay.map(s => (
+                <MatchesRow 
+                  key={s.id} 
+                  sport={s} 
+                  matches={grouped[s.id]} 
+                  liveCount={counts[s.id]} 
+                  onImageError={handleImageError}
+                />
+              ))}
+              
+              {sportsToDisplay.length === 0 && (
+                <div className="empty-state">
+                  <Clock size={48} style={{ marginBottom: '16px' }} />
+                  <h3>No Matches Available</h3>
+                  <p>We couldn't find any scheduled games with valid team data.</p>
+                </div>
+              )}
+            </>
+          ))}
+        </div>
       </div>
     </div>
   );
