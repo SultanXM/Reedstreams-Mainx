@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation"
 import "@/styles/match.css"
 import { useUniversalAdBlocker } from "@/hooks/useUniversalAdBlocker"
 
-// --- STYLING CONSTANT (Moved to top to fix Initialization Error) ---
+// --- STYLING CONSTANT ---
 const unitStyle = {
     background: 'rgba(255,255,255,0.03)',
     padding: '0 10px',
@@ -26,7 +26,7 @@ interface Match {
 }
 
 export default function MatchPlayer({ matchId }: { matchId: string }) {
-    // 🛡️ Activate Universal Ad Shield
+    // 🛡️ Activate Universal Ad Shield - UNTOUCHED
     useUniversalAdBlocker();
 
     const searchParams = useSearchParams()
@@ -38,15 +38,12 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-    // 🛡️ PLAYER STATE - Simple states for better UX
     const [playerState, setPlayerState] = useState<'initial' | 'loading' | 'ready'>('initial');
     const [loadingProgress, setLoadingProgress] = useState(0);
 
-    // COUNTDOWN STATE
     const [timeLeft, setTimeLeft] = useState<{ h: number, m: number, s: number } | null>(null);
     const [isLive, setIsLive] = useState(false);
 
-    // 1. INITIAL LOAD
     useEffect(() => {
         async function init() {
             try {
@@ -119,7 +116,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         init();
     }, [matchId, sportName]);
 
-    // COUNTDOWN TIMER
     useEffect(() => {
         if (!match || isLive) return;
         const timer = setInterval(() => {
@@ -140,19 +136,14 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         return () => clearInterval(timer);
     }, [match, isLive]);
 
-    // RESET PLAYER STATE ON STREAM CHANGE
     useEffect(() => {
         setPlayerState('initial');
         setLoadingProgress(0);
     }, [selectedStream]);
 
-    // 🛡️ HANDLE PLAY BUTTON - Single tap with loading animation
     const handlePlayClick = () => {
         if (playerState !== 'initial') return;
-
-        console.log('🛡️ User tapped play - starting protection sequence');
         setPlayerState('loading');
-
         let progress = 0;
         const interval = setInterval(() => {
             progress += 20;
@@ -161,13 +152,11 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                 clearInterval(interval);
                 setTimeout(() => {
                     setPlayerState('ready');
-                    console.log('🛡️ Protection complete - player ready');
                 }, 500);
             }
         }, 400);
     };
 
-    // RENDER: LOADING
     if (loading) return (
         <div className="player-container loading-state">
             <div className="spinner"></div>
@@ -175,10 +164,8 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         </div>
     );
 
-    // RENDER: ERROR
     if (error) return <div className="player-container error-state">{error}</div>;
 
-    // RENDER: COUNTDOWN (Enhanced UI)
     if (!isLive && timeLeft) {
         return (
             <div className="player-wrapper">
@@ -192,12 +179,10 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                         background: 'rgba(141, 185, 2, 0.05)', filter: 'blur(100px)',
                         borderRadius: '50%', zIndex: 0
                     }} />
-
                     <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <div style={{ fontSize: '11px', color: '#8db902', fontWeight: '800', letterSpacing: '4px', marginBottom: '20px', opacity: 0.8, textTransform: 'uppercase' }}>
                             Upcoming Broadcast
                         </div>
-
                         <div style={{
                             display: 'flex', gap: '15px', alignItems: 'center', fontSize: '56px', fontWeight: '900', color: '#fff', 
                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
@@ -209,7 +194,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                             <span style={{ opacity: 0.3, fontSize: '40px', paddingBottom: '10px' }}>:</span>
                             <div style={unitStyle}>{String(timeLeft.s).padStart(2, '0')}</div>
                         </div>
-
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: '#666', marginTop: '25px', fontWeight: '600', letterSpacing: '1px' }}>
                             <span className="live-dot" style={{ width: '6px', height: '6px' }} /> 
                             ESTABLISHING SATELLITE UPLINK
@@ -220,12 +204,11 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         )
     }
 
-    // RENDER: PLAYER
     return (
         <div className="player-wrapper">
-            <div className="player-container">
+            {/* 🛡️ KEY ADDED TO CONTAINER: Forces fresh render when stream changes */}
+            <div className="player-container" key={selectedStream?.embedUrl || 'empty'}>
 
-                {/* 🛡️ STATE: INITIAL - Show "Tap to Play" button */}
                 {playerState === 'initial' && selectedStream && (
                     <div
                         onClick={handlePlayClick}
@@ -256,7 +239,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                     </div>
                 )}
 
-                {/* 🛡️ STATE: LOADING - Show loading animation */}
                 {playerState === 'loading' && selectedStream && (
                     <div style={{
                         position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
@@ -271,7 +253,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                     </div>
                 )}
 
-                {/* 🛡️ STATE: READY - Show iframe */}
                 {playerState === 'ready' && selectedStream && (
                     <>
                         <PlayerIframe embedUrl={selectedStream.embedUrl} />
@@ -284,14 +265,14 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                 )}
             </div>
 
-            {/* STREAM SELECTOR */}
             {streams.length > 1 && (
                 <div className="stream-selector">
                     <div className="stream-header">AVAILABLE SIGNALS ({streams.length})</div>
                     <div className="stream-list">
-                        {streams.map((stream, index) => (
+                        {streams.map((stream) => (
                             <button
-                                key={index}
+                                // 🛡️ MOTHERFUCKER FIXED: Using stable unique key instead of index
+                                key={stream.embedUrl}
                                 className={`stream-btn ${selectedStream?.embedUrl === stream.embedUrl ? "active" : ""}`}
                                 onClick={() => setSelectedStream(stream)}
                             >
@@ -307,7 +288,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     )
 }
 
-// 🛡️ CLICK-THROUGH SHIELD COMPONENT
+// 🛡️ SHIELD LOGIC - UNTOUCHED
 function ClickThroughShield() {
     const [isBlocking, setIsBlocking] = useState(true);
     const [tapCount, setTapCount] = useState(0);
@@ -325,14 +306,10 @@ function ClickThroughShield() {
     const handleTap = (e: React.MouseEvent | React.TouchEvent) => {
         e.preventDefault();
         e.stopPropagation();
-
         const newCount = tapCount + 1;
         setTapCount(newCount);
-        console.log(`🛡️ Shield absorbed tap #${newCount}`);
-
         if (newCount >= 1) {
             setIsBlocking(false);
-            console.log('🛡️ Shield disabled for 3 seconds');
         }
     };
 
@@ -352,26 +329,18 @@ function ClickThroughShield() {
     );
 }
 
-// 🛡️ PLAYER IFRAME COMPONENT
+// 🛡️ IFRAME LOGIC - UNTOUCHED
 function PlayerIframe({ embedUrl }: { embedUrl: string }) {
     const [deviceInfo] = useState(() => {
-        if (typeof navigator === 'undefined') {
-            return { isMobile: true, isChrome: false };
-        }
+        if (typeof navigator === 'undefined') return { isMobile: true, isChrome: false };
         const ua = navigator.userAgent;
         const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
         const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua);
         const isChrome = /Chrome/.test(ua) && !/Edge/.test(ua) && !isMobile;
-
-        return {
-            isMobile: isMobile || isSafari,
-            isChrome: isChrome && !isMobile
-        };
+        return { isMobile: isMobile || isSafari, isChrome: isChrome && !isMobile };
     });
 
     const useSandbox = deviceInfo.isMobile && !deviceInfo.isChrome;
-
-    console.log('🛡️ PlayerIframe: device =', deviceInfo, 'useSandbox =', useSandbox);
 
     const baseProps = {
         src: embedUrl,
@@ -384,7 +353,6 @@ function PlayerIframe({ embedUrl }: { embedUrl: string }) {
     };
 
     if (useSandbox) {
-        console.log('🛡️ SANDBOX ENABLED - Popups will be blocked');
         return (
             <iframe
                 {...baseProps}
@@ -392,7 +360,5 @@ function PlayerIframe({ embedUrl }: { embedUrl: string }) {
             />
         );
     }
-
-    console.log('🛡️ SANDBOX DISABLED (Chrome desktop mode)');
     return <iframe {...baseProps} />;
 }
