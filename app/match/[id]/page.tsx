@@ -441,7 +441,7 @@ function MatchPageContent() {
     background: cinemaMode ? '#000' : '#050505', 
     // 👇 CHANGE THIS LINE. 
     // 70px (Header Height) + 10vh (The gap you want)
-    paddingTop: cinemaMode ? '0' : 'calc(0px + 10vh)' 
+    paddingTop: cinemaMode ? '0' : 'calc(0px + 3vh)' 
 }}>
         
         {/* 🔥 THE MAIN GRID */}
@@ -548,9 +548,9 @@ function MatchPageContent() {
                       <AlertTriangle size={32} color="#8db902" style={{marginBottom:'15px'}} />
                       <h3 style={{color:'#fff', fontSize:'16px', fontWeight:'800', margin:'0 0 5px 0'}}>{t.chat_rules_heading || "Rules"}</h3>
                       <p style={{color:'#888', fontSize:'12px', lineHeight:'1.5', marginBottom:'20px', maxWidth:'200px'}}>
-                        1. {t.chat_rule_1 || "No hate speech."}<br/>
+                        1. {t.chat_rule_1 || "100% hate speech."}<br/>
                         2. {t.chat_rule_2 || "No spam."}<br/>
-                        3. {t.chat_rule_3 || "Respect all."}
+                        3. {t.chat_rule_3 || "Do not Respect all."}
                       </p>
                       <button 
                         onClick={() => setChatAgreed(true)}

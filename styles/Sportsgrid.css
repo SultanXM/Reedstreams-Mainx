@@ -250,3 +250,126 @@ body {
   flex: 0 0 120px;
   }
 }
+/* --- SULTAN DISCORD POPUP --- */
+.sultan-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(8px);
+  padding: 20px;
+}
+
+.sultan-popup-content {
+  background: #1c1c1c; /* Matches your Selector Pill */
+  border: 1px solid #4752c4;
+  padding: 40px 30px;
+  border-radius: 20px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(141, 185, 2, 0.1);
+  animation: sultanFadeUp 0.4s ease-out;
+}
+
+@keyframes sultanFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sultan-war-header {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.sultan-popup-text {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.sultan-popup-text b {
+  color: var(--accent-color);
+}
+
+.sultan-join-btn {
+  display: block;
+  background: var(--accent-color);
+  color: #000;
+  text-decoration: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.sultan-join-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 20px rgba(141, 185, 2, 0.4);
+}
+
+.sultan-close-btn {
+  position: absolute;
+  top: 15px; right: 15px;
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.sultan-close-btn:hover {
+  color: #fff;
+}
+.discord-icon-wrapper {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.sultan-popup-title {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.sultan-discord-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #5865F2; /* Official Discord Color */
+  color: #fff;
+  text-decoration: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  transition: 0.3s;
+  border: none;
+  width: 100%;
+}
+
+.sultan-discord-btn:hover {
+  background: #4752c4;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(88, 101, 242, 0.3);
+}
+
+.sultan-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: #555;
+  background: none;
+  border: none;
+  cursor: pointer;
+}

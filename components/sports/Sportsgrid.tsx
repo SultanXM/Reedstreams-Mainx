@@ -2,10 +2,18 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, Flame, Clock, Trophy } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Flame, Clock, Trophy, X } from 'lucide-react'
 import '../../styles/Sportsgrid.css'
 
 const API_BASE = 'https://streamed.pk/api'
+
+// --- THE REAL TALK LIST ---
+const FUNNY_MESSAGES = [
+  "Only Real Niggas join our discord",
+  "Stop being a ghost, join the community",
+  "Matches, requests, and zero bullshit. Join up.",
+  "If you like the stream, you'll love the chat.",
+]
 
 interface APIMatch {
   id: string;
@@ -175,19 +183,27 @@ const MatchesRow: React.FC<{ sport: any, matches: APIMatch[], liveCount: number,
 const SportsGrid: React.FC = () => {
   const [matches, setMatches] = useState<APIMatch[]>([]);
   const [loading, setLoading] = useState(true);
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState(false);
   const [hiddenMatches, setHiddenMatches] = useState<Set<string>>(new Set());
-
-  const handleImageError = (matchId: string) => {
-    setHiddenMatches(prev => {
-      const newSet = new Set(prev);
-      newSet.add(matchId);
-      return newSet;
-    });
-  };
+  
+  // --- DISCORD DYNAMIC TEXT LOGIC ---
+  const [showPopup, setShowPopup] = useState(false);
+  const [messageIndex, setMessageIndex] = useState(0);
 
   useEffect(() => {
-    setMounted(true)
+    setMounted(true);
+
+    // SESSION STORAGE LOGIC
+    const hasSeenThisSession = sessionStorage.getItem('reedstreams_discord_seen');
+    if (!hasSeenThisSession) {
+      const timer = setTimeout(() => setShowPopup(true), 2000);
+      return () => clearTimeout(timer);
+    }
+
+    const msgInterval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % FUNNY_MESSAGES.length);
+    }, 3000);
+
     const fetchMatches = async () => {
       try {
         const res = await fetch(`${API_BASE}/matches/all-today`);
@@ -202,15 +218,28 @@ const SportsGrid: React.FC = () => {
       finally { setLoading(false); }
     };
     fetchMatches();
+
+    return () => clearInterval(msgInterval);
   }, []);
+
+  const closePopup = () => {
+    sessionStorage.setItem('reedstreams_discord_seen', 'true');
+    setShowPopup(false);
+  };
+
+  const handleImageError = (matchId: string) => {
+    setHiddenMatches(prev => {
+      const newSet = new Set(prev);
+      newSet.add(matchId);
+      return newSet;
+    });
+  };
 
   const { grouped, counts } = useMemo(() => {
     const grouped: Record<string, APIMatch[]> = {};
     const counts: Record<string, number> = {};
-    
     grouped['popular'] = [];
     counts['popular'] = 0;
-
     FIXED_SPORTS.forEach(s => { grouped[s.id] = []; counts[s.id] = 0; });
     
     matches.forEach(m => {
@@ -233,13 +262,32 @@ const SportsGrid: React.FC = () => {
       ...FIXED_SPORTS.filter(s => grouped[s.id].length > 0)
   ];
 
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(`section-${id}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
   return (
     <div className="dashboard-wrapper">
+      
+      {/* --- FUNNY REAL-TALK POPUP --- */}
+      {mounted && showPopup && (
+        <div className="sultan-popup-overlay">
+          <div className="sultan-popup-content">
+            <button className="sultan-close-btn" onClick={closePopup}><X size={24} /></button>
+            
+            <div className="discord-icon-wrapper">
+               <svg viewBox="0 0 127.14 96.36" fill="#5865F2" width="60" height="60">
+                 <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.71,32.65-1.82,56.6.48,80.21h0A105.73,105.73,0,0,0,32.47,96.36,77.7,77.7,0,0,0,39.2,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.73,11.1,105.32,105.32,0,0,0,32.05-16.15h0C130.11,50.41,122.09,26.78,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.87,53,48.74,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91,65.69,84.69,65.69Z"/>
+               </svg>
+            </div>
+
+            <h2 className="sultan-popup-title">Join the Crew</h2>
+            <div className="dynamic-text-container">
+               <p className="sultan-popup-text funny-rotation">
+                {FUNNY_MESSAGES[messageIndex]}
+              </p>
+            </div>
+            <a href="https://discord.gg/PMaUcEKV" target="_blank" rel="noopener noreferrer" className="sultan-discord-btn" onClick={closePopup}>JOIN DISCORD</a>
+          </div>
+        </div>
+      )}
+
       <div className="content-container">
         <section className="top-selector-area">
           <div className="section-row-header"> 
@@ -255,13 +303,11 @@ const SportsGrid: React.FC = () => {
             ) : (
                 FIXED_SPORTS.map(s => {
                     const count = counts[s.id];
-                    const isFootball = s.id === 'american-football';
-                    
                     return (
                       <Link
                         key={s.id}
                         href={`/live-matches?sportId=${s.id}&sportName=${encodeURIComponent(s.name)}`}
-                        className={`selector-pill ${isFootball ? 'pill-football' : ''}`}
+                        className="selector-pill"
                       >
                         <span className="pill-icon">{s.icon}</span>
                         <span className="pill-label">{s.name}</span>
@@ -294,7 +340,6 @@ const SportsGrid: React.FC = () => {
                   onImageError={handleImageError}
                 />
               ))}
-              
               {sportsToDisplay.length === 0 && (
                 <div className="empty-state">
                   <Clock size={48} style={{ marginBottom: '16px' }} />
