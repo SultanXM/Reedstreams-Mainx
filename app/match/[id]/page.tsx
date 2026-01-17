@@ -18,7 +18,8 @@ import {
   Wifi,
   MessageCircle,
   AlertOctagon,
-  Send
+  Send,
+  Smartphone
 } from "lucide-react"
 import "@/styles/match.css"
 import Header from "@/components/layout/headerformatch"
@@ -280,6 +281,51 @@ const pageStyles = `
       border-right: none;
     }
   }
+
+  /* MOBILE STABILITY BANNER STYLES */
+  .mobile-stability-banner {
+    display: none;
+    background: linear-gradient(90deg, #1a1a1a 0%, #000 100%);
+    border-bottom: 1px solid #222;
+    padding: 12px 20px;
+    margin-top: 5vh;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 100;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-stability-banner {
+      display: flex;
+    }
+  }
+
+  .stability-icon-wrapper {
+    background: rgba(141, 185, 2, 0.1);
+    padding: 8px;
+    border-radius: 8px;
+    color: #8db902;
+  }
+
+  .stability-text-content {
+    flex: 1;
+  }
+
+  .stability-title {
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stability-desc {
+    color: #888;
+    font-size: 11px;
+    line-height: 1.3;
+  }
 `
 
 // LOADING COMPONENT
@@ -438,11 +484,22 @@ function MatchPageContent() {
       {!cinemaMode && <Header />}
 
       <div className="match-page-container" style={{ 
-    background: cinemaMode ? '#000' : '#050505', 
-    // 👇 CHANGE THIS LINE. 
-    // 70px (Header Height) + 10vh (The gap you want)
-    paddingTop: cinemaMode ? '0' : 'calc(0px + 3vh)' 
-}}>
+          background: cinemaMode ? '#000' : '#050505', 
+          paddingTop: cinemaMode ? '0' : 'calc(0px + 3vh)' 
+      }}>
+
+        {/* ⚠️ MOBILE STABILITY BANNER */}
+        {!cinemaMode && (
+          <div className="mobile-stability-banner">
+            <div className="stability-icon-wrapper">
+              <Smartphone size={18} />
+            </div>
+            <div className="stability-text-content">
+              <div className="stability-title">IPHONE stability notice</div>
+              <div className="stability-desc">We are not stable on Iphone right now. Please switch to desktop for a seamless experience. We will be back shortly!</div>
+            </div>
+          </div>
+        )}
         
         {/* 🔥 THE MAIN GRID */}
         <div className={`match-grid ${cinemaMode ? 'layout-cinema' : 'layout-standard'}`}>
