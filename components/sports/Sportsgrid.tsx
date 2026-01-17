@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, Flame, Clock, Trophy } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Flame, Clock, Trophy, Smartphone } from 'lucide-react'
 import '../../styles/Sportsgrid.css'
 
 const API_BASE = 'https://streamed.pk/api'
@@ -57,7 +57,6 @@ const getImageUrl = (badgeId: string): string => `${API_BASE}/images/badge/${bad
 const isLive = (timestamp: number): boolean => {
   const now = Date.now();
   const matchTime = new Date(timestamp).getTime();
-  // Match is live if it started and is within a 3-hour window
   return matchTime <= now && (now - matchTime) < (3 * 60 * 60 * 1000);
 }
 
@@ -90,7 +89,6 @@ const SkeletonMatchCard = () => (
 );
 
 // --- Match Card ---
-// Memoized to prevent re-renders unless match data changes
 const MatchCard = React.memo(({ match, onImageError }: { match: APIMatch; onImageError: (id: string) => void }) => {
   const isMatchLive = isLive(match.date);
   const homeName = match.teams?.home?.name || 'Home';
@@ -108,7 +106,7 @@ const MatchCard = React.memo(({ match, onImageError }: { match: APIMatch; onImag
             <span className={`status-badge ${isMatchLive ? 'live' : 'upcoming'}`}>
               {isMatchLive ? 'LIVE' : formatTime(match.date)}
             </span>
-            {match.popular && <div className="badge-popular"><Flame size={14} color="#ffa500" fill="#ffa500" /></div>}
+            {match.popular && <div className="badge-popular"><Flame size={14} color="#8db902" fill="#8db902" /></div>}
           </div>
           <div className="logos-wrapper">
             <img 
@@ -154,7 +152,7 @@ const MatchesRow: React.FC<{ sport: any, matches: APIMatch[], liveCount: number,
     <section className="matches-section" id={`section-${sport.id}`}>
       <div className="section-row-header">
         <div className="title-block">
-          {isPopular && <Trophy size={20} color="var(--accent-color)" />}
+          {isPopular && <Trophy size={20} color="#8db902" />}
           <h2 className="section-title">{sport.name}</h2>
           {liveCount > 0 && <span className="live-count-tag">{liveCount} LIVE</span>}
         </div>
@@ -184,22 +182,17 @@ const SportsGrid: React.FC = () => {
 
   useEffect(() => {
     setMounted(true);
-
     const fetchMatches = async () => {
       try {
         const res = await fetch(`${API_BASE}/matches/all-today`);
         const data: APIMatch[] = await res.json();
-        
-        // Optimizing the filter loop
         const validMatches = data.filter(m => {
           const homeBadge = m.teams?.home?.badge;
           const awayBadge = m.teams?.away?.badge;
-          // Ensure badges exist and aren't empty strings
           return homeBadge && homeBadge.trim() !== '' && 
                  awayBadge && awayBadge.trim() !== '' && 
                  m.sources?.length > 0;
         });
-        
         setMatches(validMatches);
       } catch (e) { 
         console.error("Failed to fetch matches:", e); 
@@ -207,7 +200,6 @@ const SportsGrid: React.FC = () => {
         setLoading(false); 
       }
     };
-
     fetchMatches();
   }, []);
 
@@ -222,23 +214,16 @@ const SportsGrid: React.FC = () => {
   const { grouped, counts } = useMemo(() => {
     const grouped: Record<string, APIMatch[]> = {};
     const counts: Record<string, number> = {};
-    
-    // Initialize groups
     grouped['popular'] = [];
     counts['popular'] = 0;
     FIXED_SPORTS.forEach(s => { grouped[s.id] = []; counts[s.id] = 0; });
-    
-    // Single pass sorting
     matches.forEach(m => {
       if (hiddenMatches.has(m.id)) return;
-      
       const isMatchLive = isLive(m.date);
-
       if (m.popular) {
         grouped['popular'].push(m);
         if (isMatchLive) counts['popular']++;
       }
-      
       const sid = normalizeSport(m.category);
       if (sid && grouped[sid]) {
         grouped[sid].push(m);
@@ -255,13 +240,65 @@ const SportsGrid: React.FC = () => {
 
   return (
     <div className="dashboard-wrapper">
-      
+      {/* 🧠 STABILITY BANNER ADDED HERE */}
+      <style jsx>{`
+        .mobile-stability-banner {
+          display: none;
+          background: linear-gradient(90deg, #1a1a1a 0%, #000 100%);
+          border-bottom: 1px solid #222;
+          padding: 12px 20px;
+          align-items: center;
+          gap: 12px;
+          position: relative;
+          z-index: 100;
+          margin-bottom: 10px;
+          margin-top: -8vh;
+        }
+        @media (max-width: 768px) {
+          .mobile-stability-banner {
+            display: flex;
+          }
+        }
+        .stability-icon-wrapper {
+          background: rgba(141, 185, 2, 0.1);
+          padding: 8px;
+          border-radius: 8px;
+          color: #8db902;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .stability-title {
+          color: #fff;
+          font-size: 12px;
+          font-weight: 800;
+          margin-bottom: 2px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        .stability-desc {
+          color: #888;
+          font-size: 11px;
+          line-height: 1.3;
+        }
+      `}</style>
+
+      <div className="mobile-stability-banner">
+        <div className="stability-icon-wrapper">
+          <Smartphone size={18} />
+        </div>
+        <div className="stability-text-content">
+          <div className="stability-title">Mobile stability notice</div>
+          <div className="stability-desc">We are not stable on phone right now. Please switch to desktop for a seamless experience. We will be back shortly!</div>
+        </div>
+      </div>
+
       <div className="content-container">
         {/* Top Pills Section */}
         <section className="top-selector-area">
           <div className="section-row-header"> 
             <div className="title-block">
-              <Trophy size={20} color="var(--accent-color)" />
+              <Trophy size={20} color="#8db902" />
               <h2 className="section-title">Sports Category</h2>
             </div>
           </div>
