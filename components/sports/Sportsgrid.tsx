@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, Flame, Clock, Trophy, Smartphone } from 'lucide-react'
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  Flame, 
+  Clock, 
+  Trophy, 
+  Smartphone, 
+  ShieldAlert 
+} from 'lucide-react'
 import '../../styles/Sportsgrid.css'
 
 const API_BASE = 'https://streamed.pk/api'
@@ -180,8 +188,14 @@ const SportsGrid: React.FC = () => {
   const [mounted, setMounted] = useState(false);
   const [hiddenMatches, setHiddenMatches] = useState<Set<string>>(new Set());
 
+  // 🛡️ POPUP STATES - 10 SECOND TIMER
+  const [isAppleDevice, setIsAppleDevice] = useState(false);
+  const [timerCount, setTimerCount] = useState(12);
+
   useEffect(() => {
     setMounted(true);
+
+    // 1. Fetch Matches Logic
     const fetchMatches = async () => {
       try {
         const res = await fetch(`${API_BASE}/matches/all-today`);
@@ -201,6 +215,27 @@ const SportsGrid: React.FC = () => {
       }
     };
     fetchMatches();
+
+    // 2. 🛡️ APPLE DETECTION ENGINE (iOS + Mac)
+    const ua = window.navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua);
+    const isMac = /Macintosh/.test(ua) && 'ontouchend' in document === false; 
+    const isIPadPro = (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (isIOS || isMac || isIPadPro) {
+      setIsAppleDevice(true);
+      const countdown = setInterval(() => {
+        setTimerCount((prev) => {
+          if (prev <= 1) {
+            clearInterval(countdown);
+            setIsAppleDevice(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(countdown);
+    }
   }, []);
 
   const handleImageError = (matchId: string) => {
@@ -240,8 +275,33 @@ const SportsGrid: React.FC = () => {
 
   return (
     <div className="dashboard-wrapper">
-      {/* 🧠 STABILITY BANNER ADDED HERE */}
       <style jsx>{`
+        /* 🛡️ APPLE SYSTEM ALERT POPUP */
+        .apple-alert-box {
+          position: fixed;
+          top: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 95%;
+          max-width: 450px;
+          background: #000;
+          border: 1px solid #8db902;
+          border-radius: 12px;
+          z-index: 20000; 
+          padding: 16px;
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          box-shadow: 0 30px 60px rgba(0,0,0,1);
+          animation: alertSlideDown 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        @keyframes alertSlideDown {
+          from { transform: translate(-50%, -100%); opacity: 0; }
+          to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        /* Original Layout Styles */
         .mobile-stability-banner {
           display: none;
           background: linear-gradient(90deg, #1a1a1a 0%, #000 100%);
@@ -283,13 +343,32 @@ const SportsGrid: React.FC = () => {
         }
       `}</style>
 
+      {/* 🛡️ DYNAMIC APPLE STABILITY POPUP (10s) */}
+      {isAppleDevice && (
+        <div className="apple-alert-box">
+          <div style={{background: 'rgba(141, 185, 2, 0.15)', padding: '12px', borderRadius: '10px', color: '#8db902'}}>
+             <ShieldAlert size={32} strokeWidth={2.5} />
+          </div>
+          <div style={{flex: 1}}>
+             <h3 style={{color: '#fff', fontSize: '14px', fontWeight: '900', margin: 0, textTransform: 'uppercase', letterSpacing: '1px'}}>Handshake Warning</h3>
+             <p style={{color: '#888', fontSize: '11px', margin: '4px 0 0 0', lineHeight: '1.4'}}>
+                Apple Safari engine is unstable with our providers. For 1080p streams, please switch to <span style={{color: '#8db902', fontWeight: 'bold'}}>Desktop Chrome</span> or <span style={{color: '#8db902', fontWeight: 'bold'}}>Android</span>.
+             </p>
+          </div>
+          <div style={{background: '#111', border: '1px solid #222', height: '40px', width: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8db902', fontSize: '14px', fontWeight: '900'}}>
+             {timerCount}
+          </div>
+        </div>
+      )}
+
+      {/* Static banner kept for overall layout stability as per original code */}
       <div className="mobile-stability-banner">
         <div className="stability-icon-wrapper">
           <Smartphone size={18} />
         </div>
         <div className="stability-text-content">
-          <div className="stability-title">Mobile stability notice</div>
-          <div className="stability-desc">We are not stable on phone right now. Please switch to desktop for a seamless experience. We will be back shortly!</div>
+          <div className="stability-title">IOS stability notice</div>
+          <div className="stability-desc">We are not stable on IOS right now. Please switch to Android/Desktop for a seamless experience. We will be back shortly!</div>
         </div>
       </div>
 
