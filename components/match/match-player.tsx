@@ -101,10 +101,28 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                 } else {
                     setStreams(allStreams);
                     const isBasketball = sportName?.toLowerCase().includes("basketball");
+                    
                     let best = null;
-                    if (isBasketball) best = allStreams.find(s => s.sourceIdentifier === "bravo #2");
-                    if (!best) best = allStreams.find(s => s.sourceIdentifier === "admin" && s.streamNo === 1);
-                    if (!best) best = allStreams.find(s => s.hd);
+
+                    // --- SULTAN PRIORITY LOGIC ---
+                    // Priority 1: Delta #1 (Reed's Request)
+                    best = allStreams.find(s => s.sourceIdentifier.toLowerCase() === "delta" && s.streamNo === 1);
+                    
+                    // Priority 2: Basketball specific
+                    if (!best && isBasketball) {
+                        best = allStreams.find(s => s.sourceIdentifier.toLowerCase() === "bravo #2");
+                    }
+                    
+                    // Priority 3: Admin #1
+                    if (!best) {
+                        best = allStreams.find(s => s.sourceIdentifier.toLowerCase() === "admin" && s.streamNo === 1);
+                    }
+                    
+                    // Priority 4: HD any
+                    if (!best) {
+                        best = allStreams.find(s => s.hd);
+                    }
+
                     setSelectedStream(best || allStreams[0]);
                 }
             } catch (e) {
@@ -206,7 +224,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
     return (
         <div className="player-wrapper">
-            {/* 🛡️ KEY ADDED TO CONTAINER: Forces fresh render when stream changes */}
             <div className="player-container" key={selectedStream?.embedUrl || 'empty'}>
 
                 {playerState === 'initial' && selectedStream && (
@@ -271,7 +288,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                     <div className="stream-list">
                         {streams.map((stream) => (
                             <button
-                                // 🛡️ MOTHERFUCKER FIXED: Using stable unique key instead of index
                                 key={stream.embedUrl}
                                 className={`stream-btn ${selectedStream?.embedUrl === stream.embedUrl ? "active" : ""}`}
                                 onClick={() => setSelectedStream(stream)}
@@ -288,7 +304,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     )
 }
 
-// 🛡️ SHIELD LOGIC - UNTOUCHED
 function ClickThroughShield() {
     const [isBlocking, setIsBlocking] = useState(true);
     const [tapCount, setTapCount] = useState(0);
@@ -297,7 +312,6 @@ function ClickThroughShield() {
         if (!isBlocking) {
             const timer = setTimeout(() => {
                 setIsBlocking(true);
-                console.log('🛡️ Shield re-enabled');
             }, 3000);
             return () => clearTimeout(timer);
         }
@@ -329,7 +343,6 @@ function ClickThroughShield() {
     );
 }
 
-// 🛡️ IFRAME LOGIC - UNTOUCHED
 function PlayerIframe({ embedUrl }: { embedUrl: string }) {
     const [deviceInfo] = useState(() => {
         if (typeof navigator === 'undefined') return { isMobile: true, isChrome: false };
