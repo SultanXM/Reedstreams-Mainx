@@ -1,10 +1,21 @@
 import { NextResponse } from 'next/server';
 
+// CORS headers for iOS compatibility
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': '*',
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 200, headers: corsHeaders });
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const targetUrl = searchParams.get('url');
 
-  if (!targetUrl) return new NextResponse('Missing URL', { status: 400 });
+  if (!targetUrl) return new NextResponse('Missing URL', { status: 400, headers: corsHeaders });
 
   try {
     const res = await fetch(targetUrl, {
@@ -19,18 +30,18 @@ export async function GET(request: Request) {
 
     // 1. HUNT FOR THE M3U8 LINK
     // We look for patterns like: source: "http...m3u8" or file: "http...m3u8"
-    const regex = /(?:source|file)\s*:\s*["'](https?:\/\/[^"']+\.m3u8[^"']*)["']/;
+    const regex = /(?:source|file)\s*:\s*["'](https?:\/\/[^"']+\.m3u8[^"']*)['"]/;
     const match = html.match(regex);
 
     if (match && match[1]) {
-        console.log("EXTRACTED CLEAN STREAM:", match[1]);
-        return NextResponse.json({ success: true, url: match[1] });
+      console.log("EXTRACTED CLEAN STREAM:", match[1]);
+      return NextResponse.json({ success: true, url: match[1] }, { headers: corsHeaders });
     }
 
     // 2. Fallback: If we can't find it, we tell frontend to use iframe
-    return NextResponse.json({ success: false });
+    return NextResponse.json({ success: false }, { headers: corsHeaders });
 
   } catch (error) {
-    return NextResponse.json({ success: false });
+    return NextResponse.json({ success: false }, { headers: corsHeaders });
   }
 }

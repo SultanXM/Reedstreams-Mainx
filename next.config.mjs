@@ -46,13 +46,53 @@ const nextConfig = {
           },
         ],
       },
+      // CORS headers for HLS proxy APIs (iOS compatibility)
+      {
+        source: '/api/proxy/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, HEAD, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: '*',
+          },
+          {
+            key: 'Access-Control-Expose-Headers',
+            value: 'Content-Length, Content-Type',
+          },
+        ],
+      },
+      // CORS headers for stream API
+      {
+        source: '/api/stream/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: '*',
+          },
+        ],
+      },
       // Allow iframes from trusted stream sources
       {
         source: '/match/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-src 'self' https://*.streamed.pk https://*.embedstream.me https://*.sportshub.stream; frame-ancestors 'self';",
+            value: "frame-src 'self' https://*.streamed.pk https://*.embedstream.me https://*.sportshub.stream blob: data:; media-src 'self' https://*.streamed.pk https://*.embedstream.me https://*.sportshub.stream blob: data: *; frame-ancestors 'self';",
           },
         ],
       },
