@@ -1,33 +1,35 @@
-'use client'
-
-import React, { useState, useEffect } from 'react'
+// app/page.tsx
 import Header from '@/components/layout/header'
 import SportsGrid from '@/components/sports/Sportsgrid'
 
-export default function Home() {
-  const [mounted, setMounted] = useState(false)
+// This function runs on the Server
+async function getInitialMatches() {
+  const res = await fetch('https://streamed.pk/api/matches/all-today', {
+    // Vercel will refresh this data every 60 seconds in the background
+    next: { revalidate: 60 } 
+  });
+  if (!res.ok) return [];
+  return res.json();
+}
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+export default async function Home() {
+  // Fetch data BEFORE the page is sent to the user
+  const initialMatches = await getInitialMatches();
 
   return (
     <main className="min-h-screen relative overflow-hidden">
-      
-      {/* --- MILLION DOLLAR SNOWFALL SYSTEM --- */}
-      {/* Guarded by mounted to prevent Hydration Error */}
-      <div className="snow-wrapper" style={{ opacity: mounted ? 1 : 0 }}>
+      {/* Snowfall System (CSS handles the animation, no need for mounted check here) */}
+      <div className="snow-wrapper">
          <div className="snow-layer layer-1"></div>
          <div className="snow-layer layer-2"></div>
          <div className="snow-layer layer-3"></div>
       </div>
        
-      {/* Content sits ON TOP of the snow */}
-      <div className="relative z-10" style={{ opacity: mounted ? 1 : 0 }}>
+      <div className="relative z-10">
         <Header />
-        <SportsGrid />
+        {/* Pass the server-fetched data into your component */}
+        <SportsGrid initialData={initialMatches} />
       </div>
-
     </main>
   )
 }
