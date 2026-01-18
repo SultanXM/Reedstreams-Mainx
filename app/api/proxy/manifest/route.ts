@@ -1,156 +1,94 @@
 import { NextResponse } from 'next/server';
 
 /**
- * HLS Manifest Proxy for iOS Compatibility
+ * HLS Manifest Proxy
  * 
- * iOS (Safari) enforces strict CORS and SSL policies for HLS streams.
- * This proxy fetches the .m3u8 manifest from external servers and serves
- * it with proper CORS headers and correct Content-Type.
+ * Fetches an external .m3u8 manifest and serves it with:
+ * 1. Correct CORS headers (Access-Control-Allow-Origin: *)
+ * 2. Correct Content-Type (application/vnd.apple.mpegurl)
+ * 3. Rewritten internal URLs to point to our segment proxy
  * 
- * Usage: /api/proxy/manifest?url=https://example.com/stream.m3u8
+ * This allows iOS Safari (and other players) to play streams 
+ * from servers that lack proper CORS configuration.
  */
+
+// Global CORS headers
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Range, Authorization',
+  'Access-Control-Expose-Headers': 'Content-Length, Content-Range',
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 200, headers: corsHeaders });
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const manifestUrl = searchParams.get('url');
 
   if (!manifestUrl) {
-    return new NextResponse('Missing manifest URL', { status: 400 });
-  }
-
-  // Validate URL is for m3u8
-  if (!manifestUrl.includes('.m3u8')) {
-    return new NextResponse('Invalid manifest URL', { status: 400 });
+    return new NextResponse('Missing URL parameter', { status: 400, headers: corsHeaders });
   }
 
   try {
-    console.log(`[MANIFEST PROXY] Fetching: ${manifestUrl}`);
-    
     const response = await fetch(manifestUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
         'Accept': '*/*',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Referer': new URL(manifestUrl).origin + '/',
-        'Origin': new URL(manifestUrl).origin,
       },
-      cache: 'no-store',
     });
 
     if (!response.ok) {
-      console.error(`[MANIFEST PROXY] Error: ${response.status} ${response.statusText}`);
-      return new NextResponse(`Upstream error: ${response.status}`, { 
-        status: response.status,
-        headers: getCorsHeaders()
-      });
+      return new NextResponse(`Upstream Error: ${response.status}`, { status: response.status, headers: corsHeaders });
     }
 
-    let manifestContent = await response.text();
-    
-    // Rewrite relative URLs in manifest to absolute URLs
-    const baseUrl = manifestUrl.substring(0, manifestUrl.lastIndexOf('/') + 1);
-    manifestContent = rewriteManifestUrls(manifestContent, baseUrl);
-    
-    console.log(`[MANIFEST PROXY] Success - Content length: ${manifestContent.length}`);
+    let content = await response.text();
+    const baseUrl = new URL(manifestUrl);
 
-    // Determine correct Content-Type for HLS
-    const contentType = manifestUrl.includes('.m3u8') 
-      ? 'application/vnd.apple.mpegurl' 
-      : 'application/octet-stream';
+    // Rewrite URLs
+    // If they are relative, make them absolute
+    // Then wrap them in our segment proxy
 
-    return new NextResponse(manifestContent, {
+    // Helper to wrap a URL in our proxy
+    const wrapUrl = (url: string) => {
+      // Resolve relative URLs
+      const absoluteUrl = new URL(url, baseUrl.toString()).toString();
+      // Point to our segment proxy
+      // Use existing origin
+      const ourOrigin = new URL(request.url).origin;
+      return `${ourOrigin}/api/proxy/segment?url=${encodeURIComponent(absoluteUrl)}`;
+    };
+
+    // Rewrite lines that are NOT comments (#) and usually end in .ts, .m4s, or .key
+    // OR are sub-manifests (.m3u8)
+    content = content.split('\n').map(line => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) {
+        // Check for URI="..." attribute in #EXT-X-KEY
+        if (trimmed.startsWith('#EXT-X-KEY')) {
+          return trimmed.replace(/URI="([^"]*)"/, (match, group1) => {
+            return `URI="${wrapUrl(group1)}"`;
+          });
+        }
+        return line;
+      }
+      // It's a URL line
+      return wrapUrl(trimmed);
+    }).join('\n');
+
+    return new NextResponse(content, {
       status: 200,
       headers: {
-        'Content-Type': contentType,
+        'Content-Type': 'application/vnd.apple.mpegurl',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        ...getCorsHeaders()
+        ...corsHeaders
       }
     });
 
   } catch (error) {
-    console.error('[MANIFEST PROXY] Critical error:', error);
-    return new NextResponse('Proxy error', { 
-      status: 500,
-      headers: getCorsHeaders()
-    });
+    console.error('[Manifest Proxy Error]', error);
+    return new NextResponse('Internal Server Error', { status: 500, headers: corsHeaders });
   }
-}
-
-/**
- * Handle OPTIONS preflight requests for CORS
- */
-export async function OPTIONS(request: Request) {
-  return new NextResponse(null, {
-    status: 200,
-    headers: getCorsHeaders()
-  });
-}
-
-/**
- * Generate CORS headers required for iOS HLS playback
- */
-function getCorsHeaders(): Record<string, string> {
-  return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
-    'Access-Control-Allow-Headers': '*',
-    'Access-Control-Expose-Headers': 'Content-Length, Content-Type',
-    'Access-Control-Max-Age': '86400',
-  };
-}
-
-/**
- * Rewrite relative URLs in the manifest to absolute URLs
- * This ensures that segment URLs are also accessible
- */
-function rewriteManifestUrls(content: string, baseUrl: string): string {
-  // Rewrite relative segment/playlist references to absolute
-  const lines = content.split('\n');
-  const rewrittenLines = lines.map(line => {
-    const trimmedLine = line.trim();
-    
-    // Skip empty lines and comment lines (starting with #)
-    if (!trimmedLine || trimmedLine.startsWith('#')) {
-      // But handle #EXT-X-MAP and #EXT-X-KEY URIs
-      if (trimmedLine.includes('URI="')) {
-        return rewriteUriAttribute(trimmedLine, baseUrl);
-      }
-      return line;
-    }
-    
-    // If line is a relative URL (not starting with http), make it absolute
-    if (!trimmedLine.startsWith('http://') && !trimmedLine.startsWith('https://')) {
-      // Handle relative paths
-      if (trimmedLine.startsWith('/')) {
-        // Absolute path from origin
-        const urlObj = new URL(baseUrl);
-        return urlObj.origin + trimmedLine;
-      } else {
-        // Relative to current path
-        return baseUrl + trimmedLine;
-      }
-    }
-    
-    return line;
-  });
-  
-  return rewrittenLines.join('\n');
-}
-
-/**
- * Rewrite URI attributes in HLS tags like #EXT-X-MAP and #EXT-X-KEY
- */
-function rewriteUriAttribute(line: string, baseUrl: string): string {
-  return line.replace(/URI="([^"]+)"/, (match, uri) => {
-    if (uri.startsWith('http://') || uri.startsWith('https://')) {
-      return match; // Already absolute
-    }
-    if (uri.startsWith('/')) {
-      const urlObj = new URL(baseUrl);
-      return `URI="${urlObj.origin}${uri}"`;
-    }
-    return `URI="${baseUrl}${uri}"`;
-  });
 }

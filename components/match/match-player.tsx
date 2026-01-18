@@ -1,9 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useSearchParams } from "next/navigation"
 import "@/styles/match.css"
 import { useUniversalAdBlocker } from "@/hooks/useUniversalAdBlocker"
+// Import Native Player
+import NativeHLSPlayer from "./NativeHLSPlayer"
 
 // --- STYLING CONSTANT ---
 const unitStyle = {
@@ -43,6 +45,10 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
     const [timeLeft, setTimeLeft] = useState<{ h: number, m: number, s: number } | null>(null);
     const [isLive, setIsLive] = useState(false);
+
+    // 🍎 iOS Native Player State
+    const [iosStreamUrl, setIosStreamUrl] = useState<string | null>(null);
+    const [useNative, setUseNative] = useState(false);
 
     useEffect(() => {
         async function init() {
@@ -157,6 +163,37 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     useEffect(() => {
         setPlayerState('initial');
         setLoadingProgress(0);
+        setIosStreamUrl(null); // Reset iOS stream
+        setUseNative(false);
+    }, [selectedStream]);
+
+    // 🍎 iOS Extraction Logic
+    useEffect(() => {
+        // Only run on iOS/Safari if stream selected
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+        // Also enable for Mac Safari to test
+        const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+
+        if ((isIOS || isSafari) && selectedStream) {
+            console.log('🍎 [iOS] Attempting to extract HLS for native playback...');
+
+            fetch(`/api/extract-stream?url=${encodeURIComponent(selectedStream.embedUrl)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.streamUrl) {
+                        console.log('🍎 [iOS] Extraction SUCCESS:', data.streamUrl);
+                        setIosStreamUrl(data.streamUrl);
+                        setUseNative(true);
+                    } else {
+                        console.log('🍎 [iOS] Extraction FAILED, using fallback iframe.');
+                        setUseNative(false);
+                    }
+                })
+                .catch(err => {
+                    console.error('🍎 [iOS] Extraction Error:', err);
+                    setUseNative(false);
+                });
+        }
     }, [selectedStream]);
 
     const handlePlayClick = () => {
@@ -272,7 +309,17 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
                 {playerState === 'ready' && selectedStream && (
                     <>
-                        <PlayerIframe embedUrl={selectedStream.embedUrl} />
+                        {/* 🍎 Render Native Player if available for iOS */}
+                        {useNative && iosStreamUrl ? (
+                            <div className="ios-native-wrapper" style={{ width: '100%', height: '100%', position: 'relative', zIndex: 50 }}>
+                                <NativeHLSPlayer
+                                    streamUrl={iosStreamUrl}
+                                    onError={() => setUseNative(false)} // Fallback on error
+                                />
+                            </div>
+                        ) : (
+                            <PlayerIframe embedUrl={selectedStream.embedUrl} />
+                        )}
                         <ClickThroughShield />
                     </>
                 )}
