@@ -1,11 +1,9 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import "@/styles/match.css"
 import { useUniversalAdBlocker } from "@/hooks/useUniversalAdBlocker"
-// Import Native Player
-import NativeHLSPlayer from "./NativeHLSPlayer"
 
 // --- STYLING CONSTANT ---
 const unitStyle = {
@@ -45,10 +43,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
     const [timeLeft, setTimeLeft] = useState<{ h: number, m: number, s: number } | null>(null);
     const [isLive, setIsLive] = useState(false);
-
-    // 🍎 iOS Native Player State
-    const [iosStreamUrl, setIosStreamUrl] = useState<string | null>(null);
-    const [useNative, setUseNative] = useState(false);
 
     useEffect(() => {
         async function init() {
@@ -106,25 +100,34 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                     setError("Streams are offline.");
                 } else {
                     setStreams(allStreams);
-                    const isBasketball = sportName?.toLowerCase().includes("basketball");
                     
+                    // --- SULTAN SEAMLESS PRIORITY LOGIC ---
                     let best = null;
 
-                    // --- SULTAN PRIORITY LOGIC ---
-                    // Priority 1: Delta #1 (Reed's Request)
-                    best = allStreams.find(s => s.sourceIdentifier.toLowerCase() === "delta" && s.streamNo === 1);
-                    
-                    // Priority 2: Basketball specific
-                    if (!best && isBasketball) {
-                        best = allStreams.find(s => s.sourceIdentifier.toLowerCase() === "bravo #2");
+                    // 1. Try Bravo #1 first
+                    best = allStreams.find(s => 
+                        s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 1
+                    );
+
+                    // 2. Fallback to Bravo #2 if #1 is missing
+                    if (!best) {
+                        best = allStreams.find(s => 
+                            s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 2
+                        );
+                    }
+
+                    // 3. Fallback to Delta #1 if both Bravos are missing
+                    if (!best) {
+                        best = allStreams.find(s => 
+                            s.sourceIdentifier.toLowerCase() === "delta" && s.streamNo === 1
+                        );
                     }
                     
-                    // Priority 3: Admin #1
+                    // 4. Final safety fallbacks (Admin or HD)
                     if (!best) {
                         best = allStreams.find(s => s.sourceIdentifier.toLowerCase() === "admin" && s.streamNo === 1);
                     }
                     
-                    // Priority 4: HD any
                     if (!best) {
                         best = allStreams.find(s => s.hd);
                     }
@@ -163,37 +166,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     useEffect(() => {
         setPlayerState('initial');
         setLoadingProgress(0);
-        setIosStreamUrl(null); // Reset iOS stream
-        setUseNative(false);
-    }, [selectedStream]);
-
-    // 🍎 iOS Extraction Logic
-    useEffect(() => {
-        // Only run on iOS/Safari if stream selected
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-        // Also enable for Mac Safari to test
-        const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-
-        if ((isIOS || isSafari) && selectedStream) {
-            console.log('🍎 [iOS] Attempting to extract HLS for native playback...');
-
-            fetch(`/api/extract-stream?url=${encodeURIComponent(selectedStream.embedUrl)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success && data.streamUrl) {
-                        console.log('🍎 [iOS] Extraction SUCCESS:', data.streamUrl);
-                        setIosStreamUrl(data.streamUrl);
-                        setUseNative(true);
-                    } else {
-                        console.log('🍎 [iOS] Extraction FAILED, using fallback iframe.');
-                        setUseNative(false);
-                    }
-                })
-                .catch(err => {
-                    console.error('🍎 [iOS] Extraction Error:', err);
-                    setUseNative(false);
-                });
-        }
     }, [selectedStream]);
 
     const handlePlayClick = () => {
@@ -309,17 +281,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
                 {playerState === 'ready' && selectedStream && (
                     <>
-                        {/* 🍎 Render Native Player if available for iOS */}
-                        {useNative && iosStreamUrl ? (
-                            <div className="ios-native-wrapper" style={{ width: '100%', height: '100%', position: 'relative', zIndex: 50 }}>
-                                <NativeHLSPlayer
-                                    streamUrl={iosStreamUrl}
-                                    onError={() => setUseNative(false)} // Fallback on error
-                                />
-                            </div>
-                        ) : (
-                            <PlayerIframe embedUrl={selectedStream.embedUrl} />
-                        )}
+                        <PlayerIframe embedUrl={selectedStream.embedUrl} />
                         <ClickThroughShield />
                     </>
                 )}
