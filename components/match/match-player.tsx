@@ -104,26 +104,33 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                     // --- SULTAN SEAMLESS PRIORITY LOGIC ---
                     let best = null;
 
-                    // 1. Try Bravo #1 first
+                    // 1. ABSOLUTE PRIORITY: Golf #1 (The New Default)
                     best = allStreams.find(s => 
-                        s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 1
+                        s.sourceIdentifier.toLowerCase().includes("golf") && s.streamNo === 1
                     );
 
-                    // 2. Fallback to Bravo #2 if #1 is missing
+                    // 2. Fallback to Bravo #1
+                    if (!best) {
+                        best = allStreams.find(s => 
+                            s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 1
+                        );
+                    }
+
+                    // 3. Fallback to Bravo #2
                     if (!best) {
                         best = allStreams.find(s => 
                             s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 2
                         );
                     }
 
-                    // 3. Fallback to Delta #1 if both Bravos are missing
+                    // 4. Fallback to Delta #1 (The iOS Savior)
                     if (!best) {
                         best = allStreams.find(s => 
                             s.sourceIdentifier.toLowerCase() === "delta" && s.streamNo === 1
                         );
                     }
                     
-                    // 4. Final safety fallbacks (Admin or HD)
+                    // 5. Final safety fallbacks (Admin or HD)
                     if (!best) {
                         best = allStreams.find(s => s.sourceIdentifier.toLowerCase() === "admin" && s.streamNo === 1);
                     }
