@@ -158,7 +158,8 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
             const diff = matchTime - now;
             if (diff <= 0) {
                 setIsLive(true);
-                window.location.reload();
+                // Removed reload - just switch to live mode
+                // window.location.reload(); 
                 clearInterval(timer);
             } else {
                 const h = Math.floor((diff / (1000 * 60 * 60)));
@@ -205,7 +206,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
             <div className="player-wrapper">
                 <div className="player-container countdown-state" style={{
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    background: 'radial-gradient(circle at center, #0a0a0a 0%, #050505 100%)', 
+                    background: 'radial-gradient(circle at center, #0a0a0a 0%, #050505 100%)',
                     color: '#fff', position: 'relative', overflow: 'hidden'
                 }}>
                     <div style={{
@@ -218,7 +219,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                             Upcoming Broadcast
                         </div>
                         <div style={{
-                            display: 'flex', gap: '15px', alignItems: 'center', fontSize: '56px', fontWeight: '900', color: '#fff', 
+                            display: 'flex', gap: '15px', alignItems: 'center', fontSize: '56px', fontWeight: '900', color: '#fff',
                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
                             fontVariantNumeric: 'tabular-nums', letterSpacing: '-2px'
                         }}>
@@ -229,7 +230,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                             <div style={unitStyle}>{String(timeLeft.s).padStart(2, '0')}</div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: '#666', marginTop: '25px', fontWeight: '600', letterSpacing: '1px' }}>
-                            <span className="live-dot" style={{ width: '6px', height: '6px' }} /> 
+                            <span className="live-dot" style={{ width: '6px', height: '6px' }} />
                             ESTABLISHING SATELLITE UPLINK
                         </div>
                     </div>
