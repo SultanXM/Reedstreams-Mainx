@@ -1,16 +1,12 @@
 'use client'
 
-import React, { useState, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { 
-  ChevronLeft, 
-  ChevronRight, 
   Flame, 
-  Clock, 
   Trophy, 
   Smartphone, 
-  ShieldAlert,
-  X 
+  ShieldAlert 
 } from 'lucide-react'
 import '../../styles/Sportsgrid.css'
 
@@ -120,23 +116,10 @@ export default function SportsGrid({ initialData }: { initialData: APIMatch[] })
   const [loading, setLoading] = useState(true); 
   const [mounted, setMounted] = useState(false);
   const [hiddenMatches, setHiddenMatches] = useState<Set<string>>(new Set());
-  const [isAppleDevice, setIsAppleDevice] = useState(false);
-  const [timerCount, setTimerCount] = useState(12);
-  const [showDiscordPopup, setShowDiscordPopup] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     setLoading(false);
-
-    const discordTimer = setTimeout(() => setShowDiscordPopup(true), 4000);
-
-    const ua = window.navigator.userAgent;
-    if (/iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in document)) {
-      setIsAppleDevice(true);
-      const countdown = setInterval(() => setTimerCount(p => p <= 1 ? 0 : p - 1), 1000);
-      return () => { clearInterval(countdown); clearTimeout(discordTimer); }
-    }
-    return () => clearTimeout(discordTimer);
   }, []);
 
   const handleImageError = (matchId: string) => setHiddenMatches(prev => new Set(prev).add(matchId));
@@ -171,50 +154,6 @@ export default function SportsGrid({ initialData }: { initialData: APIMatch[] })
          <div className="snow-layer layer-2"></div>
          <div className="snow-layer layer-3"></div>
       </div>
-
-      {isAppleDevice && timerCount > 0 && (
-        <div className="apple-alert-box">
-          <ShieldAlert size={32} color="#8db902" />
-          <div style={{flex: 1}}>
-             <h3 style={{color: '#fff', fontSize: '14px', fontWeight: '900', margin: 0}}>Handshake Warning</h3>
-             <p style={{color: '#888', fontSize: '11px', margin: '4px 0 0 0'}}>Safari engine unstable. Use Chrome or Android.</p>
-          </div>
-          <div style={{color: '#8db902', fontWeight: '900'}}>{timerCount}</div>
-        </div>
-      )}
-
-      {/* SLEEK CORNER POPUP */}
-      {mounted && showDiscordPopup && (
-        <div className="discord-floating-card">
-            <button className="card-close" onClick={() => setShowDiscordPopup(false)}><X size={16} /></button>
-            <div className="card-body">
-                <div className="discord-mini-icon">
-                    <svg viewBox="0 0 127.14 96.36" fill="white" width="24" height="24"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.71,32.65-1.82,56.6.48,80.21h0A105.73,105.73,0,0,0,32.47,96.36,77.7,77.7,0,0,0,39.2,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.73,11.1,105.32,105.32,0,0,0,32.05-16.15h0C130.11,50.41,122.09,26.78,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.87,53,48.74,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91,65.69,84.69,65.69Z"/></svg>
-                </div>
-                <div className="card-text">
-                    <p>Yo niggas, join the Discord for live backups!</p>
-                    <a href="https://discord.gg/PMaUcEKV" target="_blank" rel="noopener noreferrer">Gimme the link</a>
-                </div>
-            </div>
-        </div>
-      )}
-
-      <style jsx>{`
-        .discord-floating-card {
-            position: fixed; bottom: 20px; right: 20px;
-            background: #1c1c1c; border: 1px solid #333;
-            padding: 15px; border-radius: 12px; z-index: 10000;
-            width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            animation: slideUp 0.4s ease;
-        }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .card-close { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #555; cursor: pointer; }
-        .card-body { display: flex; gap: 12px; align-items: center; }
-        .discord-mini-icon { background: #5865F2; padding: 8px; border-radius: 10px; }
-        .card-text p { color: #eee; font-size: 13px; margin: 0; font-weight: 600; }
-        .card-text a { color: #8db902; font-size: 12px; font-weight: 800; text-decoration: none; margin-top: 4px; display: inline-block; }
-        @media (max-width: 768px) { .discord-floating-card { width: calc(100% - 40px); left: 20px; bottom: 10px; } }
-      `}</style>
 
       <div className="content-container">
         <section className="top-selector-area">
