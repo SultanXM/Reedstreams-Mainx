@@ -318,7 +318,7 @@ function MatchPageContent() {
   
   // 🛡️ POPUP STATES
   const [isAppleDevice, setIsAppleDevice] = useState(false)
-  const [timerCount, setTimerCount] = useState(12)
+  const [timerCount, setTimerCount] = useState(5)
 
   // MATCH DATA
   const [matchTitle, setMatchTitle] = useState("Loading Stream...")

@@ -7,9 +7,11 @@ import { ArrowLeft } from 'lucide-react'
 export default function HeaderForMatch() {
     const router = useRouter()
 
-    // 🛡️ ONE PAGE BACK LOGIC
+    // 🛡️ HARD REDIRECT LOGIC
+    // We use router.push('/') instead of back() to avoid getting stuck 
+    // in the player's internal history/fetching states.
     const handleGoBack = () => {
-        router.back()
+        router.push('/')
     }
 
     const handleHome = (e: React.MouseEvent) => {
@@ -23,7 +25,7 @@ export default function HeaderForMatch() {
             top: 0,
             left: 0,
             right: 0,
-            height: '60px', // Slightly shorter for better mobile view
+            height: '60px',
             background: '#050505',
             borderBottom: '1px solid #222',
             display: 'flex',
@@ -35,7 +37,7 @@ export default function HeaderForMatch() {
             <div style={{
                 width: '100%',
                 maxWidth: '1600px',
-                padding: '0 12px', // Reduced padding for mobile
+                padding: '0 12px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between'
@@ -45,13 +47,14 @@ export default function HeaderForMatch() {
                 <div style={{ 
                     display: 'flex', 
                     alignItems: 'center', 
-                    gap: '10px', // Tight gap for mobile
+                    gap: '10px',
                     flexShrink: 1 
                 }}>
                     
                     {/* BACK BUTTON */}
                     <button 
                         onClick={handleGoBack}
+                        className="back-btn-sultan"
                         style={{
                             background: '#111',
                             border: '1px solid #333',
@@ -65,7 +68,8 @@ export default function HeaderForMatch() {
                             alignItems: 'center',
                             gap: '4px',
                             cursor: 'pointer',
-                            flexShrink: 0 // Prevents button from squishing
+                            flexShrink: 0,
+                            transition: 'all 0.2s ease'
                         }}
                     >
                         <ArrowLeft size={16} />
@@ -73,7 +77,7 @@ export default function HeaderForMatch() {
                     </button>
 
                     <a href="/" onClick={handleHome} style={{
-                        fontSize: '18px', // Smaller base font for mobile
+                        fontSize: '18px',
                         fontWeight: '900',
                         color: '#fff',
                         textDecoration: 'none',
@@ -110,8 +114,12 @@ export default function HeaderForMatch() {
                 </div>
             </div>
 
-            {/* QUICK CSS FOR LOGO SIZE ON DESKTOP */}
             <style jsx>{`
+                .back-btn-sultan:hover {
+                    background: #222 !important;
+                    border-color: #8db902 !important;
+                    color: #8db902 !important;
+                }
                 @media (min-width: 768px) {
                     a { font-size: 24px !important; }
                     .back-text { font-size: 13px !important; }
