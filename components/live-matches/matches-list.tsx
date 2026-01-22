@@ -19,16 +19,6 @@ interface Match {
   };
 }
 
-const Snowfall = () => {
-  return (
-    <div className="snow-container">
-      <div className="snowflake snow-layer-1" />
-      <div className="snowflake snow-layer-2" />
-      <div className="snowflake snow-layer-3" />
-    </div>
-  );
-};
-
 const getImageUrl = (badgeId: string): string => `${API_BASE}/images/badge/${badgeId}.webp`;
 
 const isLive = (timestamp: number): boolean => {
@@ -58,7 +48,11 @@ const MatchCard: React.FC<{ match: Match; onImageError: (id: string) => void }> 
   const isMatchLive = isLive(match.date);
   const homeName = match.teams?.home?.name || 'Home';
   const awayName = match.teams?.away?.name || 'Away';
-  const matchTitle = `${homeName} vs ${awayName}`;
+  
+  const fullTitle = `${homeName} vs ${awayName}`;
+  const matchTitle = fullTitle.length > 35 
+    ? fullTitle.substring(0, 32) + "..." 
+    : fullTitle;
 
   return (
     <Link 
@@ -103,7 +97,7 @@ const MatchCard: React.FC<{ match: Match; onImageError: (id: string) => void }> 
            </div>
         </div>
       </article>
-    </Link>
+    </Link> 
   );
 };
 
@@ -176,7 +170,6 @@ export default function LiveMatches() {
 
   return (
     <div className="page-wrapper">
-      <Snowfall />
       <div className="page-container">
         <div className="page-header">
           <Link href="/" className="back-link">

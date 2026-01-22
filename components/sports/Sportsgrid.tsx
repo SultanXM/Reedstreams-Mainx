@@ -114,11 +114,10 @@ const MatchCard = React.memo(({ match, onImageError }: { match: APIMatch; onImag
 export default function SportsGrid({ initialData }: { initialData: APIMatch[] }) {
   const [matches] = useState<APIMatch[]>(initialData || []);
   const [loading, setLoading] = useState(true); 
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(true); // FIXED: Initial true to avoid black flash
   const [hiddenMatches, setHiddenMatches] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    setMounted(true);
     setLoading(false);
   }, []);
 
@@ -149,19 +148,13 @@ export default function SportsGrid({ initialData }: { initialData: APIMatch[] })
 
   return (
     <div className="dashboard-wrapper">
-      <div className="snow-wrapper">
-         <div className="snow-layer layer-1"></div>
-         <div className="snow-layer layer-2"></div>
-         <div className="snow-layer layer-3"></div>
-      </div>
-
       <div className="content-container">
         <section className="top-selector-area">
           <div className="section-row-header"> 
             <div className="title-block"><Trophy size={20} color="#8db902" /><h2 className="section-title">Sports Category</h2></div>
           </div>
           <div className="selector-grid">
-            {!mounted || loading ? Array(8).fill(0).map((_, i) => <SkeletonPill key={i} />) : 
+            {loading ? Array(8).fill(0).map((_, i) => <SkeletonPill key={i} />) : 
               FIXED_SPORTS.map(s => (
                 <Link key={s.id} href={`/live-matches?sportId=${s.id}`} className="selector-pill">
                   <span className="pill-icon">{s.icon}</span><span className="pill-label">{s.name}</span>
@@ -173,11 +166,11 @@ export default function SportsGrid({ initialData }: { initialData: APIMatch[] })
         </section>
 
         <div className="matches-grid-container">
-          {!mounted || loading ? (
+          {loading ? (
             <>
               <div className="section-row-header" style={{ border: 'none', marginBottom: '20px' }}>
-                  <div style={{ width: '150px', height: '24px', background: '#1c1c1c', borderRadius: '4px' }} className="skeleton-pulse" />
-              </div>
+          <div style={{ width: '150px', height: '24px', background: '#1c1c1c', borderRadius: '4px' }} className="skeleton-pulse" />
+      </div>
               <div className="carousel-track">{Array(5).fill(0).map((_, i) => <SkeletonMatchCard key={i} />)}</div>
             </>
           ) : (

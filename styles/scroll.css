@@ -11,14 +11,11 @@
 
 * {
     margin: 0;
-    padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    background-color: var(--secondary-color);
-    color: var(--text-light);
     overflow-x: hidden;
 }
 
@@ -30,7 +27,6 @@ body {
     position: relative;
     background: var(--secondary-color);
     overflow: hidden;
-    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;

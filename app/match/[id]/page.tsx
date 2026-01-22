@@ -318,7 +318,7 @@ function MatchPageContent() {
   
   // 🛡️ POPUP STATES
   const [isAppleDevice, setIsAppleDevice] = useState(false)
-  const [timerCount, setTimerCount] = useState(5)
+  const [timerCount, setTimerCount] = useState(-1)
 
   // MATCH DATA
   const [matchTitle, setMatchTitle] = useState("Loading Stream...")
@@ -387,23 +387,7 @@ function MatchPageContent() {
     <>
       <style jsx global>{pageStyles}</style>
       
-      {/* 🛡️ APPLE STABILITY POPUP */}
-      {isAppleDevice && (
-        <div className="apple-alert-box">
-          <div style={{background: 'rgba(141, 185, 2, 0.15)', padding: '12px', borderRadius: '10px', color: '#8db902'}}>
-             <Smartphone size={32} strokeWidth={2.5} />
-          </div>
-          <div style={{flex: 1}}>
-             <h3 style={{color: '#fff', fontSize: '14px', fontWeight: '900', margin: 0, textTransform: 'uppercase', letterSpacing: '1px'}}>Handshake Warning</h3>
-             <p style={{color: '#888', fontSize: '11px', margin: '4px 0 0 0', lineHeight: '1.4'}}>
-                Apple Safari is currently unstable with this provider. For 1080p quality, please switch to <span style={{color: '#8db902', fontWeight: 'bold'}}>Desktop Chrome OR Android</span>.
-             </p>
-          </div>
-          <div style={{background: '#111', border: '1px solid #222', height: '40px', width: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8db902', fontSize: '14px', fontWeight: '900'}}>
-             {timerCount}
-          </div>
-        </div>
-      )}
+      
 
       {showFeedback && (
         <div className="modal-overlay">

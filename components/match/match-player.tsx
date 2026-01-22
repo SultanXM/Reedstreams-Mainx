@@ -106,20 +106,20 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
                     // 1. ABSOLUTE PRIORITY: Golf #1 (The New Default)
                     best = allStreams.find(s => 
-                        s.sourceIdentifier.toLowerCase().includes("golf") && s.streamNo === 1
+                        s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 1
                     );
 
                     // 2. Fallback to Bravo #1
                     if (!best) {
                         best = allStreams.find(s => 
-                            s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 1
+                            s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 2
                         );
                     }
 
                     // 3. Fallback to Bravo #2
                     if (!best) {
                         best = allStreams.find(s => 
-                            s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 2
+                            s.sourceIdentifier.toLowerCase().includes("golf") && s.streamNo === 1
                         );
                     }
 

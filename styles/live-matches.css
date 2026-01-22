@@ -1,74 +1,42 @@
 :root {
-  --bg-dark: #050505;
+  --bg-dark: #000000;
   --bg-card: #1c1c1e;
   --bg-card-hover: #262629;
   --accent-color: #8db902;
   --text-primary: #ffffff;
   --text-secondary: #9ca3af;
   --red-live: #e53935;
-  --page-top-padding: 140px; 
+  --page-top-padding: 160px; /* Fixed height to stop the 'Cock Cock' slide */
 }
 
-body { 
-  margin: 0; 
-  padding: 0; 
-  background: radial-gradient(circle at 50% 100%, #0f1c30 0%, #020204 70%) !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+body {
+  margin: 0;
+  padding: 0;
+  /* FORCE REEDS GREEN #8db902 - This is the master background */
+  background: 
+    radial-gradient(circle at 50% 0%, rgba(141, 185, 2, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #050603 0%, #000000 100%) !important;
+  background-attachment: fixed;
+  background-color: #000000 !important;
+  overflow-x: hidden;
 }
 
-.snow-container { 
-  position: fixed; 
-  top: 0; left: 0; width: 100%; height: 100vh; 
-  pointer-events: none; z-index: 1; 
-}
-
-.snowflake {
-  position: absolute; 
-  top: -100vh; left: 0; right: 0; bottom: 0;
-  background: transparent; border-radius: 50%;
-  animation-iteration-count: infinite; 
-  animation-timing-function: linear; 
-  animation-name: fall;
-}
-
-.snow-layer-1 { 
-  width: 2px; height: 2px; opacity: 0.6; 
-  box-shadow: 10vw 10vh #fff, 60vw 40vh #fff, 15vw 80vh #fff, 80vw 10vh #fff, 30vw 20vh #fff, 90vw 90vh #fff, 40vw 50vh #fff, 50vw 10vh #fff, 20vw 30vh #fff, 70vw 60vh #fff, 10vw 90vh #fff, 95vw 30vh #fff, 25vw 70vh #fff, 75vw 20vh #fff, 05vw 40vh #fff, 55vw 80vh #fff, 35vw 50vh #fff, 85vw 60vh #fff, 45vw 10vh #fff, 65vw 90vh #fff; 
-  animation-duration: 20s; 
-}
-
-.snow-layer-2 { 
-  width: 3px; height: 3px; opacity: 0.8; 
-  box-shadow: 5vw 5vh rgba(255,255,255,0.8), 55vw 55vh rgba(255,255,255,0.8), 25vw 25vh rgba(255,255,255,0.8), 75vw 75vh rgba(255,255,255,0.8), 15vw 45vh rgba(255,255,255,0.8), 65vw 15vh rgba(255,255,255,0.8), 35vw 85vh rgba(255,255,255,0.8), 85vw 35vh rgba(255,255,255,0.8); 
-  animation-duration: 12s; 
-}
-
-.snow-layer-3 { 
-  width: 6px; height: 6px; opacity: 0.9; filter: blur(2px); 
-  box-shadow: 10vw 20vh #fff, 80vw 10vh #fff, 30vw 50vh #fff, 90vw 80vh #fff, 50vw 90vh #fff, 20vw 40vh #fff, 70vw 30vh #fff, 40vw 70vh #fff; 
-  animation-duration: 7s; 
-}
-
-@keyframes fall { 
-  0% { transform: translateY(0); } 
-  100% { transform: translateY(100vh); } 
+.dashboard-wrapper {
+  /* THE FIX: Forced transparency so it never overlays its own color on the body */
+  background: transparent !important; 
+  min-height: 100vh;
+  padding-top: var(--page-top-padding) !important;
+  padding-bottom: 80px;
+  position: relative;
 }
 
 .page-wrapper {
-  background: linear-gradient(180deg, rgba(18, 18, 18, 0.4) 0%, rgba(5, 5, 5, 0.8) 100%);
-  min-height: 100vh;
-  padding-top: var(--page-top-padding);
-  padding-bottom: 80px;
-  position: relative;
-  z-index: 2;
+  background: transparent !important;
+  margin: 0;
+  padding: 0 10vh;
 }
 
-.page-container {
-  width: 100%; max-width: 1600px; margin: 0 auto; padding: 0 30px;
-  position: relative; z-index: 2; box-sizing: border-box;
-}
-
-.page-header { margin-bottom: 40px; }
+.page-header { margin-bottom: 20px; margin-top: 12vh; }
 .back-link { color: var(--text-secondary); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; margin-bottom: 15px; }
 .page-title { font-size: 32px; font-weight: 900; color: #fff; margin: 0; text-transform: uppercase; letter-spacing: -0.5px; }
 .match-count { color: #ffffff; font-weight: bold; font-size: 14px; margin-left: 15px; }
@@ -135,16 +103,40 @@ body {
 .status-badge.time { background-color: rgba(255, 255, 255, 0.1); color: #ccc; }
 
 @media (max-width: 768px) {
+  .page-wrapper { padding: 0; }
   :root { --page-top-padding: 10px; }
   .page-container { padding: 0 16px; }
-  .page-wrapper { margin-top: -5vh;}
+  .page-wrapper { margin-top: -5vh; }
   .page-title { font-size: 24px; }
   .matches-grid { grid-template-columns: 1fr; gap: 16px; }
   .team-logo { width: 50px; height: 50px; }
   .team-name { font-size: 13px; }
+  
+  .date-stamp {
+    gap: 10px; 
+    justify-content: center;
+  }
+  .stamp-text {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
 }
 
 @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 .skeleton-pulse { background: #1c1c1e; border-radius: 16px; opacity: 0.5; height: 200px; }
-.empty-state-page { padding: 40px; text-align: center; color: #666; border: 1px dashed #333; border-radius: 16px; }
+
+.empty-state-page { 
+  padding: 40px; 
+  text-align: center; 
+  color: #666; 
+  border: 1px dashed #333; 
+  border-radius: 16px; 
+  /* THE FIX: Removed the white transparency background that caused the grey shift */
+  background: transparent; 
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 .reset-btn { margin-top: 15px; background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 8px 16px; border-radius: 6px; }
