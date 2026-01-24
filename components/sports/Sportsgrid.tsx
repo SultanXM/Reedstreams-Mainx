@@ -24,7 +24,7 @@ const FIXED_SPORTS = [
   { id: 'basketball', name: 'Basketball', icon: '🏀' },
   { id: 'hockey', name: 'Ice Hockey', icon: '🏒' },
   { id: 'baseball', name: 'Baseball', icon: '⚾' },
-  { id: 'mma', name: 'MMA / UFC', icon: '🥊' },
+  { id: 'fight', name: 'MMA / UFC', icon: '🥊' }, // ID is 'fight' to match your API link requirements
   { id: 'tennis', name: 'Tennis', icon: '🎾' },
   { id: 'rugby', name: 'Rugby', icon: '🏉' },
   { id: 'golf', name: 'Golf', icon: '⛳' },
@@ -33,14 +33,27 @@ const FIXED_SPORTS = [
   { id: 'motorsport', name: 'Racing', icon: '🏎️' }
 ]
 
-const normalizeSport = (category: string): string => {
+const normalizeSport = (category: string, title: string = ''): string => {
   const cat = category.toLowerCase().replace(/\s+/g, '');
+  const tit = title.toLowerCase();
+  
   if (cat.includes('basketball') || cat.includes('nba')) return 'basketball';
   if (cat.includes('american') || cat.includes('nfl')) return 'american-football';
   if (cat.includes('soccer') || cat.includes('football')) return 'football';
   if (cat.includes('icehockey') || cat.includes('hockey') || cat.includes('nhl')) return 'hockey';
   if (cat.includes('baseball') || cat.includes('mlb')) return 'baseball';
-  if (cat.includes('mma') || cat.includes('ufc') || cat.includes('fight') || cat.includes('boxing')) return 'mma';
+  
+  // FIXED: Now returns 'fight' to match the FIXED_SPORTS id exactly
+  if (
+    cat.includes('mma') || 
+    cat.includes('ufc') || 
+    cat.includes('fight') || 
+    cat.includes('boxing') || 
+    cat.includes('combat') ||
+    tit.includes('ufc') ||
+    tit.includes('mma')
+  ) return 'fight';
+  
   if (cat.includes('motor') || cat.includes('racing') || cat.includes('f1') || cat.includes('nascar')) return 'motorsport';
   if (cat.includes('tennis')) return 'tennis';
   if (cat.includes('rugby')) return 'rugby';
@@ -51,11 +64,13 @@ const normalizeSport = (category: string): string => {
 }
 
 const getImageUrl = (badgeId: string): string => `${API_BASE}/images/badge/${badgeId}.webp`;
+
 const isLive = (timestamp: number): boolean => {
   const now = Date.now();
   const matchTime = new Date(timestamp).getTime();
   return matchTime <= now && (now - matchTime) < (3 * 60 * 60 * 1000);
 }
+
 const formatTime = (timestamp: number): string => new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
 const SkeletonPill = () => (
@@ -97,9 +112,9 @@ const MatchCard = React.memo(({ match, onImageError }: { match: APIMatch; onImag
             {match.popular && <div className="badge-popular"><Flame size={14} color="#8db902" fill="#8db902" /></div>}
           </div>
           <div className="logos-wrapper">
-            <img src={hBadge as string} className="team-logo" alt={homeName} onError={() => onImageError(match.id)} />
+            {hBadge && <img src={hBadge} className="team-logo" alt={homeName} onError={() => onImageError(match.id)} />}
             <span className="vs-divider">VS</span>
-            <img src={aBadge as string} className="team-logo" alt={awayName} onError={() => onImageError(match.id)} />
+            {aBadge && <img src={aBadge} className="team-logo" alt={awayName} onError={() => onImageError(match.id)} />}
           </div>
         </div>
         <div className="match-info">
@@ -114,7 +129,6 @@ const MatchCard = React.memo(({ match, onImageError }: { match: APIMatch; onImag
 export default function SportsGrid({ initialData }: { initialData: APIMatch[] }) {
   const [matches] = useState<APIMatch[]>(initialData || []);
   const [loading, setLoading] = useState(true); 
-  const [mounted, setMounted] = useState(true); // FIXED: Initial true to avoid black flash
   const [hiddenMatches, setHiddenMatches] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -126,17 +140,33 @@ export default function SportsGrid({ initialData }: { initialData: APIMatch[] })
   const { grouped, counts } = useMemo(() => {
     const grouped: Record<string, APIMatch[]> = { popular: [] };
     const counts: Record<string, number> = { popular: 0 };
-    FIXED_SPORTS.forEach(s => { grouped[s.id] = []; counts[s.id] = 0; });
+    
+    FIXED_SPORTS.forEach(s => { 
+      grouped[s.id] = []; 
+      counts[s.id] = 0; 
+    });
 
     matches.forEach(m => {
+      // Logic for displaying only if badges exist
       const hasHomeImg = m.teams?.home?.badge && m.teams.home.badge.trim() !== "";
       const hasAwayImg = m.teams?.away?.badge && m.teams.away.badge.trim() !== "";
       if (hiddenMatches.has(m.id) || !hasHomeImg || !hasAwayImg) return;
 
       const isMatchLive = isLive(m.date);
-      if (m.popular) { grouped['popular'].push(m); if (isMatchLive) counts['popular']++; }
-      const sid = normalizeSport(m.category);
-      if (sid && grouped[sid]) { grouped[sid].push(m); if (isMatchLive) counts[sid]++; }
+      
+      // Popular Section
+      if (m.popular) { 
+        grouped['popular'].push(m); 
+        if (isMatchLive) counts['popular']++; 
+      }
+
+      // Sports Logic
+      const sid = normalizeSport(m.category, m.title);
+      // FIXED: Checks if the SID exists in FIXED_SPORTS (grouped) before pushing
+      if (sid && grouped[sid]) { 
+        grouped[sid].push(m); 
+        if (isMatchLive) counts[sid]++; 
+      }
     });
     return { grouped, counts };
   }, [matches, hiddenMatches]);
@@ -151,13 +181,17 @@ export default function SportsGrid({ initialData }: { initialData: APIMatch[] })
       <div className="content-container">
         <section className="top-selector-area">
           <div className="section-row-header"> 
-            <div className="title-block"><Trophy size={20} color="#8db902" /><h2 className="section-title">Sports Category</h2></div>
+            <div className="title-block">
+                <Trophy size={20} color="#8db902" />
+                <h2 className="section-title">Sports Category</h2>
+            </div>
           </div>
           <div className="selector-grid">
             {loading ? Array(8).fill(0).map((_, i) => <SkeletonPill key={i} />) : 
               FIXED_SPORTS.map(s => (
                 <Link key={s.id} href={`/live-matches?sportId=${s.id}`} className="selector-pill">
-                  <span className="pill-icon">{s.icon}</span><span className="pill-label">{s.name}</span>
+                  <span className="pill-icon">{s.icon}</span>
+                  <span className="pill-label">{s.name}</span>
                   {counts[s.id] > 0 && <div className="pill-count-badge">{counts[s.id]}</div>}
                 </Link>
               ))
@@ -169,9 +203,11 @@ export default function SportsGrid({ initialData }: { initialData: APIMatch[] })
           {loading ? (
             <>
               <div className="section-row-header" style={{ border: 'none', marginBottom: '20px' }}>
-          <div style={{ width: '150px', height: '24px', background: '#1c1c1c', borderRadius: '4px' }} className="skeleton-pulse" />
-      </div>
-              <div className="carousel-track">{Array(5).fill(0).map((_, i) => <SkeletonMatchCard key={i} />)}</div>
+                <div style={{ width: '150px', height: '24px', background: '#1c1c1c', borderRadius: '4px' }} className="skeleton-pulse" />
+              </div>
+              <div className="carousel-track">
+                {Array(5).fill(0).map((_, i) => <SkeletonMatchCard key={i} />)}
+              </div>
             </>
           ) : (
             <>
