@@ -281,4 +281,5 @@
     }
     .team-name { font-size: 13px; }
     .team-logo-placeholder { width: 30px; height: 30px; font-size: 14px; }
+    .player-wrapper { margin-top: 10px;}
 }
