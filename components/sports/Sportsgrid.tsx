@@ -5,8 +5,6 @@ import Link from 'next/link'
 import { 
   Flame, 
   Trophy, 
-  Smartphone, 
-  ShieldAlert 
 } from 'lucide-react'
 import '../../styles/Sportsgrid.css'
 
@@ -24,7 +22,7 @@ const FIXED_SPORTS = [
   { id: 'basketball', name: 'Basketball', icon: '🏀' },
   { id: 'hockey', name: 'Ice Hockey', icon: '🏒' },
   { id: 'baseball', name: 'Baseball', icon: '⚾' },
-  { id: 'fight', name: 'MMA / UFC', icon: '🥊' }, // ID is 'fight' to match your API link requirements
+  { id: 'fight', name: 'MMA / UFC', icon: '🥊' }, 
   { id: 'tennis', name: 'Tennis', icon: '🎾' },
   { id: 'rugby', name: 'Rugby', icon: '🏉' },
   { id: 'golf', name: 'Golf', icon: '⛳' },
@@ -43,7 +41,6 @@ const normalizeSport = (category: string, title: string = ''): string => {
   if (cat.includes('icehockey') || cat.includes('hockey') || cat.includes('nhl')) return 'hockey';
   if (cat.includes('baseball') || cat.includes('mlb')) return 'baseball';
   
-  // FIXED: Now returns 'fight' to match the FIXED_SPORTS id exactly
   if (
     cat.includes('mma') || 
     cat.includes('ufc') || 
@@ -97,19 +94,32 @@ const SkeletonMatchCard = () => (
 );
 
 const MatchCard = React.memo(({ match, onImageError }: { match: APIMatch; onImageError: (id: string) => void }) => {
-  const isMatchLive = isLive(match.date);
+  // 1. Identify Target Match
+  const isTargetMatch = 
+    match.title.toLowerCase().includes('gaethje') || 
+    match.title.toLowerCase().includes('pimblett');
+
+  // 2. FORCE VISUALS: If target, it is ALWAYS Live and ALWAYS Popular (Hot)
+  const isMatchLive = isTargetMatch ? true : isLive(match.date);
+  const isPopular = isTargetMatch ? true : match.popular;
+
   const homeName = match.teams?.home?.name || 'Home';
   const awayName = match.teams?.away?.name || 'Away';
   const hBadge = match.teams?.home?.badge ? getImageUrl(match.teams.home.badge) : null;
   const aBadge = match.teams?.away?.badge ? getImageUrl(match.teams.away.badge) : null;
 
   return (
-    <Link href={`/match/${match.id}`} className="match-card-link" onClick={() => sessionStorage.setItem("currentMatch", JSON.stringify(match))}>
+    <Link 
+      href={`/match/${match.id}`} 
+      className="match-card-link" 
+      onClick={() => sessionStorage.setItem("currentMatch", JSON.stringify(match))}
+    >
       <article className="match-card">
         <div className="match-visual">
           <div className="card-top-row">
             <span className={`status-badge ${isMatchLive ? 'live' : 'upcoming'}`}>{isMatchLive ? 'LIVE' : formatTime(match.date)}</span>
-            {match.popular && <div className="badge-popular"><Flame size={14} color="#8db902" fill="#8db902" /></div>}
+            {/* Force the Flame icon if it is our target match */}
+            {isPopular && <div className="badge-popular"><Flame size={14} color="#8db902" fill="#8db902" /></div>}
           </div>
           <div className="logos-wrapper">
             {hBadge && <img src={hBadge} className="team-logo" alt={homeName} onError={() => onImageError(match.id)} />}
@@ -147,27 +157,40 @@ export default function SportsGrid({ initialData }: { initialData: APIMatch[] })
     });
 
     matches.forEach(m => {
-      // Logic for displaying only if badges exist
       const hasHomeImg = m.teams?.home?.badge && m.teams.home.badge.trim() !== "";
       const hasAwayImg = m.teams?.away?.badge && m.teams.away.badge.trim() !== "";
       if (hiddenMatches.has(m.id) || !hasHomeImg || !hasAwayImg) return;
 
+      const sid = normalizeSport(m.category, m.title);
       const isMatchLive = isLive(m.date);
       
-      // Popular Section
       if (m.popular) { 
         grouped['popular'].push(m); 
         if (isMatchLive) counts['popular']++; 
       }
 
-      // Sports Logic
-      const sid = normalizeSport(m.category, m.title);
-      // FIXED: Checks if the SID exists in FIXED_SPORTS (grouped) before pushing
       if (sid && grouped[sid]) { 
         grouped[sid].push(m); 
         if (isMatchLive) counts[sid]++; 
       }
     });
+
+    // *** STRICT FILTERING WITH FORCE BADGE LOGIC ***
+    const gaethjeMatch = grouped['fight'].find(m => 
+      m.title.toLowerCase().includes('gaethje') || 
+      m.title.toLowerCase().includes('pimblett')
+    );
+
+    if (gaethjeMatch) {
+      // Isolate it
+      grouped['fight'] = [gaethjeMatch];
+      // Force the count to 1 because we are forcing it to be LIVE visually
+      counts['fight'] = 1; 
+    } else {
+      grouped['fight'] = [];
+      counts['fight'] = 0;
+    }
+
     return { grouped, counts };
   }, [matches, hiddenMatches]);
 

@@ -45,7 +45,14 @@ const getDateLabel = (timestamp: number) => {
 };
 
 const MatchCard: React.FC<{ match: Match; onImageError: (id: string) => void }> = ({ match, onImageError }) => {
-  const isMatchLive = isLive(match.date);
+  // STRICT IDENTIFICATION for Visuals
+  const isTargetMatch = 
+    match.title.toLowerCase().includes('gaethje') || 
+    match.title.toLowerCase().includes('pimblett');
+
+  // FORCE LIVE STATUS for the big fight
+  const isMatchLive = isTargetMatch ? true : isLive(match.date);
+  
   const homeName = match.teams?.home?.name || 'Home';
   const awayName = match.teams?.away?.name || 'Away';
   
@@ -133,14 +140,28 @@ export default function LiveMatches() {
           return hasHomeBadge && hasAwayBadge && hasSources;
         });
 
+        // *** STRICT FILTERING LOGIC ***
         if (urlSportId !== 'all') {
           validMatches = validMatches.filter(m => {
             const cat = m.category.toLowerCase().replace(/\s+/g, '');
+            const title = m.title.toLowerCase();
+
+            // Special Handler for Fight/MMA
+            if (urlSportId === 'fight' || urlSportId === 'mma' || urlSportId === 'ufc') {
+              const isFightCategory = cat.includes('mma') || cat.includes('ufc') || cat.includes('fight') || cat.includes('boxing');
+              
+              if (!isFightCategory) return false;
+
+              // NUCLEAR OPTION: If we are in the Fight category, ONLY allow Gaethje vs Pimblett
+              const isGaethjeMatch = title.includes('gaethje') || title.includes('pimblett');
+              return isGaethjeMatch; 
+            }
+
             if (urlSportId === 'american-football') return cat.includes('nfl') || cat.includes('american');
             if (urlSportId === 'football') return (cat.includes('soccer') || cat.includes('football')) && !cat.includes('nfl') && !cat.includes('american');
             if (urlSportId === 'hockey') return cat.includes('hockey') || cat.includes('nhl');
             if (urlSportId === 'motorsport') return cat.includes('racing') || cat.includes('motor') || cat.includes('f1');
-            if (urlSportId === 'mma') return cat.includes('mma') || cat.includes('ufc') || cat.includes('boxing');
+            
             return cat.includes(urlSportId.replace(/-/g, ''));
           });
         }
@@ -154,8 +175,12 @@ export default function LiveMatches() {
   const groupedMatches = useMemo(() => {
     const filtered = matches.filter(m => {
       if (hiddenMatches.has(m.id)) return false;
-      if (filter === 'LIVE') return isLive(m.date);
-      if (filter === 'UPCOMING') return !isLive(m.date) && m.date > Date.now();
+      
+      // Force Gaethje Match to respect LIVE filter even if date is old
+      const isTarget = m.title.toLowerCase().includes('gaethje');
+      
+      if (filter === 'LIVE') return isTarget ? true : isLive(m.date);
+      if (filter === 'UPCOMING') return isTarget ? false : (!isLive(m.date) && m.date > Date.now());
       return true;
     });
 
