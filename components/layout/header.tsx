@@ -3,50 +3,87 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
-import { Search, Menu, X, AlertCircle, Calendar, Home, Heart, Play, Send } from 'lucide-react'
+import { Search, Menu, X, AlertCircle, Calendar, Home, Play, Send } from 'lucide-react'
 import '../../styles/header.css'
 
-const API_BASE = 'https://streamed.pk/api'
+// --- NEW API CONSTANTS ---
+const API_URL = 'https://reedstreams-edge-v1.fly.dev/api/v1/streams';
 
-interface Match {
-    id: string; title: string; category: string; date: number; popular: boolean;
-    teams?: { home?: { badge: string; name: string }; away?: { badge: string; name: string }; };
-    sources?: { source: string; id: string }[];
+// --- TYPES ---
+interface StreamGame {
+  id: number;
+  name: string;
+  poster: string;
+  start_time: number;
+  end_time: number;
+  video_link: string;
+  category: string;
 }
 
-interface Sport { id: string; name: string; }
+interface StreamCategory {
+  category: string;
+  games: StreamGame[];
+}
+
+interface ApiResponse {
+  categories: StreamCategory[];
+}
+
+interface FormattedMatch {
+  id: string;
+  title: string;
+  category: string;
+  sportId: string;
+  date: number;
+  poster: string;
+  isLive: boolean;
+}
 
 const DISPLAY_MAP: Record<string, string> = {
     'basketball': 'NBA', 'soccer': 'Football', 'football': 'Football',
     'american-football': 'NFL', 'nfl': 'NFL', 'icehockey': 'NHL',
     'hockey': 'NHL', 'baseball': 'MLB', 'mma': 'UFC', 'ufc': 'UFC',
-    'boxing': 'Boxing', 'cricket': 'Cricket', 'motorsports': 'F1',
+    'boxing': 'Boxing', 'cricket': 'Cricket', 'motorsport': 'F1',
     'racing': 'F1', 'tennis': 'Tennis', 'rugby': 'Rugby', 'golf': 'Golf', 'darts': 'Darts'
-}
-
-const URL_ID_MAP: Record<string, string> = {
-    'nfl': 'american-football', 'soccer': 'football', 'icehockey': 'hockey',
-    'racing': 'motorsport', 'motorsports': 'motorsport', 'ufc': 'mma'
 }
 
 const SORT_ORDER = [
     'soccer', 'football', 'basketball', 'american-football', 'nfl',
     'baseball', 'icehockey', 'hockey', 'mma', 'ufc', 'cricket',
-    'motorsports', 'tennis', 'rugby', 'golf', 'darts', 'boxing'
+    'motorsport', 'tennis', 'rugby', 'golf', 'darts', 'boxing'
 ]
+
+// Helper for live check (3.5 hour window)
+const checkIsLive = (timestamp: number, category: string): boolean => {
+  if (category.toLowerCase().includes('24/7')) return true;
+  const now = Date.now();
+  return timestamp <= now && (now - timestamp) < (3.5 * 60 * 60 * 1000);
+}
+
+const normalizeSport = (category: string): string => {
+  const cat = category.toLowerCase().replace(/\s+/g, '');
+  if (cat.includes('basketball') || cat.includes('nba')) return 'basketball';
+  if (cat.includes('american') || cat.includes('nfl')) return 'american-football';
+  if (cat === 'football' || cat.includes('soccer') || cat.includes('laliga')) return 'football';
+  if (cat.includes('icehockey') || cat.includes('hockey') || cat.includes('nhl')) return 'hockey';
+  if (cat.includes('baseball') || cat.includes('mlb')) return 'baseball';
+  if (cat.includes('mma') || cat.includes('ufc') || cat.includes('fight')) return 'fight';
+  if (cat.includes('motor') || cat.includes('racing') || cat.includes('f1')) return 'motorsport';
+  return 'other'; 
+}
 
 export default function Header() {
     const router = useRouter()
     const pathname = usePathname()
     const [mounted, setMounted] = useState(false)
-    const [sports, setSports] = useState<Sport[]>([])
+    const [sports, setSports] = useState<{id: string, name: string}[]>([])
     const [showSearch, setShowSearch] = useState(false)
     const [showSidebar, setShowSidebar] = useState(false)
     const [showReport, setShowReport] = useState(false)
     const [reportText, setReportText] = useState('')
     const [query, setQuery] = useState('')
-    const [matches, setMatches] = useState<Match[]>([])
-    const [searchResults, setSearchResults] = useState<Match[]>([])
+    const [allMatches, setAllMatches] = useState<FormattedMatch[]>([])
+    const [searchResults, setSearchResults] = useState<FormattedMatch[]>([])
     const [liveMatchesCount, setLiveMatchesCount] = useState(0)
 
     useEffect(() => {
@@ -55,57 +92,78 @@ export default function Header() {
         setShowReport(false);
     }, [pathname]);
 
-    const fetchLiveCount = async () => {
+    const fetchData = useCallback(async () => {
         try {
-            const response = await fetch(`${API_BASE}/matches/live`)
-            const data = await response.json()
-            setLiveMatchesCount(data.length)
-        } catch (error) { console.error(error) }
-    }
+            const response = await fetch(API_URL, { next: { revalidate: 60 } })
+            const data: ApiResponse = await response.json()
+            
+            const formatted: FormattedMatch[] = [];
+            const sportsFound = new Map<string, string>();
+            let liveCount = 0;
 
-    const fetchSports = async () => {
-        try {
-            const response = await fetch(`${API_BASE}/sports`)
-            const data: Sport[] = await response.json()
-            const sorted = data.sort((a, b) => {
-                const idxA = SORT_ORDER.indexOf(a.id); const idxB = SORT_ORDER.indexOf(b.id)
-                if (idxA !== -1 && idxB !== -1) return idxA - idxB
-                return idxA !== -1 ? -1 : idxB !== -1 ? 1 : a.name.localeCompare(b.name)
-            })
-            setSports(sorted.slice(0, 12))
-        } catch (error) { console.error(error) }
-    }
+            if (data.categories) {
+                data.categories.forEach(cat => {
+                    // Extract unique sports for the nav bar
+                    const sId = normalizeSport(cat.category);
+                    if (!sportsFound.has(sId) && sId !== 'other') {
+                        sportsFound.set(sId, cat.category.split(' ')[0]); // Use first word as name
+                    }
 
-    const fetchSearchMatches = useCallback(async () => {
-        try {
-            const response = await fetch(`${API_BASE}/matches/all-today`)
-            const data: Match[] = await response.json()
-            setMatches(data)
-        } catch (error) { console.error(error) }
+                    cat.games.forEach(game => {
+                        const startMs = game.start_time * 1000;
+                        const isLive = checkIsLive(startMs, cat.category);
+                        if (isLive) liveCount++;
+
+                        formatted.push({
+                            id: game.id.toString(),
+                            title: game.name,
+                            category: cat.category,
+                            sportId: sId,
+                            date: startMs,
+                            poster: game.poster,
+                            isLive
+                        });
+                    });
+                });
+            }
+
+            // Sort sports based on SORT_ORDER
+            const sortedSports = Array.from(sportsFound.entries())
+                .map(([id, name]) => ({ id, name }))
+                .sort((a, b) => {
+                    const idxA = SORT_ORDER.indexOf(a.id);
+                    const idxB = SORT_ORDER.indexOf(b.id);
+                    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                    return a.name.localeCompare(b.name);
+                });
+
+            setSports(sortedSports.slice(0, 12));
+            setAllMatches(formatted);
+            setLiveMatchesCount(liveCount);
+        } catch (error) {
+            console.error("Header Data Fetch Error:", error);
+        }
     }, [])
 
     useEffect(() => {
         setMounted(true)
-        const init = async () => { 
-            await Promise.all([fetchSports(), fetchLiveCount(), fetchSearchMatches()]) 
-        }
-        init()
-        const interval = setInterval(fetchLiveCount, 30000)
+        fetchData();
+        const interval = setInterval(fetchData, 60000); // Sync every minute
         return () => clearInterval(interval)
-    }, [fetchSearchMatches])
+    }, [fetchData])
 
     const handleSearch = (value: string) => {
         setQuery(value)
         if (!value.trim()) { setSearchResults([]); return; }
         const lowerVal = value.toLowerCase()
-        const filtered = matches.filter(m => 
+        const filtered = allMatches.filter(m => 
             m.title.toLowerCase().includes(lowerVal) || 
             m.category.toLowerCase().includes(lowerVal)
         )
         setSearchResults(filtered.slice(0, 10))
     }
 
-    const handleResultClick = (match: Match) => {
+    const handleResultClick = (match: FormattedMatch) => {
         sessionStorage.setItem("currentMatch", JSON.stringify(match));
         router.push(`/match/${match.id}`);
         setShowSearch(false);
@@ -122,11 +180,7 @@ export default function Header() {
         setShowReport(false);
     }
 
-    const getDisplayName = (id: string) => DISPLAY_MAP[id] || sports.find(s => s.id === id)?.name || id
-    const getSportUrl = (sport: Sport) => {
-        const validId = URL_ID_MAP[sport.id] || sport.id
-        return `/live-matches?sportId=${validId}&sportName=${encodeURIComponent(sport.name)}`
-    }
+    const getDisplayName = (id: string) => DISPLAY_MAP[id] || id.charAt(0).toUpperCase() + id.slice(1);
 
     const hardNavigate = (e: React.MouseEvent, path: string) => {
         e.preventDefault();
@@ -144,7 +198,11 @@ export default function Header() {
                         </a>
                         <nav className="sports-mini-nav">
                             {mounted && sports.map(sport => (
-                                <Link key={sport.id} href={getSportUrl(sport)} className="mini-sport-link">
+                                <Link 
+                                    key={sport.id} 
+                                    href={`/live-matches?sportId=${sport.id}&sportName=${encodeURIComponent(getDisplayName(sport.id))}`} 
+                                    className="mini-sport-link"
+                                >
                                     {getDisplayName(sport.id)}
                                 </Link>
                             ))}
@@ -202,15 +260,19 @@ export default function Header() {
                             <nav className="sidebar-nav">
                                 <a href="/" className="sidebar-item" onClick={(e) => hardNavigate(e, '/')}><Home size={18} /> Home</a>
                                 <Link href="/schedule" className="sidebar-item" onClick={() => setShowSidebar(false)}><Calendar size={18} /> Schedule</Link>
-                                {/* Mobile Report Button */}
-                                <button className="sidebar-item" onClick={() => { setShowSidebar(false); setShowReport(true); }} style={{width:'100%', background:'none', border:'none', color:'inherit', cursor:'pointer'}}>
+                                <button className="sidebar-item" onClick={() => { setShowSidebar(false); setShowReport(true); }} style={{width:'100%', background:'none', border:'none', color:'inherit', cursor:'pointer', textAlign:'left'}}>
                                     <AlertCircle size={18} /> Report Issue
                                 </button>
                             </nav>
                             <div className="sidebar-divider">SPORTS</div>
                             <div className="sidebar-grid">
                                 {sports.map(s => (
-                                    <Link key={s.id} href={getSportUrl(s)} className="sidebar-chip" onClick={() => setShowSidebar(false)}>
+                                    <Link 
+                                        key={s.id} 
+                                        href={`/live-matches?sportId=${s.id}&sportName=${encodeURIComponent(getDisplayName(s.id))}`} 
+                                        className="sidebar-chip" 
+                                        onClick={() => setShowSidebar(false)}
+                                    >
                                         {getDisplayName(s.id)}
                                     </Link>
                                 ))}
@@ -241,7 +303,9 @@ export default function Header() {
                                     <div key={match.id} className="search-result-row" onClick={() => handleResultClick(match)}>
                                         <div className="result-info">
                                             <span className="result-teams">{match.title}</span>
-                                            <span className="result-meta">{getDisplayName(match.category)} • {new Date(match.date * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                                            <span className="result-meta">
+                                                {match.category} • {new Date(match.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                            </span>
                                         </div>
                                         <Play size={16} className="play-icon" />
                                     </div>

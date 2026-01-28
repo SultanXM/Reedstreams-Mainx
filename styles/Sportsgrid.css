@@ -8,7 +8,8 @@
   --section-gap: 35px;       
   --card-gap: 16px;
   
-  --match-card-w: 280px;     
+  /* SULTAN UPDATE: Increased Desktop Size */
+  --match-card-w: 300px;     
   --sport-card-size: 160px;
 }
 
@@ -25,8 +26,6 @@ body {
 }
 
 .dashboard-wrapper {
-  /* Only using your theme color #8db902 but heavily transparency-muted */
-  
   padding-top: var(--page-top-padding);
   padding-bottom: 80px;
   position: relative;
@@ -42,7 +41,7 @@ body {
   box-sizing: border-box;
 }
 
-/* --- SELECTORS (UPDATED TO SULTAN STYLE) --- */
+/* --- SELECTORS --- */
 .top-selector-area { margin-bottom: 2vh; }
 
 .selector-grid {
@@ -52,12 +51,12 @@ body {
 }
 .selector-grid::-webkit-scrollbar { display: none; }
 
-/* Selector Pill Base Style - SOLID DARK GREY STYLE */
+/* Selector Pill Base Style */
 .selector-pill {
   flex: 0 0 160px;
   height: var(--sport-card-size);
   background: linear-gradient(#161920 0%, #8db9020d 100%);
-  background-color: #1c1c1c;  /* ✅ Solid Dark Grey from past code */
+  background-color: #1c1c1c;
   border-radius: 16px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -65,18 +64,16 @@ body {
   text-decoration: none;
   padding: 0;
   border: 1px solid rgba(141, 185, 2, 0.2);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* PRO SHADOW */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-/* Hover State - Subtle Highlight */
 .selector-pill:hover {
-  background-color: #252525;  /* ✅ Subtle highlight on hover */
+  background-color: #252525;
   transform: translateY(-6px);
   box-shadow: 0 12px 24px rgba(0,0,0,0.6);
   border-color: var(--accent-color);
 }
 
-/* Active State */
 .selector-pill.active {
   background: var(--accent-color);
   box-shadow: 0 0 20px rgba(141, 185, 2, 0.4);
@@ -101,10 +98,7 @@ body {
     transition: color 0.2s; 
 }
 
-/* Popular Specific Style if needed */
-.selector-pill.pill-popular { 
-    background-color: #1c1c1c; 
-}
+.selector-pill.pill-popular { background-color: #1c1c1c; }
 
 .pill-count-badge {
   position: absolute; top: -6px; right: -6px;
@@ -114,13 +108,13 @@ body {
   border: 2px solid var(--bg-dark);
 }
 
-/* --- MATCHES SECTION (Preserved) --- */
+/* --- MATCHES SECTION --- */
 .matches-section { margin-bottom: 10px; } 
 
 .section-row-header {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 12px; padding-left: 12px;
-  border-left: 5px solid var(--accent-color); /* The "Stick" */
+  border-left: 5px solid var(--accent-color);
 }
 
 .title-block { display: flex; align-items: center; gap: 10px; }
@@ -154,6 +148,7 @@ body {
 }
 .carousel-track::-webkit-scrollbar { display: none; }
 
+/* Dynamic Width handled by Variable */
 .match-card-link { flex: 0 0 var(--match-card-w); text-decoration: none; }
 
 .match-card {
@@ -203,24 +198,19 @@ body {
 .match-sub-meta { font-size: 10px; color: var(--accent-color); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
 
 @media (max-width: 768px) {
-
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  padding-top: 5vh;
-  overflow-x: hidden;
-}
+  body {
+    padding-top: 5vh;
+  }
   :root { 
     --sport-card-size: 25vw; 
-    --match-card-w: 60vw; 
+    /* SULTAN UPDATE: Fixed Mobile Size to 220px to maintain what you liked */
+    --match-card-w: 220px; 
     --page-top-padding: 90px;
     --section-gap: 30px; 
     --card-gap: 12px;
   }
   
-  .content-container { padding: 0 10px; }
+  .content-container { padding: 0 10px; margin-top: -5vh; }
   .selector-grid, .carousel-track { padding-right: 1vh; }
 
   .nav-controls { display: none; }
@@ -234,158 +224,18 @@ body {
   .team-logo { width: 10vw; height: 10vw; }
   .match-info { padding: 8px 10px; }
   .match-main-title { font-size: 14px; height: 36px; margin-bottom: 0px; }
-  .content-container { margin-top: -5vh; }
 
   .selector-pill {
    height: 110px;
-  flex: 0 0 120px;
+   flex: 0 0 120px;
   }
-}
-/* --- SULTAN DISCORD POPUP --- */
-.sultan-popup-overlay {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 10000;
-  backdrop-filter: blur(8px);
-  padding: 20px;
-}
+  
+  .dashboard-wrapper {
+    background: transparent !important;
+    min-height: 100vh;
+  }
 
-.sultan-popup-content {
-  background: #1c1c1c; /* Matches your Selector Pill */
-  border: 1px solid #4752c4;
-  padding: 40px 30px;
-  border-radius: 20px;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-  position: relative;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(141, 185, 2, 0.1);
-  animation: sultanFadeUp 0.4s ease-out;
-}
-
-@keyframes sultanFadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.sultan-war-header {
-  font-size: 22px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 1px;
-  margin-bottom: 15px;
-  text-transform: uppercase;
-}
-
-.sultan-popup-text {
-  color: var(--text-secondary);
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 25px;
-}
-
-.sultan-popup-text b {
-  color: var(--accent-color);
-}
-
-.sultan-join-btn {
-  display: block;
-  background: var(--accent-color);
-  color: #000;
-  text-decoration: none;
-  padding: 14px;
-  border-radius: 10px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-}
-
-.sultan-join-btn:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 20px rgba(141, 185, 2, 0.4);
-}
-
-.sultan-close-btn {
-  position: absolute;
-  top: 15px; right: 15px;
-  background: transparent;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.sultan-close-btn:hover {
-  color: #fff;
-}
-.discord-icon-wrapper {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-}
-
-.sultan-popup-title {
-  color: #fff;
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-.sultan-discord-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #5865F2; /* Official Discord Color */
-  color: #fff;
-  text-decoration: none;
-  padding: 14px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 16px;
-  transition: 0.3s;
-  border: none;
-  width: 100%;
-}
-
-.sultan-discord-btn:hover {
-  background: #4752c4;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 15px rgba(88, 101, 242, 0.3);
-}
-
-.sultan-close-btn {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  color: #555;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-body {
-  margin: 0;
-  padding: 0;
-  /* THE FIX: Move the gradient here and set it to fixed so it paints instantly without the black flash */
-  background: 
-    radial-gradient(circle at 50% 0%, rgba(141, 185, 2, 0.15) 0%, transparent 50%),
-    linear-gradient(180deg, #050603 0%, #000000 100%) !important;
-  background-attachment: fixed;
-  background-color: #000000 !important;
-  overflow-x: hidden;
-  /* Reduced the 3vh padding which often caused a 'jump' during hydration */
-}
-
-.dashboard-wrapper {
-  /* THE FIX: Removed the background-color here. If this has a color, it blocks the body gradient during load */
-  background: transparent !important;
-  min-height: 100vh;
-  padding-top: var(--page-top-padding);
-  padding-bottom: 80px;
-  position: relative;
-}
-
-.top-selector-area {
-  padding-top: 5vh;
+  .top-selector-area {
+    padding-top: vh;
+  }
 }
