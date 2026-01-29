@@ -42,7 +42,7 @@ body {
 }
 
 /* --- SELECTORS (Vibrant Update) --- */
-.top-selector-area { margin-bottom: 2vh; }
+.top-selector-area { margin-bottom: 2vh; margin-top: -2vh; }
 
 .selector-grid {
   display: flex; gap: var(--card-gap);
@@ -261,7 +261,7 @@ body {
   }
   
   .content-container { padding: 0 10px; margin-top: -5vh; }
-  
+  .top-selector-area { margin-bottom: 2vh; margin-top: -7vh; }
   .section-title { font-size: 20px; }
   .pill-icon { font-size: 8vw; margin-bottom: 4px; }
   .pill-label { font-size: 3vw; }
