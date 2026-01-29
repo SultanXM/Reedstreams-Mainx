@@ -23,7 +23,7 @@ import {
   ShieldAlert
 } from "lucide-react"
 import "@/styles/match.css"
-import Header from "@/components/layout/headerformatch"
+import Header from "@/components/layout/header"
 
 // 🔥 IMPORT LANGUAGE HOOK
 import { useLanguage } from "@/context/language-context"
