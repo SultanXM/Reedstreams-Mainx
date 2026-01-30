@@ -53,11 +53,17 @@ const SORT_ORDER = [
     'motorsport', 'tennis', 'rugby', 'golf', 'darts', 'boxing'
 ]
 
-// Helper for live check (3.5 hour window)
+/**
+ * ARCHITECT FIX: WIDENED LIVE WINDOW
+ * Prevents the player from stopping segment requests if the game runs long
+ * or if there is a clock drift between the server and the user's device.
+ */
 const checkIsLive = (timestamp: number, category: string): boolean => {
   if (category.toLowerCase().includes('24/7')) return true;
   const now = Date.now();
-  return timestamp <= now && (now - timestamp) < (3.5 * 60 * 60 * 1000);
+  // Allow matches to stay 'Live' for up to 8 hours after start time
+  // Adds a 15-minute 'future' buffer for clock drift
+  return timestamp <= (now + 900000) && (now - timestamp) < (8 * 60 * 60 * 1000);
 }
 
 const normalizeSport = (category: string): string => {
@@ -103,10 +109,9 @@ export default function Header() {
 
             if (data.categories) {
                 data.categories.forEach(cat => {
-                    // Extract unique sports for the nav bar
                     const sId = normalizeSport(cat.category);
                     if (!sportsFound.has(sId) && sId !== 'other') {
-                        sportsFound.set(sId, cat.category.split(' ')[0]); // Use first word as name
+                        sportsFound.set(sId, cat.category.split(' ')[0]);
                     }
 
                     cat.games.forEach(game => {
@@ -127,7 +132,6 @@ export default function Header() {
                 });
             }
 
-            // Sort sports based on SORT_ORDER
             const sortedSports = Array.from(sportsFound.entries())
                 .map(([id, name]) => ({ id, name }))
                 .sort((a, b) => {
@@ -148,7 +152,7 @@ export default function Header() {
     useEffect(() => {
         setMounted(true)
         fetchData();
-        const interval = setInterval(fetchData, 60000); // Sync every minute
+        const interval = setInterval(fetchData, 60000);
         return () => clearInterval(interval)
     }, [fetchData])
 

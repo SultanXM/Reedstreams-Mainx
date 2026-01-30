@@ -3,227 +3,248 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, PlayCircle, Clock, ChevronRight, Search, X } from 'lucide-react'
+import { ArrowLeft, Calendar } from 'lucide-react'
 import '../../styles/live-matches.css'
 
-const API_BASE = 'https://reedstreams-edge-v1.fly.dev/api/v1/streams'
+const API_BASE = 'https://streamed.pk/api'
 
-interface FormattedMatch {
+interface Match {
   id: string;
   title: string;
   category: string;
-  sportId: string;
   date: number;
-  poster: string;
-  isLive: boolean;
+  teams?: { 
+    home?: { badge: string; name: string }; 
+    away?: { badge: string; name: string } 
+  };
 }
 
-const isLive = (timestamp: number, category: string = ''): boolean => {
-  if (category.toLowerCase().includes('24/7')) return true;
+const getImageUrl = (badgeId: string): string => `${API_BASE}/images/badge/${badgeId}.webp`;
+
+const isLive = (timestamp: number): boolean => {
   const now = Date.now();
-  return timestamp <= now && (now - timestamp) < (3.5 * 60 * 60 * 1000);
+  const matchTime = new Date(timestamp).getTime();
+  return matchTime <= now && (now - matchTime) < (3 * 60 * 60 * 1000);
 }
 
 const formatTime = (timestamp: number): string => {
   return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
+// Helper to get Date Stamp Label
 const getDateLabel = (timestamp: number) => {
   const date = new Date(timestamp);
   const today = new Date();
   const tomorrow = new Date();
   tomorrow.setDate(today.getDate() + 1);
+
   if (date.toDateString() === today.toDateString()) return "TODAY";
   if (date.toDateString() === tomorrow.toDateString()) return "TOMORROW";
+  
   return date.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' }).toUpperCase();
 };
 
-const SkeletonRow = () => (
-    <div className="match-row skeleton-pulse">
-        <div className="row-poster-container sk-bg" />
-        <div className="row-content-wrapper">
-            <div className="row-info">
-                <div className="sk-text sk-w-30" style={{ height: '12px', marginBottom: '12px' }} />
-                <div className="sk-text sk-w-60" style={{ height: '24px' }} />
-            </div>
-            <div className="row-meta-col sk-hide-mobile">
-                <div className="sk-text sk-w-100" style={{ height: '35px', borderRadius: '8px' }} />
-                <div className="sk-text sk-w-80" style={{ height: '15px', marginTop: '10px' }} />
-            </div>
-        </div>
-    </div>
-);
+const MatchCard: React.FC<{ match: Match; onImageError: (id: string) => void }> = ({ match, onImageError }) => {
+  // STRICT IDENTIFICATION for Visuals
+  const isTargetMatch = 
+    match.title.toLowerCase().includes('gaethje') || 
+    match.title.toLowerCase().includes('pimblett');
 
-const MatchRow = React.memo(({ match }: { match: FormattedMatch }) => {
+  // FORCE LIVE STATUS for the big fight
+  const isMatchLive = isTargetMatch ? true : isLive(match.date);
+  
+  const homeName = match.teams?.home?.name || 'Home';
+  const awayName = match.teams?.away?.name || 'Away';
+  
+  const fullTitle = `${homeName} vs ${awayName}`;
+  const matchTitle = fullTitle.length > 35 
+    ? fullTitle.substring(0, 32) + "..." 
+    : fullTitle;
+
   return (
-    <Link href={`/match/${match.id}`} className="match-row-link">
-      <article className="match-row">
-        <div className="row-poster-container">
-           <div className="row-poster" style={{ backgroundImage: `url(${match.poster})` }} />
-           <div className="row-overlay-icon">
-               <PlayCircle size={28} color="#fff" fill="rgba(0,0,0,0.5)" />
+    <Link 
+      href={`/match/${match.id}`} 
+      className="match-link"
+      onClick={() => sessionStorage.setItem("currentMatch", JSON.stringify(match))}
+    >
+      <article className="match-card">
+        <div className="card-body">
+           <div className="team-container">
+              <img 
+                src={getImageUrl(match.teams!.home!.badge)} 
+                className="team-logo" 
+                alt={homeName} 
+                onError={() => onImageError(match.id)} 
+              />
+              <span className="team-name">{homeName}</span>
+           </div>
+           <div className="vs-container">
+             <span className="vs-text">VS</span>
+           </div>
+           <div className="team-container">
+              <img 
+                src={getImageUrl(match.teams!.away!.badge)} 
+                className="team-logo" 
+                alt={awayName} 
+                onError={() => onImageError(match.id)} 
+              />
+              <span className="team-name">{awayName}</span>
            </div>
         </div>
-        <div className="row-content-wrapper">
-          <div className="row-info">
-             <div className="row-category">{match.category}</div>
-             <div className="row-title">{match.title}</div>
-          </div>
-          <div className="row-meta-col">
-             <div className={`row-status-badge ${match.isLive ? 'live' : 'upcoming'}`}>
-                 {match.isLive ? <><span className="live-dot" /> LIVE</> : <><Clock size={12} /> {formatTime(match.date)}</>}
-             </div>
-             <div className="row-action-btn">WATCH NOW <ChevronRight size={14} /></div>
-          </div>
+        <div className="card-footer-info">
+           <div className="match-info-text">
+             <span className="match-description">{matchTitle}</span>
+           </div>
+           <div className="match-status-btn">
+             {isMatchLive ? (
+               <span className="status-badge live">LIVE</span>
+             ) : (
+               <span className="status-badge time">{formatTime(match.date)}</span>
+             )}
+           </div>
         </div>
       </article>
-    </Link>
+    </Link> 
   );
-});
+};
 
 export default function LiveMatches() {
   const searchParams = useSearchParams()
   const urlSportId = searchParams.get('sportId') || 'all'
-  const [matches, setMatches] = useState<FormattedMatch[]>([])
+  const urlSportName = decodeURIComponent(searchParams.get('sportName') || 'All Matches')
+
+  const [matches, setMatches] = useState<Match[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'ALL' | 'LIVE' | 'UPCOMING'>('ALL')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [hiddenMatches, setHiddenMatches] = useState<Set<string>>(new Set())
+
+  const handleImageError = (matchId: string) => {
+    setHiddenMatches(prev => {
+      const newSet = new Set(prev);
+      newSet.add(matchId);
+      return newSet;
+    });
+  };
 
   useEffect(() => {
     const fetchMatches = async () => {
       setLoading(true)
       try {
-        const res = await fetch(API_BASE)
-        const data = await res.json()
-        let validMatches: FormattedMatch[] = [];
-        if (data && Array.isArray(data.categories)) {
-            data.categories.forEach((catBlock: any) => {
-                if (catBlock.games) {
-                    catBlock.games.forEach((game: any) => {
-                        const startTimeMs = game.start_time * 1000;
-                        validMatches.push({
-                            id: game.id.toString(),
-                            title: game.name,
-                            category: catBlock.category,
-                            sportId: 'unknown',
-                            date: startTimeMs,
-                            poster: game.poster,
-                            isLive: isLive(startTimeMs, catBlock.category)
-                        });
-                    });
-                }
-            });
-        }
+        const res = await fetch(`${API_BASE}/matches/all-today`)
+        const data: Match[] = await res.json()
         
+        let validMatches = data.filter(m => {
+          const hasHomeBadge = m.teams?.home?.badge && m.teams.home.badge.trim() !== '';
+          const hasAwayBadge = m.teams?.away?.badge && m.teams.away.badge.trim() !== '';
+          const hasSources = (m as any).sources?.length > 0;
+          return hasHomeBadge && hasAwayBadge && hasSources;
+        });
+
+        // *** STRICT FILTERING LOGIC ***
         if (urlSportId !== 'all') {
           validMatches = validMatches.filter(m => {
-             const normCat = m.category.toLowerCase();
-             const normUrl = urlSportId.toLowerCase();
-             
-             // Smart TV Filter
-             if (normUrl === 'tv') {
-                 return normCat.includes('24/7') || normCat.includes('tv');
-             }
-             
-             // Smart Fight/MMA Filter
-             if (normUrl === 'fight' || normUrl === 'mma') {
-                 return normCat.includes('mma') || normCat.includes('ufc') || normCat.includes('fight') || normCat.includes('boxing') || normCat.includes('wwe');
-             }
+            const cat = m.category.toLowerCase().replace(/\s+/g, '');
+            const title = m.title.toLowerCase();
 
-             // Strict American Football
-             if (normUrl === 'american-football') {
-                 return normCat.includes('nfl') || normCat.includes('american');
-             }
-             
-             // Strict Soccer
-             if (normUrl === 'football' || normUrl === 'soccer') {
-                 const isSoccer = normCat.includes('football') || normCat.includes('soccer');
-                 const isNotAmerican = !normCat.includes('nfl') && !normCat.includes('american');
-                 return isSoccer && isNotAmerican;
-             }
-             
-             // Fallback for others (Basketball, Hockey, etc)
-             return normCat.includes(normUrl.replace('-', ''));
+            // Special Handler for Fight/MMA
+            if (urlSportId === 'fight' || urlSportId === 'mma' || urlSportId === 'ufc') {
+              const isFightCategory = cat.includes('mma') || cat.includes('ufc') || cat.includes('fight') || cat.includes('boxing');
+              
+              if (!isFightCategory) return false;
+
+              // NUCLEAR OPTION: If we are in the Fight category, ONLY allow Gaethje vs Pimblett
+              const isGaethjeMatch = title.includes('gaethje') || title.includes('pimblett');
+              return isGaethjeMatch; 
+            }
+
+            if (urlSportId === 'american-football') return cat.includes('nfl') || cat.includes('american');
+            if (urlSportId === 'football') return (cat.includes('soccer') || cat.includes('football')) && !cat.includes('nfl') && !cat.includes('american');
+            if (urlSportId === 'hockey') return cat.includes('hockey') || cat.includes('nhl');
+            if (urlSportId === 'motorsport') return cat.includes('racing') || cat.includes('motor') || cat.includes('f1');
+            
+            return cat.includes(urlSportId.replace(/-/g, ''));
           });
         }
         setMatches(validMatches.sort((a, b) => a.date - b.date))
-      } catch (e) { console.error(e) } finally { setLoading(false) }
+      } catch (e) { console.error(e) }
+      finally { setLoading(false) }
     }
     fetchMatches()
   }, [urlSportId])
 
   const groupedMatches = useMemo(() => {
     const filtered = matches.filter(m => {
-      const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesFilter = filter === 'LIVE' ? m.isLive : filter === 'UPCOMING' ? (!m.isLive && m.date > Date.now()) : true;
-      return matchesSearch && matchesFilter;
+      if (hiddenMatches.has(m.id)) return false;
+      
+      // Force Gaethje Match to respect LIVE filter even if date is old
+      const isTarget = m.title.toLowerCase().includes('gaethje');
+      
+      if (filter === 'LIVE') return isTarget ? true : isLive(m.date);
+      if (filter === 'UPCOMING') return isTarget ? false : (!isLive(m.date) && m.date > Date.now());
+      return true;
     });
-    const groups: { [key: string]: FormattedMatch[] } = {};
+
+    const groups: { [key: string]: Match[] } = {};
     filtered.forEach(m => {
       const label = getDateLabel(m.date);
       if (!groups[label]) groups[label] = [];
       groups[label].push(m);
     });
     return groups;
-  }, [matches, filter, searchQuery]);
+  }, [matches, hiddenMatches, filter]);
 
   return (
     <div className="page-wrapper">
       <div className="page-container">
         <div className="page-header">
-          <Link href="/" className="back-link"><ArrowLeft size={16} /> Back Home</Link>
+          <Link href="/" className="back-link">
+             <ArrowLeft size={16} /> Back Home
+          </Link>
           <div className="header-title-row">
-            <h1 className="page-title">{urlSportId.toUpperCase().replace('-', ' ')}</h1>
-            <span className="match-count">{Object.values(groupedMatches).reduce((acc, curr) => acc + curr.length, 0)} Matches</span>
+            <h1 className="page-title">{urlSportName}</h1>
+            <span className="match-count">{matches.length} Matches</span>
           </div>
-          <div className="filter-area">
-            <div className="filter-bar">
-                <button className={`filter-pill ${filter === 'ALL' ? 'active' : ''}`} onClick={() => setFilter('ALL')}>ALL</button>
-                <button className={`filter-pill ${filter === 'LIVE' ? 'active' : ''}`} onClick={() => setFilter('LIVE')}><div className="live-dot" /> LIVE</button>
-                <button className={`filter-pill ${filter === 'UPCOMING' ? 'active' : ''}`} onClick={() => setFilter('UPCOMING')}>UPCOMING</button>
-                <button className={`search-toggle-btn ${isSearchOpen ? 'active' : ''}`} onClick={() => setIsSearchOpen(!isSearchOpen)}>
-                    {isSearchOpen ? <X size={16} /> : <Search size={16} />}
-                </button>
-            </div>
-            {isSearchOpen && (
-                <div className="search-input-wrapper">
-                    <input 
-                        type="text" 
-                        placeholder={`Search in ${urlSportId}...`}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="sport-search-input"
-                        autoFocus
-                    />
-                </div>
-            )}
+          <div className="filter-bar">
+            <button className={`filter-pill ${filter === 'ALL' ? 'active' : ''}`} onClick={() => setFilter('ALL')}>ALL</button>
+            <button className={`filter-pill ${filter === 'LIVE' ? 'active' : ''}`} onClick={() => setFilter('LIVE')}>
+              <div className="live-dot" /> LIVE
+            </button>
+            <button className={`filter-pill ${filter === 'UPCOMING' ? 'active' : ''}`} onClick={() => setFilter('UPCOMING')}>
+              UPCOMING
+            </button>
           </div>
         </div>
 
-        <div className="matches-list-wrapper">
-          {loading ? (
-            <div className="matches-list-container">
-                {Array(6).fill(0).map((_, i) => <SkeletonRow key={i} />)}
-            </div>
-          ) : (
-            Object.keys(groupedMatches).length > 0 ? Object.entries(groupedMatches).map(([dateLabel, dateMatches]) => (
+        {loading ? (
+          <div className="matches-grid">
+            {Array(8).fill(0).map((_, i) => <div key={i} className="loading-card skeleton-pulse" />)}
+          </div>
+        ) : (
+          <div className="matches-list-wrapper">
+            {Object.keys(groupedMatches).length > 0 ? (
+              Object.entries(groupedMatches).map(([dateLabel, dateMatches]) => (
                 <div key={dateLabel} className="date-group">
                   <div className="date-stamp">
-                    <span className="stamp-line"></span><span className="stamp-text">{dateLabel}</span><span className="stamp-line"></span>
+                    <span className="stamp-line"></span>
+                    <span className="stamp-text">{dateLabel}</span>
+                    <span className="stamp-line"></span>
                   </div>
-                  <div className="matches-list-container">
-                    {dateMatches.map(m => <MatchRow key={m.id} match={m} />)}
+                  <div className="matches-grid">
+                    {dateMatches.map(m => (
+                      <MatchCard key={m.id} match={m} onImageError={handleImageError} />
+                    ))}
                   </div>
                 </div>
-            )) : (
-              <div className="empty-state">
-                <h3>No {urlSportId.replace('-', ' ')} matches found.</h3>
-                <p>Check back later or try another category.</p>
+              ))
+            ) : (
+              <div className="empty-state-page">
+                <Calendar size={60} style={{ opacity: 0.3, marginBottom: '20px' }} />
+                <h3>No Matches Found</h3>
+                <button className="reset-btn" onClick={() => setFilter('ALL')}>Show All Matches</button>
               </div>
-            )
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
