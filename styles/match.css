@@ -284,3 +284,13 @@
     .player-wrapper { margin-top: 20px;}
 }
 
+.video-js .vjs-big-play-button {
+    background-color: #8db902 !important; /* Your Green */
+    border: none !important;
+    box-shadow: 0 0 20px rgba(141, 185, 2, 0.4);
+}
+
+.video-js .vjs-control-bar {
+    background: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(10px);
+}

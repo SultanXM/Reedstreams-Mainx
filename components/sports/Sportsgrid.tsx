@@ -9,6 +9,7 @@ import {
 import '../../styles/Sportsgrid.css'
 
 const API_BASE = 'https://streamed.pk/api'
+const REED_API_URL = 'https://reedstreams-edge-v1.fly.dev/api/v1/streams'
 
 interface APIMatch {
   id: string; title: string; category: string; date: number; popular: boolean;
@@ -93,13 +94,41 @@ const SkeletonMatchCard = () => (
     </div>
 );
 
-const MatchCard = React.memo(({ match, onImageError }: { match: APIMatch; onImageError: (id: string) => void }) => {
-  // 1. Identify Target Match
-  const isTargetMatch = 
-    match.title.toLowerCase().includes('gaethje') || 
-    match.title.toLowerCase().includes('pimblett');
+// --- UPDATED BANNER CARD ---
+const BannerCard = ({ game }: { game: any }) => {
+  const isMatchLive = isLive(game.start_time * 1000);
+  return (
+    <Link 
+      href={`/match/${game.id}?isNative=true`} 
+      className="match-card-link" 
+      onClick={() => sessionStorage.setItem("currentMatch", JSON.stringify({
+          id: game.id,
+          title: game.name,
+          date: game.start_time * 1000,
+          isNative: true,
+          embedUrl: game.video_link // Fixed: Passing the actual stream link
+      }))}
+    >
+      <article className="match-card">
+        <div className="match-visual" style={{ padding: 0, overflow: 'hidden', position: 'relative', display: 'block' }}>
+          <img src={game.poster} alt={game.name} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} />
+          <div className="card-top-row" style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, padding: '12px', display: 'flex', justifyContent: 'flex-start' }}>
+            <span className={`status-badge ${isMatchLive ? 'live' : 'upcoming'}`} style={{ margin: 0 }}>
+                {isMatchLive ? 'LIVE' : formatTime(game.start_time * 1000)}
+            </span>
+          </div>
+        </div>
+        <div className="match-info">
+          <div className="match-main-title">{game.name}</div>
+          <div className="match-sub-meta">REEDSTREAMS SIGNAL</div>
+        </div>
+      </article>
+    </Link>
+  );
+};
 
-  // 2. FORCE VISUALS: If target, it is ALWAYS Live and ALWAYS Popular (Hot)
+const MatchCard = React.memo(({ match, onImageError }: { match: APIMatch; onImageError: (id: string) => void }) => {
+  const isTargetMatch = match.title.toLowerCase().includes('gaethje') || match.title.toLowerCase().includes('pimblett');
   const isMatchLive = isTargetMatch ? true : isLive(match.date);
   const isPopular = isTargetMatch ? true : match.popular;
 
@@ -109,16 +138,11 @@ const MatchCard = React.memo(({ match, onImageError }: { match: APIMatch; onImag
   const aBadge = match.teams?.away?.badge ? getImageUrl(match.teams.away.badge) : null;
 
   return (
-    <Link 
-      href={`/match/${match.id}`} 
-      className="match-card-link" 
-      onClick={() => sessionStorage.setItem("currentMatch", JSON.stringify(match))}
-    >
+    <Link href={`/match/${match.id}`} className="match-card-link" onClick={() => sessionStorage.setItem("currentMatch", JSON.stringify(match))}>
       <article className="match-card">
         <div className="match-visual">
           <div className="card-top-row">
             <span className={`status-badge ${isMatchLive ? 'live' : 'upcoming'}`}>{isMatchLive ? 'LIVE' : formatTime(match.date)}</span>
-            {/* Force the Flame icon if it is our target match */}
             {isPopular && <div className="badge-popular"><Flame size={14} color="#8db902" fill="#8db902" /></div>}
           </div>
           <div className="logos-wrapper">
@@ -138,11 +162,22 @@ const MatchCard = React.memo(({ match, onImageError }: { match: APIMatch; onImag
 
 export default function SportsGrid({ initialData }: { initialData: APIMatch[] }) {
   const [matches] = useState<APIMatch[]>(initialData || []);
+  const [reedCombat, setReedCombat] = useState<any[]>([]);
   const [loading, setLoading] = useState(true); 
   const [hiddenMatches, setHiddenMatches] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    setLoading(false);
+    async function fetchMMA() {
+      try {
+        const res = await fetch(REED_API_URL);
+        const data = await res.json();
+        const wrestlingData = data.categories.find((c: any) => c.category === "Wrestling")?.games || [];
+        const combatData = data.categories.find((c: any) => c.category === "Combat Sports")?.games || [];
+        setReedCombat([...wrestlingData, ...combatData]);
+      } catch (e) { console.error("API Error"); }
+      setLoading(false);
+    }
+    fetchMMA();
   }, []);
 
   const handleImageError = (matchId: string) => setHiddenMatches(prev => new Set(prev).add(matchId));
@@ -164,27 +199,13 @@ export default function SportsGrid({ initialData }: { initialData: APIMatch[] })
       const sid = normalizeSport(m.category, m.title);
       const isMatchLive = isLive(m.date);
       
-      if (m.popular) { 
-        grouped['popular'].push(m); 
-        if (isMatchLive) counts['popular']++; 
-      }
-
-      if (sid && grouped[sid]) { 
-        grouped[sid].push(m); 
-        if (isMatchLive) counts[sid]++; 
-      }
+      if (m.popular) { grouped['popular'].push(m); if (isMatchLive) counts['popular']++; }
+      if (sid && grouped[sid]) { grouped[sid].push(m); if (isMatchLive) counts[sid]++; }
     });
 
-    // *** STRICT FILTERING WITH FORCE BADGE LOGIC ***
-    const gaethjeMatch = grouped['fight'].find(m => 
-      m.title.toLowerCase().includes('gaethje') || 
-      m.title.toLowerCase().includes('pimblett')
-    );
-
+    const gaethjeMatch = grouped['fight'].find(m => m.title.toLowerCase().includes('gaethje') || m.title.toLowerCase().includes('pimblett'));
     if (gaethjeMatch) {
-      // Isolate it
       grouped['fight'] = [gaethjeMatch];
-      // Force the count to 1 because we are forcing it to be LIVE visually
       counts['fight'] = 1; 
     } else {
       grouped['fight'] = [];
@@ -195,9 +216,15 @@ export default function SportsGrid({ initialData }: { initialData: APIMatch[] })
   }, [matches, hiddenMatches]);
 
   const sportsToDisplay = [
-      ...(grouped['popular'].length > 0 ? [{ id: 'popular', name: 'Popular Today' }] : []),
-      ...FIXED_SPORTS.filter(s => grouped[s.id].length > 0)
+      ...(grouped['popular'].length > 0 ? [{ id: 'popular', name: 'Popular Today', type: 'standard' }] : []),
+      ...FIXED_SPORTS.filter(s => grouped[s.id].length > 0).map(s => ({ ...s, type: 'standard' }))
   ];
+
+  if (reedCombat.length > 0) {
+    const pos = Math.max(0, sportsToDisplay.length - 1);
+    // Fixed Heading: Removed Royal Rumble text
+    sportsToDisplay.splice(pos, 0, { id: 'reed-combat', name: 'MMA & BOXING', type: 'banner' } as any);
+  }
 
   return (
     <div className="dashboard-wrapper">
@@ -224,29 +251,22 @@ export default function SportsGrid({ initialData }: { initialData: APIMatch[] })
 
         <div className="matches-grid-container">
           {loading ? (
-            <>
-              <div className="section-row-header" style={{ border: 'none', marginBottom: '20px' }}>
-                <div style={{ width: '150px', height: '24px', background: '#1c1c1c', borderRadius: '4px' }} className="skeleton-pulse" />
-              </div>
-              <div className="carousel-track">
-                {Array(5).fill(0).map((_, i) => <SkeletonMatchCard key={i} />)}
-              </div>
-            </>
+            <div className="carousel-track">{Array(5).fill(0).map((_, i) => <SkeletonMatchCard key={i} />)}</div>
           ) : (
             <>
               {sportsToDisplay.map(s => (
                 <section key={s.id} className="matches-section">
                   <div className="section-row-header">
                     <div className="title-block">
-                      {s.id === 'popular' && <Trophy size={20} color="#8db902" />}
                       <h2 className="section-title">{s.name}</h2>
                       {counts[s.id] > 0 && <span className="live-count-tag">{counts[s.id]} LIVE</span>}
                     </div>
                   </div>
                   <div className="carousel-track">
-                    {grouped[s.id].map((m, idx) => (
-                      <MatchCard key={`${m.id}-${idx}`} match={m} onImageError={handleImageError} />
-                    ))}
+                    {s.type === 'banner' ? 
+                      reedCombat.map((game, i) => <BannerCard key={i} game={game} />) :
+                      grouped[s.id].map((m, idx) => <MatchCard key={`${m.id}-${idx}`} match={m} onImageError={handleImageError} />)
+                    }
                   </div>
                 </section>
               ))}
