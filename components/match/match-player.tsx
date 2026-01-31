@@ -131,9 +131,15 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
                     // --- PRIORITY LOGIC ---
                     let best = null;
-                    best = allStreams.find(s => s.isNative);
+
+                    // 1. ABSOLUTE PRIORITY: Golf #1 (as requested)
+                    best = allStreams.find(s => s.sourceIdentifier.toLowerCase().includes("golf") && s.streamNo === 1);
+
+                    // 2. Secondary Priority: ReedStreams Official (Native)
+                    if (!best) best = allStreams.find(s => s.isNative);
+
+                    // 3. Fallbacks
                     if (!best) best = allStreams.find(s => s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 1);
-                    if (!best) best = allStreams.find(s => s.sourceIdentifier.toLowerCase().includes("golf") && s.streamNo === 1);
                     if (!best) best = allStreams.find(s => s.sourceIdentifier.toLowerCase() === "delta");
                     if (!best) best = allStreams.find(s => s.hd);
 
