@@ -1,29 +1,34 @@
-import { kv } from '@vercel/kv';
+import { createClient } from 'redis';
 import { NextResponse } from 'next/server';
+
+const client = createClient({
+  url: process.env.REDIS_URL
+});
+
+client.on('error', err => console.log('Redis Client Error', err));
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const matchId = searchParams.get('matchId');
-  if (!matchId) return NextResponse.json({ error: 'Missing matchId' }, { status: 400 });
-
-  const override = await kv.get(`match:${matchId}:override`);
+  
+  if (!client.isOpen) await client.connect();
+  const override = await client.get(`match:${matchId}:override`);
+  
   return NextResponse.json({ source: override || 'AUTO' });
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const { matchId, source, secret } = body;
+  const { matchId, source, secret } = await request.json();
 
-  // Using the key you mentioned earlier
-  if (secret !== "reedsmoney19k") {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  if (secret !== "reedsmoney19k") return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+  if (!client.isOpen) await client.connect();
+  
   if (source === 'AUTO') {
-    await kv.del(`match:${matchId}:override`);
+    await client.del(`match:${matchId}:override`);
   } else {
-    // Expires in 24 hours so it doesn't mess up tomorrow's games
-    await kv.set(`match:${matchId}:override`, source, { ex: 86400 });
+    await client.set(`match:${matchId}:override`, source, { EX: 86400 });
   }
-  return NextResponse.json({ success: true, source });
+  
+  return NextResponse.json({ success: true });
 }
