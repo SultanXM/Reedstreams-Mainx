@@ -129,19 +129,39 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                 } else {
                     setStreams(allStreams);
 
-                    // --- PRIORITY LOGIC ---
+                    // --- 4. ADMIN OVERRIDE CHECK ---
+                    let forcedSource = 'AUTO';
+                    try {
+                        const overrideRes = await fetch(`/api/stream-control?matchId=${matchId}`);
+                        const overrideData = await overrideRes.json();
+                        forcedSource = overrideData.source; 
+                    } catch (e) {
+                        console.warn("Override fetch failed, using AUTO");
+                    }
+
+                    // --- 5. PRIORITY LOGIC ---
                     let best = null;
 
-                    // 1. ABSOLUTE PRIORITY: Golf #1 (as requested)
-                    best = allStreams.find(s => s.sourceIdentifier.toLowerCase().includes("golf") && s.streamNo === 1);
+                    // A. Check for Admin forced sources first
+                    if (forcedSource === 'GOLF') {
+                        best = allStreams.find(s => s.sourceIdentifier.toLowerCase().includes("golf") && s.streamNo === 1);
+                    } else if (forcedSource === 'NATIVE') {
+                        best = allStreams.find(s => s.isNative);
+                    }
 
-                    // 2. Secondary Priority: ReedStreams Official (Native)
-                    if (!best) best = allStreams.find(s => s.isNative);
+                    // B. Standard logic if no override or override source not found
+                    if (!best) {
+                        // Priority 1: Golf #1 (as requested)
+                        best = allStreams.find(s => s.sourceIdentifier.toLowerCase().includes("golf") && s.streamNo === 1);
 
-                    // 3. Fallbacks
-                    if (!best) best = allStreams.find(s => s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 1);
-                    if (!best) best = allStreams.find(s => s.sourceIdentifier.toLowerCase() === "delta");
-                    if (!best) best = allStreams.find(s => s.hd);
+                        // Priority 2: ReedStreams Official (Native)
+                        if (!best) best = allStreams.find(s => s.isNative);
+
+                        // Priority 3: Fallbacks
+                        if (!best) best = allStreams.find(s => s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 1);
+                        if (!best) best = allStreams.find(s => s.sourceIdentifier.toLowerCase() === "delta");
+                        if (!best) best = allStreams.find(s => s.hd);
+                    }
 
                     setSelectedStream(best || allStreams[0]);
                 }
@@ -314,9 +334,6 @@ function PlayerIframe({ embedUrl }: { embedUrl: string }) {
         }
     }, []);
 
-    // NOTE: We keep a stable <div> wrapper. React controls the div. 
-    // The iframe is just a child that appears later. 
-    // This prevents the "Failed to execute removeChild" error.
     return (
         <div style={{ width: '100%', height: '100%', background: '#000', position: 'relative' }}>
             {isMounted && (
