@@ -78,14 +78,16 @@ const MatchRow = React.memo(({ match, useBanner }: { match: Match; useBanner: bo
       <article className="match-row">
         <div className="row-poster-container" style={{ width: '100px', flex: '0 0 100px', overflow: 'hidden' }}>
            {useBanner ? (
-             <div 
+             <img 
+                src={getPosterUrl(match.poster!)}
+                alt={match.title}
+                referrerPolicy="no-referrer"
+                onError={() => setImgError(true)}
                 className="row-poster" 
                 style={{ 
-                    backgroundImage: `url(${getPosterUrl(match.poster!)})`, 
                     width: '100%', 
                     height: '100%', 
-                    backgroundSize: 'cover', 
-                    backgroundPosition: 'center' 
+                    objectFit: 'cover'
                 }} 
              />
            ) : (
@@ -132,7 +134,6 @@ export default function LiveMatches() {
   const searchParams = useSearchParams()
   const urlSportId = searchParams.get('sportId') || 'all'
   
-  // 🔥 FIX: Improved Logic for Display Name
   const DISPLAY_NAMES: Record<string, string> = {
     'american-football': 'NFL Football',
     'football': 'Soccer',
@@ -147,11 +148,7 @@ export default function LiveMatches() {
   const urlSportName = useMemo(() => {
     const paramName = searchParams.get('sportName');
     if (paramName) return decodeURIComponent(paramName);
-    
-    // Fallback to mapping the ID to a clean name
     if (DISPLAY_NAMES[urlSportId]) return DISPLAY_NAMES[urlSportId];
-    
-    // Last resort: Clean up the ID string
     return urlSportId.replace('-', ' ').toUpperCase();
   }, [urlSportId, searchParams]);
 

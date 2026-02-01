@@ -42,7 +42,7 @@ body {
   box-sizing: border-box;
 }
 .match-card {
-  min-width: 15vw;
+  min-width: auto;
   max-width: 15vw;
 }
 /* --- SELECTORS (UPDATED TO SULTAN STYLE) --- */
@@ -400,10 +400,10 @@ body {
   .match-card {
     max-width: 65vw;
     min-width: 65vw;
+    height: auto !important;
   }
 
 .team-logo {
     min-height: 70px;
-    mon-width: 70px;
 }
 }
