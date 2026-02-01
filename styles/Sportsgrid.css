@@ -42,8 +42,8 @@ body {
   box-sizing: border-box;
 }
 .match-card {
-  min-width: auto;
-  max-width: 15vw;
+  min-width: 13vw;
+  max-width: 13vw;
 }
 /* --- SELECTORS (UPDATED TO SULTAN STYLE) --- */
 .top-selector-area { margin-bottom: 2vh; }
@@ -174,6 +174,7 @@ body {
 
 .match-visual {
   width: 100%; aspect-ratio: 16/9; 
+  height:  !important;
   position: relative; display: flex; align-items: center; justify-content: center;
   background: radial-gradient(circle at center, #222 0%, #0a0a0a 100%);
   border-bottom: 1px solid #1f1f1f;
@@ -245,6 +246,9 @@ body {
   .selector-pill {
    height: 110px;
   flex: 0 0 120px;
+  }
+  .match-visual {
+    max-height: 18vh;
   }
 }
 /* --- SULTAN DISCORD POPUP --- */
@@ -407,3 +411,21 @@ body {
     min-height: 70px;
 }
 }
+.page-wrapper, .dashboard-wrapper {
+  background: transparent !important; /* Ensure no solid color blocks the body */
+}
+.row-poster-container {
+  
+}
+/* --- THE ULTIMATE GRADIENT FIX --- */
+
+.match-row {
+  display: flex;
+  align-items: center;
+  background: #111 !important; /* Base solid color for the rest of the card */
+  border: 1px solid #222;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+

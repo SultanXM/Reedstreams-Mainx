@@ -6,22 +6,21 @@
   --text-primary: #ffffff;
   --text-secondary: #9ca3af;
   --red-live: #e53935;
-  --page-top-padding: 130px;
+  --page-top-padding: 110px;
 }
 
 body {
   margin: 0;
   padding: 0;
   background: 
-    radial-gradient(circle at 50% 0%, rgba(141, 185, 2, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 50% 0%, rgba(141, 185, 2, 0.15) 0%, transparent 50%),
     linear-gradient(180deg, #050603 0%, #000000 100%) !important;
-  background-attachment: fixed;
-  background-color: #000000 !important;
+  background-attachment: fixed !important; /* Forces the glow to stay put */
+  background-color: #000 !important;
   overflow-x: hidden;
 }
 
 .page-wrapper {
-  background: transparent !important;
   min-height: 100vh;
   padding-top: var(--page-top-padding);
   padding-bottom: 80px;
@@ -33,6 +32,8 @@ body {
   margin: 0 auto;
   padding: 0 20px;
   box-sizing: border-box;
+  
+
 }
 
 /* --- HEADER SECTION --- */
@@ -49,7 +50,8 @@ body {
   margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 16px;
 }
 .page-title { font-size: 28px; font-weight: 800; color: #fff; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
-.match-count { color: var(--accent-color); font-weight: 700; font-size: 14px; background: rgba(141, 185, 2, 0.1); padding: 4px 10px; border-radius: 20px; }
+
+.ount { color: var(--accent-color); font-weight: 700; font-size: 14px; background: rgba(141, 185, 2, 0.1); padding: 4px 10px; border-radius: 20px; }
 
 /* Filter Bar */
 .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -58,6 +60,7 @@ body {
   color: #aaa; padding: 8px 18px; border-radius: 6px; font-size: 12px; font-weight: 700;
   cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
   text-transform: uppercase;
+  border-radius: 16px;
 }
 .filter-pill:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
 .filter-pill.active { 
@@ -93,7 +96,7 @@ body {
   align-items: center;
   background: var(--bg-card);
   border: 1px solid #222;
-  border-radius: 12px;
+  border-radius: 16spx;
   padding: 0; 
   height: 140px; 
   transition: all 0.25s ease;
@@ -719,3 +722,13 @@ body {
 }
   
 }
+
+.page-wrapper, .dashboard-wrapper {
+  background: transparent !important; /* Ensure no solid color blocks the body */
+}
+.search-toggle-btn {
+  border-radius: 16px !important;
+}
+.match-visual {
+    max-height: auto;
+  }

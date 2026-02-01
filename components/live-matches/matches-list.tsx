@@ -52,7 +52,7 @@ const getDateLabel = (timestamp: number) => {
 
 const SkeletonRow = () => (
     <div className="match-row skeleton-pulse">
-        <div className="row-poster-container sk-bg" />
+        <div className="row-poster-container" />
         <div className="row-content-wrapper">
             <div className="row-info">
                 <div className="sk-text sk-w-30" style={{ height: '12px', marginBottom: '12px' }} />
@@ -91,7 +91,7 @@ const MatchRow = React.memo(({ match, useBanner }: { match: Match; useBanner: bo
                 }} 
              />
            ) : (
-             <div className="row-logos-visual" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', height: '100%', background: '#111', padding: '5px' }}>
+             <div className="row-logos-visual" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', height: '100%', padding: '5px' }}>
                 <img 
                   src={getBadgeUrl(match.teams!.home!.badge)} 
                   alt="" 
@@ -109,9 +109,6 @@ const MatchRow = React.memo(({ match, useBanner }: { match: Match; useBanner: bo
                 />
              </div>
            )}
-           <div className="row-overlay-icon">
-               <PlayCircle size={24} color="#8db902" fill="rgba(0,0,0,0.6)" />
-           </div>
         </div>
         <div className="row-content-wrapper">
           <div className="row-info">
