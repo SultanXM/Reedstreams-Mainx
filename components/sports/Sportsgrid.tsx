@@ -175,6 +175,7 @@ const StandardMatchCard = React.memo(({ match, onImageError }: { match: APIMatch
 });
 
 // --- MAIN GRID ---
+const ELITE_SOURCES = ['admin', 'delta', 'golf', 'bravo'];
 
 export default function SportsGrid({ initialData }: { initialData: APIMatch[] }) {
   const [matches] = useState<APIMatch[]>(initialData || []);
@@ -193,6 +194,10 @@ export default function SportsGrid({ initialData }: { initialData: APIMatch[] })
     });
 
     matches.forEach(m => {
+      const hasEliteSource = m.sources.some(s =>
+        ELITE_SOURCES.includes(s.source.toLowerCase())
+      );
+      if (!hasEliteSource) return;
       // 1. Check for Logos
       const hasHomeLogo = m.teams?.home?.badge && m.teams.home.badge.trim() !== "";
       const hasAwayLogo = m.teams?.away?.badge && m.teams.away.badge.trim() !== "";

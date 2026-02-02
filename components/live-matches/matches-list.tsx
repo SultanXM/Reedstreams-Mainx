@@ -154,6 +154,7 @@ export default function LiveMatches() {
   const [filter, setFilter] = useState<'ALL' | 'LIVE' | 'UPCOMING'>('ALL')
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const ELITE_SOURCES = ['admin', 'delta', 'golf', 'bravo']
 
   useEffect(() => {
     const fetchMatches = async () => {
@@ -163,10 +164,13 @@ export default function LiveMatches() {
         const data: Match[] = await res.json()
         
         let validMatches = data.filter(m => {
+          const hasEliteSource = (m.sources || []).some(s =>
+            ELITE_SOURCES.includes(s.source.toLowerCase())
+          );
           const hasBadges = m.teams?.home?.badge?.trim() && m.teams.away?.badge?.trim();
           const hasPoster = m.poster && m.poster.trim() !== "";
           const hasSources = (m as any).sources?.length > 0;
-          return (hasBadges || hasPoster) && hasSources;
+          return hasEliteSource && (hasBadges || hasPoster) && hasSources;
         });
 
         if (urlSportId !== 'all') {

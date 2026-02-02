@@ -298,3 +298,136 @@
     backdrop-filter: blur(10px);
 }
 
+/* Container for the countdown digits */
+.timer-display {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+/* Individual time units (H, M, S) */
+.timer-unit {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    min-width: 70px;
+    text-align: center;
+    font-size: 48px;
+    font-weight: 900;
+    color: #fff;
+    box-shadow: 0 0 30px rgba(141, 185, 2, 0.1);
+}
+
+/* The colon separators (:) */
+.timer-sep {
+    opacity: 0.3;
+    font-size: 32px;
+    font-weight: 900;
+    color: #fff;
+    padding-bottom: 5px;
+}
+
+/* Satellite Uplink Label */
+.uplink-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    color: #666;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* The pulsing dot for "Establishing Uplink" */
+.live-dot-pulse {
+    width: 8px;
+    height: 8px;
+    background-color: #8db902;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(141, 185, 2, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(141, 185, 2, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(141, 185, 2, 0); }
+}
+/* The main wrapper for the upcoming state */
+.countdown-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 400px; /* Ensures the player area doesn't collapse */
+    background: radial-gradient(circle at center, #0a0a0a 0%, #050505 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* THE FIX: Force the timer digits to be in a row */
+.timer-display {
+    display: flex !important;
+    flex-direction: row !important; /* Forces horizontal */
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 15px;
+    margin: 20px 0;
+    z-index: 2;
+}
+
+/* Digital Unit Styling */
+.timer-unit {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    min-width: 80px;
+    text-align: center;
+    font-size: 56px;
+    font-weight: 900;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 0 30px rgba(141, 185, 2, 0.15);
+}
+
+.timer-sep {
+    font-size: 40px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.2);
+    padding-bottom: 8px;
+}
+
+/* Uplink Label Styling */
+.uplink-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+    color: #555;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 20px;
+}
+
+.live-dot-pulse {
+    width: 6px;
+    height: 6px;
+    background-color: #8db902;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #8db902;
+    animation: sultan-pulse 2s infinite ease-in-out;
+}
+
+@keyframes sultan-pulse {
+    0% { opacity: 0.4; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0.4; transform: scale(0.8); }
+}
+
