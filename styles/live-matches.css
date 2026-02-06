@@ -1,6 +1,6 @@
 :root {
   --bg-dark: #000000;
-  --bg-card: #141414;
+  --bg-card: rgb(30, 30, 30);
   --bg-card-hover: #1f1f1f;
   --accent-color: #8db902;
   --text-primary: #ffffff;
@@ -16,7 +16,7 @@ body {
     radial-gradient(circle at 50% 0%, rgba(141, 185, 2, 0.15) 0%, transparent 50%),
     linear-gradient(180deg, #050603 0%, #000000 100%) !important;
   background-attachment: fixed !important; /* Forces the glow to stay put */
-  background-color: #000 !important;
+  background-color: #000000 !important;
   overflow-x: hidden;
 }
 
@@ -51,18 +51,19 @@ body {
 }
 .page-title { font-size: 28px; font-weight: 800; color: #fff; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
 
-.ount { color: var(--accent-color); font-weight: 700; font-size: 14px; background: rgba(141, 185, 2, 0.1); padding: 4px 10px; border-radius: 20px; }
+.count { color: var(--accent-color); font-weight: 700; font-size: 14px; background: rgba(141, 185, 2, 0.1); padding: 4px 10px; border-radius: 20px; }
 
 /* Filter Bar */
 .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; }
 .filter-pill {
-  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-  color: #aaa; padding: 8px 18px; border-radius: 6px; font-size: 12px; font-weight: 700;
+  background: linear-gradient(#161920 0%, #8db9020d 100%);
+  background-color: #1c1c1c; border: 1px solid rgba(141, 185, 2, 0.2);
+  color: #aaa; padding: 8px 18px; font-size: 12px; font-weight: 700;
   cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
   text-transform: uppercase;
   border-radius: 16px;
 }
-.filter-pill:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
+.filter-pill:hover { background-color: #252525; color: #fff; border-color: var(--accent-color); box-shadow: 0 0 10px rgba(141, 185, 2, 0.2); }
 .filter-pill.active { 
   background: var(--accent-color); 
   color: #000; 
@@ -95,8 +96,8 @@ body {
   display: flex;
   align-items: center;
   background: var(--bg-card);
-  border: 1px solid #222;
-  border-radius: 16spx;
+  border: 1px solid #1f1f1f;
+  border-radius: 16px;
   padding: 0; 
   height: 140px; 
   transition: all 0.25s ease;
@@ -132,6 +133,20 @@ body {
 .match-row:hover .row-poster {
   transform: scale(1.05);
 }
+
+/* Fallback Logos Visual */
+.row-logos-visual {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: radial-gradient(circle at center, #222 0%, #0a0a0a 100%);
+  overflow: hidden;
+}
+.row-logos-visual img { width: 55px; height: 55px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+.row-logos-visual .vs-text { font-weight: 900; color: #555; font-size: 14px; font-style: italic; }
 
 .row-overlay-icon {
   position: absolute; inset: 0;
@@ -400,7 +415,7 @@ body {
   display: flex;
   align-items: center;
   background: var(--bg-card);
-  border: 1px solid #222;
+  border: 1px solid #1f1f1f;
   border-radius: 12px;
   /* INCREASED HEIGHT BY 10% (from 140px to 155px) */
   height: 155px; 
@@ -514,7 +529,7 @@ body {
   display: flex;
   align-items: center;
   background: var(--bg-card);
-  border: 1px solid #222;
+  border: 1px solid #1f1f1f;
   border-radius: 12px;
   height: 155px; 
   min-height: 155px; /* Forced minimum height to prevent compacting */
@@ -711,15 +726,17 @@ body {
 .row-poster-container { 
   background: radial-gradient(circle at center, #222 0%, #0a0a0a 100%);
 }
-.row-logos-visual img {
-  min-height: 60px;
-  min-width: 60px;
-}
+
 @media (max-width: 768) {
-.row-logos-visual img {
-  min-width: auto;
-  max-width: auto;
-}
+  .row-logos-visual img {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: auto;
+    max-width: auto;
+  }
+  .row-logos-visual .vs-text {
+    font-size: 10px;
+  }
   
 }
 
@@ -732,3 +749,34 @@ body {
 .match-visual {
     max-height: auto;
   }
+
+/* --- LOAD MORE BUTTON --- */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  padding: 30px 0 10px 0;
+}
+
+.load-more-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-secondary);
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.load-more-btn:hover {
+  background: var(--accent-color);
+  color: #000;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 15px rgba(141, 185, 2, 0.3);
+}

@@ -6,108 +6,45 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-
-  // Allow cross-origin requests in development
   allowedDevOrigins: [
     'http://192.168.100.5:3000',
     'http://localhost:3000',
   ],
-
-  // Security headers for production
   async headers() {
     return [
       {
         source: '/:path*',
         headers: [
-          // Prevent clickjacking
-          {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN',
-          },
-          // XSS Protection
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-          // Prevent MIME type sniffing
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          // Referrer policy
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          // Permissions Policy (limit what features can be used)
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
-          },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-XSS-Protection', value: '1; mode=block' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
       },
-      // CORS headers for HLS proxy APIs (iOS compatibility)
       {
-        source: '/api/proxy/:path*',
+        source: '/api/:path*',
         headers: [
-          {
-            key: 'Access-Control-Allow-Origin',
-            value: '*',
-          },
-          {
-            key: 'Access-Control-Allow-Methods',
-            value: 'GET, HEAD, OPTIONS',
-          },
-          {
-            key: 'Access-Control-Allow-Headers',
-            value: '*',
-          },
-          {
-            key: 'Access-Control-Expose-Headers',
-            value: 'Content-Length, Content-Type',
-          },
+          { key: 'Access-Control-Allow-Origin', value: 'https://reedstreams.live' }, 
+          { key: 'Access-Control-Allow-Methods', value: 'GET, POST, OPTIONS' },
+          { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
+          { key: 'Access-Control-Allow-Credentials', value: 'true' },
         ],
       },
-      // CORS headers for stream API
-      {
-        source: '/api/stream/:path*',
-        headers: [
-          {
-            key: 'Access-Control-Allow-Origin',
-            value: '*',
-          },
-          {
-            key: 'Access-Control-Allow-Methods',
-            value: 'GET, OPTIONS',
-          },
-          {
-            key: 'Access-Control-Allow-Headers',
-            value: '*',
-          },
-        ],
-      },
-      // Allow iframes from trusted stream sources
       {
         source: '/match/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-src 'self' https://*.streamed.pk https://*.embedstream.me https://*.sportshub.stream blob: data:; media-src 'self' https://*.streamed.pk https://*.embedstream.me https://*.sportshub.stream blob: data: *; frame-ancestors 'self';",
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.vercel-scripts.com https://*.cbox.ws https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://*.cbox.ws; img-src 'self' blob: data: https://* https://*.cbox.ws https://www.google-analytics.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; frame-src 'self' https://*.streamed.pk https://*.embedstream.me https://*.sportshub.stream https://*.modistreams.org https://modistreams.org https://*.embedsports.top https://embedsports.top https://*.cbox.ws https://my.cbox.ws https://tlk.io https://*.minnit.chat https://minnit.chat https://reedstreams-edge-v1.fly.dev blob: data:; connect-src 'self' https://*.cbox.ws wss://*.cbox.ws https://tlk.io wss://tlk.io https://*.minnit.chat wss://*.minnit.chat https://streamed.pk https://reedstreams-aggregator.fly.dev https://reedstreams-edge-v1.fly.dev https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com;",
           },
         ],
       },
     ];
   },
-
-  // Compression and performance
   compress: true,
-
-  // Enable React strict mode for development
-  reactStrictMode: false, // Disabled to prevent double-mounting issues with ad shield
-
-  // Experimental features for performance
+  reactStrictMode: false,
   experimental: {
-    // Enable optimized package imports
     optimizePackageImports: ['@vercel/analytics'],
   },
 }

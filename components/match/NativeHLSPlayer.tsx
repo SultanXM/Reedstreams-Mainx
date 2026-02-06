@@ -1,6 +1,5 @@
-"use client"
-
 import React, { useEffect, useRef, useState } from 'react';
+import { Loader } from 'lucide-react';
 
 /**
  * 🍎 Native iOS HLS Player
@@ -50,7 +49,7 @@ export default function NativeHLSPlayer({ streamUrl, onError, onSuccess }: Nativ
             video.removeEventListener('canplay', handleCanPlay);
             video.removeEventListener('error', handleError);
         };
-    }, [streamUrl]);
+    }, [streamUrl, onError, onSuccess]);
 
     return (
         <div style={{ width: '100%', height: '100%', background: '#000', position: 'relative' }}>
@@ -58,10 +57,11 @@ export default function NativeHLSPlayer({ streamUrl, onError, onSuccess }: Nativ
             {status === 'loading' && (
                 <div style={{
                     position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: '#8db902', zIndex: 10
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    color: '#8db902', zIndex: 10, background: '#09090b'
                 }}>
-                    <div className="spinner-protect" />
+                    <Loader className="spinner" size={48} />
+                    <span style={{ marginTop: '1rem', fontWeight: 600, letterSpacing: '0.05em' }}>OPTIMIZING STREAM...</span>
                 </div>
             )}
 
@@ -73,6 +73,8 @@ export default function NativeHLSPlayer({ streamUrl, onError, onSuccess }: Nativ
                 controls
                 autoPlay
                 muted // Muted needed for autoplay usually
+                preload="auto" // Enhancement: Aggressively load buffer
+                x-webkit-airplay="allow" // Enhancement: Allow AirPlay
             />
         </div>
     );

@@ -1,16 +1,24 @@
+"use client";
+
+import React, { useEffect, useRef } from 'react';
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
 
-function ReedVideoJS({ src }: { src: string }) {
+export default function ReedVideoJS({ src }: { src: string }) {
     const videoRef = useRef<HTMLDivElement>(null);
     const playerRef = useRef<any>(null);
 
     useEffect(() => {
+        if (!videoRef.current) return;
         
         if (!playerRef.current) {
             const videoElement = document.createElement("video-js");
             videoElement.classList.add("vjs-big-play-centered");
-            videoRef.current?.appendChild(videoElement);
+            // Ensure the video element takes up the full container
+            videoElement.style.width = "100%";
+            videoElement.style.height = "100%";
+            
+            videoRef.current.appendChild(videoElement);
 
             const player = (playerRef.current = videojs(videoElement, {
                 autoplay: true,
@@ -18,11 +26,24 @@ function ReedVideoJS({ src }: { src: string }) {
                 responsive: true,
                 fluid: true,
                 liveui: true,
-                sources: [{ src, type: "application/x-mpegURL"}]
+                sources: [{ src, type: "application/x-mpegURL"}],
+                html5: {
+                    vhs: {
+                        overrideNative: true,
+                        enableLowInitialPlaylist: true,
+                        smoothQualityChange: true,
+                    },
+                    nativeAudioTracks: false,
+                    nativeVideoTracks: false,
+                }
             }));
 
             player.on('ready', () => {
                 console.log("Uplink = 200 OK");
+            });
+            
+            player.on('error', () => {
+                console.error("VideoJS Error:", player.error());
             });
         } else {
             
@@ -43,7 +64,7 @@ function ReedVideoJS({ src }: { src: string }) {
 
     return (
         <div data-vjs-player style={{ width: "100%", height: "100%" }}>
-            <div ref={videoRef} />
+            <div ref={videoRef} style={{ width: "100%", height: "100%" }} />
         </div>
     );
 }

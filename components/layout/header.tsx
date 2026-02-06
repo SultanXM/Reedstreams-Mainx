@@ -55,33 +55,37 @@ export default function Header() {
         setShowReport(false);
     }, [pathname]);
 
-    const fetchLiveCount = async () => {
+    const fetchLiveCount = useCallback(async () => {
         try {
             const response = await fetch(`${API_BASE}/matches/live`)
+            if (!response.ok) throw new Error('Failed to fetch live count')
             const data = await response.json()
-            setLiveMatchesCount(data.length)
-        } catch (error) { console.error(error) }
-    }
+            setLiveMatchesCount(Array.isArray(data) ? data.length : 0)
+        } catch (error) { console.error('Live count error:', error) }
+    }, [])
 
-    const fetchSports = async () => {
+    const fetchSports = useCallback(async () => {
         try {
             const response = await fetch(`${API_BASE}/sports`)
+            if (!response.ok) throw new Error('Failed to fetch sports')
             const data: Sport[] = await response.json()
+            if (!Array.isArray(data)) return
             const sorted = data.sort((a, b) => {
                 const idxA = SORT_ORDER.indexOf(a.id); const idxB = SORT_ORDER.indexOf(b.id)
                 if (idxA !== -1 && idxB !== -1) return idxA - idxB
                 return idxA !== -1 ? -1 : idxB !== -1 ? 1 : a.name.localeCompare(b.name)
             })
             setSports(sorted.slice(0, 12))
-        } catch (error) { console.error(error) }
-    }
+        } catch (error) { console.error('Sports fetch error:', error) }
+    }, [])
 
     const fetchSearchMatches = useCallback(async () => {
         try {
             const response = await fetch(`${API_BASE}/matches/all-today`)
+            if (!response.ok) throw new Error('Failed to fetch matches')
             const data: Match[] = await response.json()
-            setMatches(data)
-        } catch (error) { console.error(error) }
+            setMatches(Array.isArray(data) ? data : [])
+        } catch (error) { console.error('Search matches error:', error) }
     }, [])
 
     useEffect(() => {
@@ -92,7 +96,7 @@ export default function Header() {
         init()
         const interval = setInterval(fetchLiveCount, 30000)
         return () => clearInterval(interval)
-    }, [fetchSearchMatches])
+    }, [fetchLiveCount, fetchSports, fetchSearchMatches])
 
     const handleSearch = (value: string) => {
         setQuery(value)
@@ -114,7 +118,10 @@ export default function Header() {
     }
 
     const handleSendReport = () => {
-        if (!reportText.trim()) return;
+        if (!reportText.trim()) {
+            alert("Please enter a message before sending.");
+            return;
+        }
         const subject = encodeURIComponent("ReedStreams - Issue Report");
         const body = encodeURIComponent(reportText);
         window.location.href = `mailto:reedstreams000@gmail.com?subject=${subject}&body=${body}`;
@@ -192,10 +199,12 @@ export default function Header() {
                 <>
                     <div className="sidebar-overlay visible" onClick={() => setShowSidebar(false)} />
                     <div className="sidebar-drawer open">
-                        <div className="sidebar-header">
-                            <span onClick={(e) => hardNavigate(e, '/')} className="sidebar-logo" style={{cursor:'pointer'}}>
-                                <span className="accent-text">REED</span>STREAMS</span>
-                            <button onClick={() => setShowSidebar(false)} className="close-btn"><X size={24} /></button>
+                        <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px', borderBottom: '1px solid #222' }}>
+                            <span onClick={(e) => hardNavigate(e, '/')} className="sidebar-logo" style={{cursor:'pointer', fontSize: '22px', fontWeight: '900', letterSpacing: '-1px', display: 'flex', alignItems: 'center', color: '#fff'}}>
+                                <span className="accent-text" style={{ color: '#8db902' }}>REED</span>
+                                <span>STREAMS</span>
+                            </span>
+                            <button onClick={() => setShowSidebar(false)} className="close-btn" style={{ background: 'transparent', border: 'none', color: '#a1a1aa', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={24} /></button>
                         </div>
                         <div className="sidebar-content">
                             <div className="live-banner"><div className="pulsing-dot" /> {liveMatchesCount} Matches Live</div>
@@ -259,24 +268,54 @@ export default function Header() {
             {/* REPORT MODAL */}
             {mounted && showReport && (
                 <div className="modal-backdrop" onClick={() => setShowReport(false)}>
-                    <div className="search-modal report-modal" onClick={(e) => e.stopPropagation()} style={{maxWidth: '500px'}}>
-                        <div className="search-header">
-                            <AlertCircle className="search-icon" size={20} style={{color: 'var(--accent)'}} />
-                            <span style={{flex: 1, fontWeight: 'bold', marginLeft: '10px'}}>Report an Issue</span>
+                    <div className="search-modal report-modal" onClick={(e) => e.stopPropagation()} style={{maxWidth: '500px', background: '#09090b', border: '1px solid #333', borderRadius: '12px'}}>
+                        <div className="search-header" style={{borderBottom: '1px solid #222', padding: '15px 20px'}}>
+                            <AlertCircle className="search-icon" size={20} style={{color: '#8db902'}} />
+                            <span style={{flex: 1, fontWeight: '800', marginLeft: '10px', color: '#fff', textTransform: 'uppercase', letterSpacing: '1px'}}>Report an Issue</span>
                             <button className="close-btn" onClick={() => setShowReport(false)}><X size={20} /></button>
                         </div>
                         <div style={{padding: '20px'}}>
-                            <p style={{color: '#aaa', fontSize: '13px', marginBottom: '15px'}}>Describe the problem (stream down, wrong score, etc.) and we'll fix it ASAP.</p>
+                            <p style={{color: '#a1a1aa', fontSize: '13px', marginBottom: '15px', lineHeight: '1.5'}}>Describe the problem (stream down, wrong score, etc.) and we'll fix it ASAP.</p>
                             <textarea 
                                 value={reportText}
                                 onChange={(e) => setReportText(e.target.value)}
                                 placeholder="Write your message here..."
-                                style={{width: '100%', height: '120px', background: '#111', border: '1px solid #333', borderRadius: '8px', color: 'white', padding: '12px', outline: 'none', resize: 'none'}}
+                                style={{
+                                    width: '100%', 
+                                    height: '120px', 
+                                    background: '#18181b', 
+                                    border: '1px solid #333', 
+                                    borderRadius: '8px', 
+                                    color: 'white', 
+                                    padding: '12px', 
+                                    outline: 'none', 
+                                    resize: 'none',
+                                    fontSize: '14px',
+                                    fontFamily: 'inherit',
+                                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.3)'
+                                }}
                             />
                             <button 
                                 className="primary-btn" 
                                 onClick={handleSendReport}
-                                style={{width: '100%', marginTop: '15px', justifyContent: 'center', height: '45px'}}
+                                style={{
+                                    width: '100%', 
+                                    marginTop: '15px', 
+                                    justifyContent: 'center', 
+                                    height: '45px',
+                                    background: '#8db902',
+                                    color: '#000',
+                                    fontWeight: '800',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '1px',
+                                    cursor: 'pointer',
+                                    transition: 'transform 0.1s'
+                                }}
+                                onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
+                                onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                             >
                                 <Send size={16} className="btn-icon" /> <span>SEND REPORT</span>
                             </button>

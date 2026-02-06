@@ -8,21 +8,10 @@
   --section-gap: 35px;       
   --card-gap: 16px;
   
-  --match-card-w: 20px;     
+  --match-card-w: 280px;     
   --sport-card-size: 160px;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  background: 
-    radial-gradient(circle at 50% 0%, rgba(141, 185, 2, 0.15) 0%, transparent 50%),
-    linear-gradient(180deg, #050603 0%, #000000 100%) !important;
-  background-attachment: fixed;
-  background-color: #000000 !important;
-  overflow-x: hidden;
-  padding-top: 3vh;
-}
 
 .dashboard-wrapper {
   /* Only using your theme color #8db902 but heavily transparency-muted */
@@ -41,10 +30,7 @@ body {
   z-index: 2;
   box-sizing: border-box;
 }
-.match-card {
-  min-width: 13vw;
-  max-width: 13vw;
-}
+
 /* --- SELECTORS (UPDATED TO SULTAN STYLE) --- */
 .top-selector-area { margin-bottom: 2vh; }
 
@@ -163,9 +149,9 @@ body {
   background: rgb(30, 30, 30);
   border: 1px solid #1f1f1f;
   overflow: hidden;
-  border-radius: 16px;
   transition: all 0.25s ease;
   height: 100%;
+  border-radius: 12px;
 }
 
 .match-card:hover {
@@ -174,10 +160,10 @@ body {
 
 .match-visual {
   width: 100%; aspect-ratio: 16/9; 
-  height:  !important;
   position: relative; display: flex; align-items: center; justify-content: center;
   background: radial-gradient(circle at center, #222 0%, #0a0a0a 100%);
   border-bottom: 1px solid #1f1f1f;
+  min-height: 60%;
 }
 
 .card-top-row {
@@ -217,8 +203,6 @@ body {
   padding-top: 5vh;
   overflow-x: hidden;
 }
-
-
   :root { 
     --sport-card-size: 25vw; 
     --match-card-w: 60vw; 
@@ -226,7 +210,7 @@ body {
     --section-gap: 30px; 
     --card-gap: 12px;
   }
-
+  
   .content-container { padding: 0 10px; }
   .selector-grid, .carousel-track { padding-right: 1vh; }
 
@@ -246,9 +230,6 @@ body {
   .selector-pill {
    height: 110px;
   flex: 0 0 120px;
-  }
-  .match-visual {
-    max-height: 18vh;
   }
 }
 /* --- SULTAN DISCORD POPUP --- */
@@ -381,7 +362,7 @@ body {
   background: 
     radial-gradient(circle at 50% 0%, rgba(141, 185, 2, 0.15) 0%, transparent 50%),
     linear-gradient(180deg, #050603 0%, #000000 100%) !important;
-  background-attachment: fixed;
+  background-attachment: fixed !important;
   background-color: #000000 !important;
   overflow-x: hidden;
   /* Reduced the 3vh padding which often caused a 'jump' during hydration */
@@ -400,32 +381,119 @@ body {
   padding-top: 5vh;
 }
 
-@media (max-width: 768px) {
-  .match-card {
-    max-width: 65vw;
-    min-width: 65vw;
-    height: auto !important;
-  }
+/* --- SKELETON LOADING (Synced with Live Matches) --- */
 
-.team-logo {
-    min-height: 70px;
+.skeleton-pulse {
+  position: relative;
+  overflow: hidden;
+  background: #111 !important;
+  border-color: #1a1a1a !important;
+  pointer-events: none;
 }
-}
-.page-wrapper, .dashboard-wrapper {
-  background: transparent !important; /* Ensure no solid color blocks the body */
-}
-.row-poster-container {
-  
-}
-/* --- THE ULTIMATE GRADIENT FIX --- */
 
-.match-row {
+.skeleton-pulse::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.03),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* Skeleton Pill */
+.skeleton-pill {
+  border: 1px solid #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.skeleton-pill-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.skeleton-pill-label {
+  width: 60px;
+  height: 10px;
+  border-radius: 4px;
+  background: #1a1a1a;
+}
+
+/* Skeleton Match Card */
+.skeleton-match-card {
+  border: 1px solid #1a1a1a;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-match-card .match-visual {
+  background: #161616 !important; /* Override gradient */
+  border-bottom: 1px solid #1a1a1a;
   display: flex;
   align-items: center;
-  background: #111 !important; /* Base solid color for the rest of the card */
-  border: 1px solid #222;
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
+  justify-content: center;
+  gap: 15px;
 }
 
+.skeleton-logo {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #222;
+}
+
+.skeleton-vs {
+  width: 20px;
+  height: 10px;
+  background: #222;
+  border-radius: 2px;
+}
+
+.skeleton-match-card .match-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  flex: 1;
+}
+
+.skeleton-title {
+  width: 80%;
+  height: 14px;
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.skeleton-subtitle {
+  width: 40%;
+  height: 10px;
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+/* Skeleton Header */
+.skeleton-header {
+    width: 200px;
+    height: 24px;
+    background: #1a1a1a;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    margin-left: 12px;
+    display: inline-block;
+}

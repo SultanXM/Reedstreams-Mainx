@@ -1,26 +1,30 @@
 'use client'
 
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
-import { Flame, Trophy, Zap } from 'lucide-react'
+import { Flame, Trophy } from 'lucide-react'
 import '../../styles/Sportsgrid.css'
 
-const API_BASE = 'https://streamed.pk' 
+// --- CONSTANTS & CONFIGURATION ---
 
-// --- INTERFACES ---
-interface APIMatch {
-  id: string; 
-  title: string; 
-  category: string; 
-  date: number; 
-  popular: boolean;
-  poster?: string;  
-  teams?: { 
-    home?: { badge: string; name: string }; 
-    away?: { badge: string; name: string } 
-  };
-  sources: { source: string; id: string }[];
-}
+const BASE_URL = 'https://streamed.pk'
+const API_BASE = `${BASE_URL}/api`
+
+// Using a Map for efficient lookups is cleaner than a long if/else chain.
+const SPORT_NORMALIZATION_MAP = new Map([
+  ['basketball', 'basketball'], ['nba', 'basketball'],
+  ['american-football', 'american-football'], ['nfl', 'american-football'],
+  ['soccer', 'football'], ['football', 'football'],
+  ['icehockey', 'hockey'], ['hockey', 'hockey'], ['nhl', 'hockey'],
+  ['baseball', 'baseball'], ['mlb', 'baseball'],
+  ['mma', 'fight'], ['ufc', 'fight'], ['fight', 'fight'], ['boxing', 'fight'], ['combat', 'fight'],
+  ['motor', 'motorsport'], ['racing', 'motorsport'], ['f1', 'motorsport'], ['nascar', 'motorsport'],
+  ['tennis', 'tennis'],
+  ['rugby', 'rugby'],
+  ['golf', 'golf'],
+  ['darts', 'darts'],
+  ['cricket', 'cricket'],
+])
 
 const FIXED_SPORTS = [
   { id: 'american-football', name: 'Football 🔥', icon: '🏈' },
@@ -28,7 +32,7 @@ const FIXED_SPORTS = [
   { id: 'basketball', name: 'Basketball', icon: '🏀' },
   { id: 'hockey', name: 'Ice Hockey', icon: '🏒' },
   { id: 'baseball', name: 'Baseball', icon: '⚾' },
-  { id: 'fight', name: 'MMA / UFC', icon: '🥊' }, 
+  { id: 'fight', name: 'MMA / UFC', icon: '🥊' },
   { id: 'tennis', name: 'Tennis', icon: '🎾' },
   { id: 'rugby', name: 'Rugby', icon: '🏉' },
   { id: 'golf', name: 'Golf', icon: '⛳' },
@@ -37,252 +41,375 @@ const FIXED_SPORTS = [
   { id: 'motorsport', name: 'Racing', icon: '🏎️' }
 ]
 
-// --- UTILS ---
+// --- TYPE DEFINITIONS ---
 
-const normalizeSport = (category: string, title: string = ''): string => {
-  const cat = category.toLowerCase().replace(/\s+/g, '');
-  const tit = title.toLowerCase();
-  
-  if (cat.includes('basketball') || cat.includes('nba')) return 'basketball';
-  if (cat.includes('american') || cat.includes('nfl') || tit.includes('nfl') || cat.includes('ncaa')) return 'american-football';
-  if (cat.includes('soccer') || cat.includes('football')) return 'football';
-  if (cat.includes('icehockey') || cat.includes('hockey') || cat.includes('nhl')) return 'hockey';
-  if (cat.includes('baseball') || cat.includes('mlb')) return 'baseball';
-  if (cat.includes('mma') || cat.includes('ufc') || cat.includes('fight') || cat.includes('boxing') || tit.includes('ufc')) return 'fight';
-  if (cat.includes('motor') || cat.includes('racing') || cat.includes('f1') || cat.includes('nascar')) return 'motorsport';
-  if (cat.includes('tennis')) return 'tennis';
-  if (cat.includes('rugby')) return 'rugby';
-  if (cat.includes('golf')) return 'golf';
-  if (cat.includes('darts')) return 'darts';
-  if (cat.includes('cricket')) return 'cricket';
-  return '';
+interface APIMatch {
+  id: string;
+  title: string;
+  category: string;
+  date: number;
+  popular: boolean;
+  poster?: string;
+  teams?: { home?: { badge: string; name: string }; away?: { badge: string; name: string } };
+  sources: { source: string; id: string }[];
 }
 
-// 1. Badge URL
-const getBadgeUrl = (badgeId: string): string => `${API_BASE}/api/images/badge/${badgeId}.webp`;
-
-// 2. Poster URL (Smart Logic)
-const getPosterUrl = (posterRaw: string): string => {
-  if (!posterRaw) return '';
-  if (posterRaw.startsWith('/')) {
-     return `${API_BASE}${posterRaw}.webp`;
-  }
-  return `${API_BASE}/api/images/proxy/${posterRaw}.webp`;
+interface TwentyFourSevenGame {
+  id: number;
+  name: string;
+  poster: string;
+  video_link: string;
 }
+
+interface TwentyFourSevenCategory {
+  category: string;
+  games: TwentyFourSevenGame[];
+}
+
+interface SportInfo {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+interface GroupedMatches {
+  [key: string]: APIMatch[];
+}
+
+interface LiveCounts {
+  [key: string]: number;
+}
+
+
+// --- HELPER FUNCTIONS ---
+
+const getImageUrl = (badgeId: string): string => `${API_BASE}/images/badge/${badgeId}.webp`;
+const getPosterUrl = (posterId: string): string => {
+  if (!posterId) return '';
+  if (posterId.startsWith('http')) return posterId;
+  if (posterId.startsWith('/')) return `${BASE_URL}${posterId}.webp`;
+  return `${API_BASE}/images/proxy/${posterId}.webp`;
+};
 
 const isLive = (timestamp: number): boolean => {
   const now = Date.now();
   const matchTime = new Date(timestamp).getTime();
-  return matchTime <= now && (now - matchTime) < (4 * 60 * 60 * 1000);
+  // A match is live if it started and was less than 3 hours ago.
+  return matchTime <= now && (now - matchTime) < (3 * 60 * 60 * 1000);
 }
 
 const formatTime = (timestamp: number): string => new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-// --- COMPONENTS ---
+const normalizeSport = (category: string, title: string = ''): string => {
+  const cat = category.toLowerCase().replace(/\s+/g, '');
+  const tit = title.toLowerCase();
+
+  // Handle title-based overrides first
+  if (tit.includes('ufc') || tit.includes('mma')) return 'fight';
+
+  return SPORT_NORMALIZATION_MAP.get(cat) || '';
+}
+
+// --- SKELETON COMPONENTS ---
 
 const SkeletonPill = () => (
-    <div className="selector-pill skeleton-pulse" style={{ background: '#1c1c1c', border: '1px solid #222' }}>
-        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#2a2a2a', marginBottom: '8px' }} />
-        <div style={{ width: '60px', height: '10px', background: '#2a2a2a', borderRadius: '4px' }} />
-    </div>
+  <div className="selector-pill skeleton-pill skeleton-pulse">
+    <div className="skeleton-pill-icon" />
+    <div className="skeleton-pill-label" />
+  </div>
 );
 
 const SkeletonMatchCard = () => (
-    <div className="match-card-link">
-        <div className="match-card skeleton-pulse" style={{ background: '#1e1e1e', height: '100%' }}>
-            <div className="match-visual" style={{ background: '#111', height: '140px' }}></div>
-            <div className="match-info">
-                <div style={{ width: '80%', height: '14px', background: '#222', marginBottom: '8px', borderRadius: '4px' }} />
-            </div>
-        </div>
+  <div className="match-card-link">
+    <div className="match-card skeleton-match-card skeleton-pulse">
+      <div className="match-visual">
+        <div className="skeleton-logo" />
+        <div className="skeleton-vs" />
+        <div className="skeleton-logo" />
+      </div>
+      <div className="match-info">
+        <div className="skeleton-title" />
+        <div className="skeleton-subtitle" />
+      </div>
     </div>
+  </div>
 );
 
-// --- BANNER CARD ---
-const BannerCard = ({ match }: { match: APIMatch }) => {
-  const isMatchLive = isLive(match.date);
-  const [imgError, setImgError] = useState(false);
-  const posterSrc = match.poster ? getPosterUrl(match.poster) : null;
+// --- UI COMPONENTS ---
 
-  if (imgError) return null;
-
+const TwentyFourSevenMatchCard = React.memo(({ match }: { match: TwentyFourSevenGame }) => {
   return (
-    <Link 
-      href={`/match/${match.id}`} 
+    <Link
+      href={match.video_link}
+      target="_blank"
+      rel="noopener noreferrer"
       className="match-card-link"
-      onClick={() => sessionStorage.setItem("currentMatch", JSON.stringify(match))}
     >
-      <article className="match-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <div className="match-visual" style={{ height: '140px', position: 'relative', overflow: 'hidden', padding: 0 }}>
-          {posterSrc ? (
-             <img 
-               src={posterSrc} 
-               alt={match.title} 
-               referrerPolicy="no-referrer"
-               onError={() => setImgError(true)}
-               style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-             />
-          ) : null}
-          <div className="card-top-row" style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, padding: '12px', display: 'flex', justifyContent: 'flex-start' }}>
-            <span className={`status-badge ${isMatchLive ? 'live' : 'upcoming'}`} style={{ margin: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-                {isMatchLive ? 'LIVE' : formatTime(match.date)}
-            </span>
-          </div>
+      <article className="match-card">
+        <div className="match-visual" style={{ padding: 0 }}>
+          <img src={match.poster} alt={`${match.name} poster`} style={{objectFit: "cover", width: "100%", height: "100%", display: "block"}} />
         </div>
-        <div className="match-info" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <div className="match-main-title truncate">{match.title}</div>
-          <div className="match-sub-meta">{match.category}</div>
-        </div>
-      </article>
-    </Link>
-  );
-};
-
-// --- STANDARD CARD ---
-const StandardMatchCard = React.memo(({ match, onImageError }: { match: APIMatch; onImageError: (id: string) => void }) => {
-  const isMatchLive = isLive(match.date);
-  const homeName = match.teams?.home?.name || 'Home';
-  const awayName = match.teams?.away?.name || 'Away';
-  
-  const hBadge = getBadgeUrl(match.teams!.home!.badge);
-  const aBadge = getBadgeUrl(match.teams!.away!.badge);
-
-  return (
-    <Link 
-      href={`/match/${match.id}`} 
-      className="match-card-link" 
-      onClick={() => sessionStorage.setItem("currentMatch", JSON.stringify(match))}
-    >
-      <article className="match-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <div className="match-visual" style={{ height: '140px' }}>
-          <div className="card-top-row">
-            <span className={`status-badge ${isMatchLive ? 'live' : 'upcoming'}`}>{isMatchLive ? 'LIVE' : formatTime(match.date)}</span>
-            {match.popular && <div className="badge-popular"><Flame size={14} color="#8db902" fill="#8db902" /></div>}
-          </div>
-          <div className="logos-wrapper">
-            <img src={hBadge} className="team-logo" alt={homeName} referrerPolicy="no-referrer" onError={() => onImageError(match.id)} />
-            <span className="vs-divider">VS</span>
-            <img src={aBadge} className="team-logo" alt={awayName} referrerPolicy="no-referrer" onError={() => onImageError(match.id)} />
-          </div>
-        </div>
-        <div className="match-info" style={{ flex: 1 }}>
-          <div className="match-main-title">{homeName} <span style={{opacity:0.5}}>vs</span> {awayName}</div>
-          <div className="match-sub-meta">{match.category}</div>
+        <div className="match-info">
+          <p className="match-main-title">{match.name}</p>
         </div>
       </article>
     </Link>
   );
 });
+TwentyFourSevenMatchCard.displayName = 'TwentyFourSevenMatchCard';
 
-// --- MAIN GRID ---
-const ELITE_SOURCES = ['admin', 'delta', 'golf', 'bravo'];
+const MatchCard = React.memo(({ match, onImageError }: { match: APIMatch; onImageError: (id: string) => void }) => {
+  const [imageError, setImageError] = useState(false);
+  const isMatchLive = isLive(match.date);
+  const homeName = match.teams?.home?.name || 'Home';
+  const awayName = match.teams?.away?.name || 'Away';
+  const homeBadgeUrl = match.teams?.home?.badge ? getImageUrl(match.teams.home.badge) : null;
+  const awayBadgeUrl = match.teams?.away?.badge ? getImageUrl(match.teams.away.badge) : null;
+
+  // Prioritize poster if available, but fallback to logos if poster fails
+  const showPoster = !!match.poster && !imageError;
+
+  return (
+    <Link
+      href={`/match/${match.id}`}
+      className="match-card-link"
+      onClick={() => sessionStorage.setItem("currentMatch", JSON.stringify(match))}
+    >
+      <article className="match-card">
+        <div className="match-visual" style={showPoster ? { padding: 0 } : undefined}>
+          <div className="card-top-row">
+            <span className={`status-badge ${isMatchLive ? 'live' : 'upcoming'}`}>
+              {isMatchLive ? 'LIVE' : formatTime(match.date)}
+            </span>
+            {match.popular && <div className="badge-popular"><Flame size={14} color="#8db902" fill="#8db902" /></div>}
+          </div>
+          {showPoster ? (
+            <img 
+              src={getPosterUrl(match.poster!)} 
+              alt={match.title} 
+              style={{objectFit: "cover", width: "100%", height: "100%", display: "block"}} 
+              onError={() => {
+                if (homeBadgeUrl && awayBadgeUrl) {
+                  setImageError(true);
+                } else {
+                  onImageError(match.id);
+                }
+              }} 
+            />
+          ) : (
+            <div className="logos-wrapper">
+              {homeBadgeUrl && <img src={homeBadgeUrl} className="team-logo" alt={`${homeName} logo`} onError={() => onImageError(match.id)} />}
+              <span className="vs-divider">VS</span>
+              {awayBadgeUrl && <img src={awayBadgeUrl} className="team-logo" alt={`${awayName} logo`} onError={() => onImageError(match.id)} />}
+            </div>
+          )}
+        </div>
+        <div className="match-info">
+          <p className="match-main-title">
+            {match.teams?.home && match.teams?.away ? (
+              <>{homeName} <span style={{ opacity: 0.5 }}>vs</span> {awayName}</>
+            ) : (
+              match.title
+            )}
+          </p>
+          <p className="match-sub-meta">{match.category}</p>
+        </div>
+      </article>
+    </Link>
+  );
+});
+MatchCard.displayName = 'MatchCard';
+
+const SportsCategorySelector = ({ sports, counts, loading }: { sports: SportInfo[], counts: LiveCounts, loading: boolean }) => (
+  <section className="top-selector-area">
+    <div className="section-row-header">
+      <div className="title-block">
+        <Trophy size={20} color="var(--accent-color)" />
+        <h2 className="section-title">Sports Category</h2>
+      </div>
+    </div>
+    <div className="selector-grid">
+      {loading ? (
+        Array(8).fill(0).map((_, i) => <SkeletonPill key={i} />)
+      ) : (
+        sports.map(sport => (
+          <Link key={sport.id} href={`/live-matches?sportId=${sport.id}`} className="selector-pill">
+            <span className="pill-icon">{sport.icon}</span>
+            <span className="pill-label">{sport.name}</span>
+            {counts[sport.id] > 0 && <div className="pill-count-badge">{counts[sport.id]}</div>}
+          </Link>
+        ))
+      )}
+    </div>
+  </section>
+);
+
+const TwentyFourSevenCarousel = ({ section, matches }: { section: { id: string, name: string }, matches: TwentyFourSevenGame[] }) => (
+    <section key={section.id} className="matches-section">
+      <div className="section-row-header">
+        <div className="title-block">
+          <h2 className="section-title">{section.name}</h2>
+        </div>
+      </div>
+      <div className="carousel-track">
+        {matches.map(match => (
+          <TwentyFourSevenMatchCard key={match.id} match={match} />
+        ))}
+      </div>
+    </section>
+  );
+
+const MatchCarousel = ({ section, matches, count, onImageError }: { section: { id: string, name: string }, matches: APIMatch[], count: number, onImageError: (id: string) => void }) => (
+  <section key={section.id} className="matches-section">
+    <div className="section-row-header">
+      <div className="title-block">
+        {section.id === 'popular' && <Trophy size={20} color="var(--accent-color)" />}
+        <h2 className="section-title">{section.name}</h2>
+        {count > 0 && <span className="live-count-tag">{count} LIVE</span>}
+      </div>
+    </div>
+    <div className="carousel-track">
+      {matches.map(match => (
+        <MatchCard key={match.id} match={match} onImageError={onImageError} />
+      ))}
+    </div>
+  </section>
+);
+
+// --- MAIN COMPONENT ---
 
 export default function SportsGrid({ initialData }: { initialData: APIMatch[] }) {
-  const [matches] = useState<APIMatch[]>(initialData || []);
-  const [loading, setLoading] = useState(false); 
-  const [brokenLogos, setBrokenLogos] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(true);
+  const [hiddenMatchIds, setHiddenMatchIds] = useState<Set<string>>(new Set());
+  const [twentyFourSevenStreams, setTwentyFourSevenStreams] = useState<TwentyFourSevenGame[]>([]);
 
-  const handleImageError = (matchId: string) => setBrokenLogos(prev => new Set(prev).add(matchId));
+  useEffect(() => {
+    // If there's data, we are not loading. This simplifies the previous logic.
+    if (initialData) setLoading(false);
+  }, [initialData]);
 
-  const { grouped, counts } = useMemo(() => {
-    const grouped: Record<string, APIMatch[]> = { popular: [] };
-    const counts: Record<string, number> = { popular: 0 };
-    
-    FIXED_SPORTS.forEach(s => { 
-      grouped[s.id] = []; 
-      counts[s.id] = 0; 
+  useEffect(() => {
+    const fetchTwentyFourSevenStreams = async () => {
+        try {
+            const response = await fetch('https://reedstreams-edge-v1.fly.dev/api/v1/streams');
+            const data = await response.json();
+            
+            let games: TwentyFourSevenGame[] = [];
+            
+            if (Array.isArray(data)) {
+                const category = data.find((cat: any) => cat.category === '24/7 Streams');
+                if (category) games = category.games;
+            } else if (data && data.category === '24/7 Streams') {
+                games = data.games;
+            }
+            
+            if (games.length > 0) {
+                setTwentyFourSevenStreams(games);
+            }
+        } catch (error) {
+            console.error('Error fetching 24/7 streams:', error);
+        }
+    };
+
+    fetchTwentyFourSevenStreams();
+  }, []);
+
+  const handleImageError = useCallback((matchId: string) => {
+    setHiddenMatchIds(prev => new Set(prev).add(matchId));
+  }, []);
+
+  const { groupedMatches, liveCounts } = useMemo(() => {
+    const grouped: GroupedMatches = { popular: [] };
+    const counts: LiveCounts = { popular: 0 };
+
+    FIXED_SPORTS.forEach(s => {
+      grouped[s.id] = [];
+      counts[s.id] = 0;
     });
 
-    matches.forEach(m => {
-      const hasEliteSource = m.sources.some(s =>
-        ELITE_SOURCES.includes(s.source.toLowerCase())
-      );
-      if (!hasEliteSource) return;
-      // 1. Check for Logos
-      const hasHomeLogo = m.teams?.home?.badge && m.teams.home.badge.trim() !== "";
-      const hasAwayLogo = m.teams?.away?.badge && m.teams.away.badge.trim() !== "";
-      const logosValid = hasHomeLogo && hasAwayLogo && !brokenLogos.has(m.id);
+    if (!initialData) return { groupedMatches: grouped, liveCounts: counts };
 
-      // 2. Check for Poster
-      const hasPoster = m.poster && m.poster.trim() !== "";
+    initialData.forEach(match => {
+      const hasHomeImg = !!match.teams?.home?.badge;
+      const hasAwayImg = !!match.teams?.away?.badge;
+      const hasPoster = !!match.poster;
 
-      // 3. FINAL SEAL: Ruthless Elimination
-      if (!logosValid && !hasPoster) return;
-
-      const sid = normalizeSport(m.category, m.title);
-      const isMatchLive = isLive(m.date);
-      
-      if (m.popular) { 
-        grouped['popular'].push(m); 
-        if (isMatchLive) counts['popular']++; 
+      // Filter out matches with missing images or those that have errored.
+      if (hiddenMatchIds.has(match.id)) {
+        return;
       }
-      
-      if (sid && grouped[sid]) { 
-        grouped[sid].push(m); 
-        if (isMatchLive) counts[sid]++; 
+
+      if ((!hasHomeImg || !hasAwayImg) && !hasPoster) {
+        return;
+      }
+
+      const sportId = normalizeSport(match.category, match.title);
+      const isMatchLive = isLive(match.date);
+
+      if (match.popular) {
+        grouped.popular.push(match);
+        if (isMatchLive) {
+          counts.popular = (counts.popular || 0) + 1;
+        }
+      }
+
+      if (sportId && grouped[sportId]) {
+        grouped[sportId].push(match);
+        if (isMatchLive) {
+          counts[sportId] = (counts[sportId] || 0) + 1;
+        }
       }
     });
 
-    return { grouped, counts };
-  }, [matches, brokenLogos]);
+    // NOTE: The hardcoded "Gaethje/Pimblett" fight logic has been removed.
+    // The API's `popular: true` flag should be used to mark such important events.
+    // This makes the component more robust and data-driven.
 
-  const sportsToDisplay = [
-      ...(grouped['popular'].length > 0 ? [{ id: 'popular', name: 'Popular Today' }] : []),
-      ...FIXED_SPORTS.filter(s => grouped[s.id].length > 0)
+    return { groupedMatches: grouped, liveCounts: counts };
+  }, [initialData, hiddenMatchIds]);
+
+  const sectionsToDisplay = [
+    ...(groupedMatches.popular.length > 0 ? [{ id: 'popular', name: 'Popular Today' }] : []),
+    ...FIXED_SPORTS.filter(s => groupedMatches[s.id]?.length > 0)
   ];
+
+  const twentyFourSevenSection = { id: '247-streams', name: '24/7 Streams' };
 
   return (
     <div className="dashboard-wrapper">
       <div className="content-container">
-        <section className="top-selector-area">
-          <div className="section-row-header"> 
-            <div className="title-block">
-                <Trophy size={20} color="#8db902" />
-                <h2 className="section-title">Sports Category</h2>
-            </div>
-          </div>
-          <div className="selector-grid">
-            {loading ? Array(8).fill(0).map((_, i) => <SkeletonPill key={i} />) : 
-              FIXED_SPORTS.map(s => (
-                <Link key={s.id} href={`/live-matches?sportId=${s.id}`} className="selector-pill">
-                  <span className="pill-icon">{s.icon}</span>
-                  <span className="pill-label">{s.name}</span>
-                  {counts[s.id] > 0 && <div className="pill-count-badge">{counts[s.id]}</div>}
-                </Link>
-              ))
-            }
-          </div>
-        </section>
+        <SportsCategorySelector
+          sports={FIXED_SPORTS}
+          counts={liveCounts}
+          loading={loading}
+        />
 
         <div className="matches-grid-container">
           {loading ? (
-            <div className="carousel-track">{Array(5).fill(0).map((_, i) => <SkeletonMatchCard key={i} />)}</div>
+            Array(3).fill(0).map((_, rowIndex) => (
+              <React.Fragment key={rowIndex}>
+                <div className="skeleton-header skeleton-pulse" />
+                <div className="carousel-track">
+                  {Array(5).fill(0).map((_, i) => <SkeletonMatchCard key={i} />)}
+                </div>
+              </React.Fragment>
+            ))
           ) : (
-            <>
-              {sportsToDisplay.map(s => (
-                <section key={s.id} className="matches-section">
-                  <div className="section-row-header">
-                    <div className="title-block">
-                      <h2 className="section-title">{s.name}</h2>
-                      {counts[s.id] > 0 && <span className="live-count-tag">{counts[s.id]} LIVE</span>}
-                    </div>
-                  </div>
-                  <div className="carousel-track">
-                    {grouped[s.id].map((m, idx) => {
-                       const hasHomeLogo = m.teams?.home?.badge && m.teams.home.badge.trim() !== "";
-                       const hasAwayLogo = m.teams?.away?.badge && m.teams.away.badge.trim() !== "";
-                       const useStandardCard = hasHomeLogo && hasAwayLogo && !brokenLogos.has(m.id);
-
-                       if (useStandardCard) {
-                           return <StandardMatchCard key={`${m.id}-${idx}`} match={m} onImageError={handleImageError} />
-                       } else {
-                           return <BannerCard key={`${m.id}-${idx}`} match={m} />
-                       }
-                    })}
-                  </div>
-                </section>
-              ))}
-            </>
+            sectionsToDisplay.map(section => (
+              <MatchCarousel
+                key={section.id}
+                section={section}
+                matches={groupedMatches[section.id]}
+                count={liveCounts[section.id] || 0}
+                onImageError={handleImageError}
+              />
+            ))
+          )}
+          {twentyFourSevenStreams.length > 0 && (
+            <TwentyFourSevenCarousel
+              section={twentyFourSevenSection}
+              matches={twentyFourSevenStreams}
+            />
           )}
         </div>
       </div>

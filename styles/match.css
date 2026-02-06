@@ -430,4 +430,33 @@
     50% { opacity: 1; transform: scale(1.2); }
     100% { opacity: 0.4; transform: scale(0.8); }
 }
+/* --- RESPONSIVE MOBILE FIX --- */
+@media (max-width: 768px) {
+    /* 1. Shrink the main container height */
+    .countdown-state {
+        min-height: 250px; /* Less tall on mobile */
+    }
+
+    /* 2. Shrink the digits and gap */
+    .timer-display {
+        gap: 8px; /* Tighter spacing */
+    }
+
+    .timer-unit {
+        font-size: 28px; /* Half size */
+        padding: 8px 12px; /* Smaller padding */
+        min-width: 50px; /* Smaller width */
+        border-radius: 6px;
+    }
+
+    .timer-sep {
+        font-size: 20px; /* Smaller colon separator */
+    }
+
+    /* 3. Adjust the pulsing dot label */
+    .uplink-label {
+        margin-top: 15px;
+        font-size: 9px;
+    }
+}
 

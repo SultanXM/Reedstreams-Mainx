@@ -1,215 +1,37 @@
 /* styles/matches-list.css */
 
-:root {
-  --lm-card-bg: #080808;
-  --lm-border: #2a2e38;
-  --lm-accent: #8db902;
-  --lm-text-main: #ffffff;
-  --lm-text-dim: #a0aec0;
-  --main-bg: #020204;
-}
-
-/* --- GLOBAL SETTINGS --- */
-body {
-  background-color: var(--main-bg) !important;
-  color: #fff;
-  margin: 0;
-  overflow-x: hidden;
-}
-
-/* Snowfall (Kept) */
-.snow-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none; background: radial-gradient(circle at 50% 100%, #0f1c30 0%, #020204 70%); }
-.snow-layer { position: absolute; top: -100vh; left: 0; right: 0; bottom: 0; background: transparent; border-radius: 50%; animation: snowfall 20s linear infinite; }
-.layer-1 { width: 2px; height: 2px; opacity: 0.6; box-shadow: 10vw 10vh #fff, 60vw 40vh #fff, 15vw 80vh #fff, 80vw 10vh #fff; animation-duration: 20s; }
-.layer-2 { width: 3px; height: 3px; opacity: 0.8; box-shadow: 5vw 5vh rgba(255,255,255,0.8), 55vw 55vh rgba(255,255,255,0.8); animation-duration: 12s; }
-.layer-3 { width: 6px; height: 6px; opacity: 0.9; filter: blur(2px); box-shadow: 10vw 20vh #fff; animation-duration: 7s; }
-@keyframes snowfall { 0% { transform: translateY(0); } 100% { transform: translateY(100vh); } }
-
-/* --- CONTAINER --- */
-.lm-container {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px 60px 20px;
-  min-height: 100vh;
-  background: transparent !important; 
-}
-
-/* --- HERO --- */
-.lm-hero {
-  padding: 30px 0 20px 0;
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-.lm-back-link {
-  display: inline-flex; align-items: center; gap: 8px; color: var(--lm-text-dim); font-size: 13px; font-weight: 700; text-transform: uppercase; background: transparent; border: none; cursor: pointer; margin-bottom: 10px; transition: color 0.2s;
-}
-.lm-back-link:hover { color: var(--lm-accent); }
-
-.lm-sport-title {
-  font-size: 32px; font-weight: 900; color: #fff; text-transform: uppercase; display: flex; align-items: center; gap: 15px;
-}
-.lm-sport-title::before { content: ''; display: block; width: 6px; height: 32px; background-color: var(--lm-accent); border-radius: 2px; }
-
-/* --- FILTERS --- */
-.lm-filter-bar { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-.lm-filter-bar::-webkit-scrollbar { display: none; }
-.lm-filter-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--lm-border); color: var(--lm-text-dim); padding: 10px 24px; font-size: 12px; font-weight: 800; text-transform: uppercase; cursor: pointer; border-radius: 6px; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
-.lm-filter-btn.active { background: var(--lm-accent); color: #000; border-color: var(--lm-accent); box-shadow: 0 0 15px rgba(141, 185, 2, 0.2); }
-
-/* --- DATE HEADER --- */
-.lm-date-separator { display: flex; align-items: center; gap: 15px; margin: 40px 0 20px 0; }
-.lm-date-line { flex-grow: 1; height: 1px; background: linear-gradient(90deg, #2a2e38 0%, transparent 100%); }
-.lm-date-text { color: var(--lm-accent); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-
-/* --- GRID --- */
-.lm-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); 
-  gap: 20px;
-}
-
-/* --- CARD DESIGN (Cleaned Up) --- */
-.lm-card-link { text-decoration: none; display: block; }
-
-.lm-card {
-  background-color: #050505; 
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 12px;
-  padding: 16px;
-  
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  
-  height: 100%;
-  aspect-ratio: 16 / 9; /* Professional Thumbnail Shape */
-  min-height: 160px;
-  
-  position: relative;
-  overflow: hidden;
-  transition: all 0.2s ease;
-  
-  /* REMOVED: ::before left border */
-}
-
-@media (hover: hover) {
-  .lm-card:hover {
-    border-color: rgba(255, 255, 255, 0.3);
-    background-color: #0a0a0a;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  }
-}
-.lm-card:active { transform: scale(0.98); }
-
-/* 1. Header (Status Only) */
-.lm-card-header {
-  display: flex;
-  justify-content: flex-end; /* Push status to right */
-  width: 100%;
-  z-index: 2;
-  margin-bottom: 5px;
-}
-
-.lm-status {
-  font-size: 10px;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 4px;
-  text-transform: uppercase;
-}
-.lm-status.live { background: var(--lm-accent); color: #000; box-shadow: 0 0 10px rgba(141, 185, 2, 0.4); }
-.lm-status.upcoming { background: #222; color: #aaa; border: 1px solid #333; }
-
-/* 2. Center Visuals */
-.lm-teams-visual {
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  z-index: 1;
-  padding: 10px 0;
-}
-
-.lm-team-logo {
-  width: 55px; /* Nice and Big */
-  height: 55px;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
-  transition: transform 0.2s;
-}
-.lm-card:hover .lm-team-logo { transform: scale(1.1); }
-
-.lm-vs {
-  font-size: 14px;
-  color: #444;
-  font-weight: 900;
-  font-style: italic;
-}
-
-/* 3. Footer (Names & Title) */
-.lm-card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid rgba(255,255,255,0.05);
-  padding-top: 12px;
-  width: 100%;
-  z-index: 2;
-}
-
-.lm-teams-text {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  font-size: 12px;
-  color: #fff;
-  font-weight: 700;
-  text-transform: uppercase;
-  max-width: 100%;
+.match-description {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%; /* Ensures the container itself doesn't overflow */
 }
 
-/* 15 Creative Gradients */
-.card-shade-1 { background: linear-gradient(135deg, #180a29 0%, #050505 100%); border-top: 1px solid #5a2e91; }
-.card-shade-2 { background: radial-gradient(circle at top right, rgba(20, 50, 20, 0.4) 0%, #000 70%); border-right: 1px solid #1f4a1f; }
-.card-shade-3 { background: linear-gradient(180deg, #061229 0%, #000 100%); border-bottom: 1px solid #1a3a6e; }
-.card-shade-4 { background: linear-gradient(135deg, #2e0505 0%, #000 80%); border-left: 1px solid #5c1212; }
-.card-shade-5 { background: radial-gradient(circle at bottom left, rgba(60, 50, 10, 0.3) 0%, #000 70%); border-bottom: 1px solid #5c481d; }
-.card-shade-6 { background: linear-gradient(45deg, #051a1a 0%, #000 100%); border-top: 1px solid #0f4d4d; }
-.card-shade-7 { background-color: #080808; background-image: radial-gradient(#222 1px, transparent 1px); background-size: 6px 6px; border: 1px solid #333; }
-.card-shade-8 { background: linear-gradient(to right, #1f0516 0%, #000 100%); border-left: 2px solid #5e113a; }
-.card-shade-9 { background: linear-gradient(160deg, #0f1521 0%, #000 90%); border-top: 2px solid #23314a; }
-.card-shade-10 { background: radial-gradient(circle at top, rgba(80, 30, 10, 0.25) 0%, #000 80%); }
-.card-shade-11 { background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%); border: 1px solid #333; }
-.card-shade-12 { background: linear-gradient(135deg, #000 40%, rgba(20, 60, 20, 0.3) 100%); border-bottom: 2px solid #2e8f2e; }
-.card-shade-13 { background: radial-gradient(circle at center, rgba(40, 10, 60, 0.3) 0%, #000 100%); }
-.card-shade-14 { background: repeating-linear-gradient(45deg, #080808, #080808 10px, #0f0f0f 10px, #0f0f0f 20px); border-color: #222; }
-.card-shade-15 { background: radial-gradient(circle at top left, rgba(255,255,255,0.05) 0%, #000 60%); }
-
-/* --- MOBILE OPTIMIZATION --- */
-@media (max-width: 768px) {
-  .lm-container { padding: 0 15px 60px 15px; }
-  
-  .lm-grid {
-    grid-template-columns: 1fr; /* 1 Card per row */
-    gap: 15px;
-  }
-  
-  .lm-card {
-    /* Slightly more compact on mobile */
-    min-height: 120px;
-    padding: 15px;
-  }
-  
-  .lm-team-logo { width: 45px; height: 45px; } /* Kept Big */
+.team-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px; /* Adjust as needed */
+  display: inline-block;
+  vertical-align: middle;
 }
 
-/* SKELETON */
-.lm-skeleton-card { width: 100%; height: 160px; background: #161920; border: 1px solid #222; border-radius: 12px; animation: pulse 1.5s infinite; }
-@media (max-width: 768px) { .lm-skeleton-card { height: 120px; } }
-@keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+.empty-state-page p {
+  color: #888;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.reset-btn {
+  background-color: #333;
+  color: white;
+  border: 1px solid #555;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.reset-btn:hover {
+  background-color: #444;
+}

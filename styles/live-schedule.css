@@ -121,15 +121,22 @@
   max-width: 65%; /* Give status badge more room */
 }
 
-.card-status-badge {
-  font-size: 9px; /* Tiniest badge */
-  font-weight: 700;
-  padding: 3px 6px;
-  border-radius: 3px;
-  text-transform: uppercase;
+.card-status-badge.live {
   background-color: #8db902;
   color: #0f1115;
 }
+
+.card-status-badge.upcoming {
+  background-color: #2a2e38;
+  color: #a0aec0;
+}
+
+.clock-icon {
+  display: inline;
+  margin-left: 3px;
+  vertical-align: middle;
+}
+
 
 
 /* --- RESPONSIVENESS REFACTORING (NO OVERLAP) --- */
