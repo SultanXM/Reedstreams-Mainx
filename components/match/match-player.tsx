@@ -1,3 +1,5 @@
+// components/match/match-player.tsx
+
 "use client";
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
@@ -33,7 +35,6 @@ interface Match {
 }
 
 // --- Custom Hook for Data Fetching ---
-// This hook encapsulates all the complex logic for fetching and merging streams.
 const useMatchStreams = (matchId: string) => {
     const [match, setMatch] = useState<Match | null>(null);
     const [streams, setStreams] = useState<Stream[]>([]);
@@ -190,7 +191,7 @@ const PlayerError: React.FC<{ message: string }> = ({ message }) => (
         flexDirection: 'column', 
         alignItems: 'center', 
         justifyContent: 'center', 
-        background: '#09090b', 
+         background: '#09090b', 
         borderRadius: '12px', 
         color: '#ef4444' 
     }}>
@@ -228,61 +229,96 @@ const Countdown: React.FC<{ targetDate: string }> = ({ targetDate }) => {
                         <div className="timer-unit">{String(timeLeft.m).padStart(2, '0')}</div>:
                         <div className="timer-unit">{String(timeLeft.s).padStart(2, '0')}</div>
                     </div>
+                    <div className="uplink-label">
+                        <span className="live-dot-pulse" />
+                        ESTABLISHING SATELLITE UPLINK
+                    </div>
                 </div>
             </div>
         </div>
     );
 };
 
-const IframePlayer: React.FC<{ embedUrl: string }> = ({ embedUrl }) => {
-    const [isLoading, setIsLoading] = useState(true);
+const ClickThroughShield: React.FC = () => {
+    const [isBlocking, setIsBlocking] = useState(true);
+    const [tapCount, setTapCount] = useState(0);
 
     useEffect(() => {
-        setIsLoading(true);
-        // Robustness: Force loader to hide after 10s if iframe doesn't trigger load
-        const timeout = setTimeout(() => setIsLoading(false), 10000);
-        return () => clearTimeout(timeout);
-    }, [embedUrl]);
+        if (!isBlocking) {
+            const timer = setTimeout(() => {
+                setIsBlocking(true);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [isBlocking, tapCount]);
+
+    const handleTap = (e: React.MouseEvent | React.TouchEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const newCount = tapCount + 1;
+        setTapCount(newCount);
+        if (newCount >= 1) {
+            setIsBlocking(false);
+        }
+    };
+
+    if (!isBlocking) return null;
 
     return (
-        <div className="video-iframe-wrapper" style={{ position: 'relative', width: '100%', paddingTop: '56.25%', backgroundColor: '#000', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            {isLoading && (
-                <div className="overlay-loading" style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 10,
-                    background: '#09090b',
-                    color: '#8db902',
-                    backdropFilter: 'blur(10px)'
-                }}>
-                    <Loader className="spinner" size={48} />
-                    <span style={{ marginTop: '12px', fontSize: '0.875rem', fontWeight: 500, letterSpacing: '0.05em', opacity: 0.8 }}>ESTABLISHING SECURE CONNECTION</span>
-                </div>
+        <div
+            onClick={handleTap}
+            onTouchStart={handleTap}
+            onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            style={{
+                position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                zIndex: 100, background: 'transparent', cursor: 'pointer',
+                touchAction: 'none', WebkitTapHighlightColor: 'transparent'
+            }}
+        />
+    );
+};
+
+const IframePlayer: React.FC<{ embedUrl: string }> = ({ embedUrl }) => {
+    const [deviceInfo] = useState(() => {
+        if (typeof navigator === 'undefined') return { isMobile: true, isChrome: false };
+        const ua = navigator.userAgent;
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+        const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua);
+        const isChrome = /Chrome/.test(ua) && !/Edge/.test(ua) && !isMobile;
+        return { isMobile: isMobile || isSafari, isChrome: isChrome && !isMobile };
+    });
+
+    const useSandbox = deviceInfo.isMobile && !deviceInfo.isChrome;
+
+    const baseProps = {
+        src: embedUrl,
+        className: "video-iframe",
+        frameBorder: "0" as const,
+        allowFullScreen: true,
+        allow: "autoplay; encrypted-media; picture-in-picture; fullscreen",
+        referrerPolicy: "no-referrer" as const,
+        style: { 
+            position: 'absolute' as const,
+            top: 0,
+            left: 0,
+            width: '100%', 
+            height: '100%', 
+            border: 'none',
+            background: '#000', 
+            pointerEvents: 'auto' as const 
+        }
+    };
+
+    return (
+        <div className="video-iframe-wrapper" style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: '#000' }}>
+            {useSandbox ? (
+                <iframe
+                    {...baseProps}
+                    sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
+                />
+            ) : (
+                <iframe {...baseProps} />
             )}
-            <iframe
-                src={embedUrl}
-                className="video-iframe"
-                style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    border: 'none'
-                }}
-                frameBorder="0"
-                allowFullScreen
-                allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-                referrerPolicy="no-referrer"
-                onLoad={() => setIsLoading(false)}
-            />
         </div>
     );
 };
@@ -303,6 +339,7 @@ const StreamSelector: React.FC<{
                 >
                     <span className="signal-icon"></span>
                     {s.sourceIdentifier} {s.streamNo > 0 ? `#${s.streamNo}` : ""}
+                    {s.hd && <span className="hd-badge" style={{marginLeft: 'auto', fontSize: '9px', background: '#8db902', color: '#000', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold'}}>HD</span>}
                 </button>
             ))}
         </div>
@@ -320,17 +357,49 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     // Select the best stream initially, or fallback to the first
     const bestStream = useMemo(() => {
         if (streams.length === 0) return null;
-        return streams.find(s => s.sourceIdentifier === "REEDSTREAMS-OFFICIAL") || streams[0];
+        // Prioritize official stream, then specific reliable sources, then HD
+        return streams.find(s => s.sourceIdentifier === "REEDSTREAMS-OFFICIAL") || 
+               streams.find(s => s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 1) ||
+               streams.find(s => s.sourceIdentifier.toLowerCase().includes("golf") && s.streamNo === 1) ||
+               streams.find(s => s.sourceIdentifier.toLowerCase() === "delta" && s.streamNo === 1) ||
+               streams.find(s => s.hd) ||
+               streams[0];
     }, [streams]);
     
     const [selectedStream, setSelectedStream] = useState<Stream | null>(bestStream);
+    const [playerState, setPlayerState] = useState<'initial' | 'loading' | 'ready'>('initial');
+    const [loadingProgress, setLoadingProgress] = useState(0);
 
     useEffect(() => {
-        // When bestStream is calculated, update the selected stream
+        // When bestStream is calculated, update the selected stream if none selected
         if (bestStream && !selectedStream) {
             setSelectedStream(bestStream);
         }
     }, [bestStream, selectedStream]);
+
+    // Reset player state when stream changes
+    useEffect(() => {
+        if (selectedStream) {
+            setPlayerState('initial');
+            setLoadingProgress(0);
+        }
+    }, [selectedStream]);
+
+    const handlePlayClick = () => {
+        if (playerState !== 'initial') return;
+        setPlayerState('loading');
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 20;
+            setLoadingProgress(progress);
+            if (progress >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    setPlayerState('ready');
+                }, 500);
+            }
+        }, 400);
+    };
 
     if (loading) return <PlayerLoader />;
     if (error) return <PlayerError message={error} />;
@@ -349,12 +418,72 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
             <style>{`
                 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
                 .spinner { animation: spin 1s linear infinite; }
+                .spinner-protect {
+                    width: 40px; height: 40px;
+                    border: 3px solid rgba(141, 185, 2, 0.3);
+                    border-radius: 50%;
+                    border-top-color: #8db902;
+                    animation: spin 1s ease-in-out infinite;
+                    margin-bottom: 20px;
+                }
             `}</style>
-            <div className="player-container" key={selectedStream.embedUrl}>
-                {selectedStream.sourceIdentifier === "REEDSTREAMS-OFFICIAL" ? (
-                    <ReedVideoJS src={selectedStream.embedUrl} />
-                ) : (
-                    <IframePlayer embedUrl={selectedStream.embedUrl} />
+            <div className="player-container" key={selectedStream.embedUrl} style={{ position: 'relative', width: '100%', height: '100%', background: '#000' }}>
+                
+                {/* TAP TO PLAY OVERLAY */}
+                {playerState === 'initial' && (
+                    <div
+                        onClick={handlePlayClick}
+                        onTouchStart={(e) => { e.preventDefault(); handlePlayClick(); }}
+                        style={{
+                            position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                            background: 'linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.95) 100%)',
+                            zIndex: 1000, cursor: 'pointer', touchAction: 'none', WebkitTapHighlightColor: 'transparent'
+                        }}
+                    >
+                        <div style={{
+                            width: '80px', height: '80px', borderRadius: '50%',
+                            background: 'linear-gradient(135deg, #8db902 0%, #6a8c00 100%)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            boxShadow: '0 0 40px rgba(141, 185, 2, 0.4)', marginBottom: '20px'
+                        }}>
+                            <div style={{
+                                width: 0, height: 0, borderTop: '15px solid transparent',
+                                borderBottom: '15px solid transparent', borderLeft: '25px solid #000', marginLeft: '5px'
+                            }} />
+                        </div>
+                        <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>TAP TO PLAY</div>
+                        <div style={{ color: '#666', fontSize: '11px', marginTop: '8px' }}>HD Stream Ready</div>
+                    </div>
+                )}
+
+                {/* LOADING OVERLAY */}
+                {playerState === 'loading' && (
+                    <div style={{
+                        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                        background: '#000', zIndex: 1000
+                    }}>
+                        <div className="spinner-protect" />
+                        <div style={{ color: '#fff', fontSize: '14px', marginBottom: '10px' }}>CONNECTING TO STREAM...</div>
+                        <div style={{ width: '200px', height: '4px', background: '#222', borderRadius: '2px', overflow: 'hidden' }}>
+                            <div style={{ width: `${loadingProgress}%`, height: '100%', background: '#8db902', transition: 'width 0.3s ease' }} />
+                        </div>
+                    </div>
+                )}
+
+                {/* ACTIVE PLAYER */}
+                {playerState === 'ready' && (
+                    <>
+                        {selectedStream.sourceIdentifier === "REEDSTREAMS-OFFICIAL" ? (
+                            <ReedVideoJS src={selectedStream.embedUrl} />
+                        ) : (
+                            <>
+                                <IframePlayer embedUrl={selectedStream.embedUrl} />
+                                <ClickThroughShield />
+                            </>
+                        )}
+                    </>
                 )}
             </div>
             {streams.length > 1 && (

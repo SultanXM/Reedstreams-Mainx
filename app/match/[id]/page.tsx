@@ -448,7 +448,7 @@ function MatchPageContent() {
                       <button onClick={() => setChatAgreed(true)} style={{ background:'#8db902', color:'#000', border:'none', padding:'10px 30px', borderRadius:'6px', fontSize:'12px', fontWeight:'800', cursor:'pointer', textTransform:'uppercase', letterSpacing:'1px' }}>{t.i_agree || "I Agree"}</button>
                     </div>
                   )}
-                  <iframe src="https://tlk.io/reedstreams" width="100%" height="100%" allow="autoplay" frameBorder="0" scrolling="auto" style={{display: 'block', width: '100%', height: '100%'}}></iframe>
+                  <iframe src="https://my.cbox.ws/Reedstreams" width="100%" height="100%" allow="autoplay" frameBorder="0" scrolling="auto" style={{display: 'block', width: '100%', height: '100%'}}></iframe>
                 </div>
             </div>
           )}
