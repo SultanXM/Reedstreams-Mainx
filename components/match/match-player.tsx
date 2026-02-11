@@ -427,7 +427,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                     margin-bottom: 20px;
                 }
             `}</style>
-            <div className="player-container" key={selectedStream.embedUrl} style={{ position: 'relative', width: '100%', height: '100%', background: '#000' }}>
+            <div className="player-container" key={selectedStream.embedUrl} style={{ position: 'relative', width: '100%', aspectRatio: '16/9', background: '#000' }}>
                 
                 {/* TAP TO PLAY OVERLAY */}
                 {playerState === 'initial' && (
