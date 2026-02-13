@@ -43,7 +43,7 @@ const useMatchStreams = (matchId: string) => {
 
     const fetchPremiumSource = useCallback(async (adminSource: MatchSource): Promise<Stream | null> => {
         try {
-            const oracleRes = await fetch(AGGREGATOR_URL);
+            const oracleRes = await fetch(AGGREGATOR_URL, { cache: 'no-store' });
             if (!oracleRes.ok) return null;
 
             const mergedMatches = await oracleRes.json();
@@ -56,7 +56,7 @@ const useMatchStreams = (matchId: string) => {
             const reedSource = matchedEntry.sources.find((s: any) => s.name.toLowerCase().includes("reeds") || s.is_direct === true);
             if (!reedSource) return null;
             
-            const signRes = await fetch(`/api/premium-sign?id=${reedSource.url}`);
+            const signRes = await fetch(`/api/premium-sign?id=${reedSource.url}`, { cache: 'no-store' });
             if (!signRes.ok) return null;
 
             const signedData = await signRes.json();
@@ -79,7 +79,7 @@ const useMatchStreams = (matchId: string) => {
 
     const fetchStandardSources = useCallback(async (matchSources: MatchSource[]): Promise<Stream[]> => {
         const promises = matchSources.map(src =>
-            fetch(`/api/stream/${src.source}/${src.id}`)
+            fetch(`/api/stream/${src.source}/${src.id}`, { cache: 'no-store' })
                 .then(r => r.ok ? r.json() : [])
                 .then(streams => streams.map((s: any) => ({ ...s, sourceIdentifier: src.source })))
                 .catch(() => [])
@@ -105,7 +105,7 @@ const useMatchStreams = (matchId: string) => {
                 } catch {}
 
                 if (!foundMatch) {
-                    const res = await fetch("/api/matches");
+                    const res = await fetch("/api/matches", { cache: 'no-store' });
                     if (res.ok) {
                         const list = await res.json();
                         foundMatch = list.find((m: Match) => String(m.id) === String(matchId));
@@ -357,11 +357,38 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     // Select the best stream initially, or fallback to the first
     const bestStream = useMemo(() => {
         if (streams.length === 0) return null;
+
+        let ua = "";
+        if (typeof navigator !== "undefined") {
+            ua = navigator.userAgent;
+        }
+
+        const isIOSMobile = /iPhone|iPod/i.test(ua);
+        const isMac = /Macintosh|MacIntel/i.test(ua) && !/iPhone|iPod|iPad/i.test(ua);
+
+        const findSource = (name: string) => streams.find(s => s.sourceIdentifier.toLowerCase().includes(name.toLowerCase()) && s.streamNo === 1);
+        const official = streams.find(s => s.sourceIdentifier === "REEDSTREAMS-OFFICIAL");
+
+        // 1. iOS Mobile: ReedStreams or Golf
+        if (isIOSMobile) {
+            if (official) return official;
+            const golf = findSource("golf");
+            if (golf) return golf;
+        }
+
+        // 2. Macbook: Echo or Golf
+        if (isMac) {
+            const echo = findSource("echo");
+            if (echo) return echo;
+            const golf = findSource("golf");
+            if (golf) return golf;
+        }
+
         // Prioritize official stream, then specific reliable sources, then HD
-        return streams.find(s => s.sourceIdentifier === "REEDSTREAMS-OFFICIAL") || 
-               streams.find(s => s.sourceIdentifier.toLowerCase().includes("bravo") && s.streamNo === 1) ||
-               streams.find(s => s.sourceIdentifier.toLowerCase().includes("golf") && s.streamNo === 1) ||
-               streams.find(s => s.sourceIdentifier.toLowerCase() === "delta" && s.streamNo === 1) ||
+        return official || 
+               findSource("bravo") ||
+               findSource("golf") ||
+               findSource("delta") ||
                streams.find(s => s.hd) ||
                streams[0];
     }, [streams]);
