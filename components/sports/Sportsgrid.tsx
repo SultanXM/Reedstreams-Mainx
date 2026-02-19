@@ -36,9 +36,18 @@ const isAlwaysLive = (category: string): boolean => {
   return alwaysLiveCategories.some(cat => category.toLowerCase().includes(cat.toLowerCase()))
 }
 
+// checks if its soccer (not the american hand-egg one)
 const isSoccer = (category: string): boolean => {
   const soccerTerms = ['soccer', 'football']
   return soccerTerms.some(term => category.toLowerCase().includes(term.toLowerCase()))
+}
+
+// american football check - cuz football means different things depending where u live lol
+const isAmericanFootball = (category: string): boolean => {
+  const cat = category.toLowerCase()
+  // if it says football but NOT soccer = american football (the one with the brown ball)
+  // also check for nfl cuz sometimes its just called that
+  return (cat.includes('football') && !cat.includes('soccer')) || cat.includes('nfl')
 }
 
 const formatTime = (timestamp: number): string => {
@@ -206,9 +215,9 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
     setHiddenGameIds(prev => new Set(prev).add(id))
   }, [])
 
-  // Filter out hidden games and organize categories
+  // organize all the games so they look nice
   const organizedCategories = useMemo(() => {
-    // First filter out hidden games
+    // remove the broken image games first (they ugly)
     const filtered = categories
       .map(cat => ({
         ...cat,
@@ -218,24 +227,24 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
 
     const result: Array<{category: string, games: Game[], icon?: React.ComponentType<{size: number, color: string}>}> = []
 
-    // Separate 24/7 from regular categories
+    // split the always-live tv channels from normal games
     const regularCategories: Category[] = []
     const alwaysLiveCategories: Category[] = []
     
     filtered.forEach(cat => {
       if (isAlwaysLive(cat.category)) {
-        alwaysLiveCategories.push(cat)
+        alwaysLiveCategories.push(cat)  // these never end lol
       } else {
         regularCategories.push(cat)
       }
     })
 
-    // Build Popular section - take games from different categories
+    // make the "Popular" section - just grab some games from everywhere so it looks full
     const popularGames: Game[] = []
-    const gamesPerCategory = new Map<number, number>() // Track how many we took from each category
-    const minGamesFromEach = 1
-    const maxGamesFromEach = 3
-    const targetPopularCount = 12
+    const gamesPerCategory = new Map<number, number>() // keep track so we dont steal too many from one spot
+    const minGamesFromEach = 1  // at least grab one from everyone, fair is fair
+    const maxGamesFromEach = 3  // dont be greedy
+    const targetPopularCount = 12  // 12 games looks good on screen, trust me bro
 
     // First pass: get at least 1 game from each category (prioritize live)
     regularCategories.forEach(cat => {
@@ -273,7 +282,7 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
       })
     }
 
-    // Sort popular games: live first, then by time
+    // sort popular stuff - live games first cuz nobody wants to watch a replay in popular section lmao
     popularGames.sort((a, b) => {
       const aLive = isLive(a.start_time, a.end_time)
       const bLive = isLive(b.start_time, b.end_time)
@@ -282,17 +291,25 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
       return a.start_time - b.start_time
     })
 
-    // Add Popular section if we have games
+    // slap the popular section on top (row 1) if we got anything
     if (popularGames.length > 0) {
       result.push({
         category: '🔥 Popular',
         games: popularGames,
-        icon: undefined
+        icon: undefined  // no icon for popular, the fire emoji is enough
       })
     }
 
-    // Sort regular categories: categories with live games first
+    // sort the categories - football gotta be 2nd row right after popular or boss gets mad
     const sortedCategories = [...regularCategories].sort((a, b) => {
+      // football (the american one with touchdowns) goes 2nd always, dont mess with this
+      const aIsFootball = isAmericanFootball(a.category)
+      const bIsFootball = isAmericanFootball(b.category)
+      
+      if (aIsFootball && !bIsFootball) return -1  // a is football, it wins
+      if (!aIsFootball && bIsFootball) return 1   // b is football, it wins
+      
+      // for everything else just put live games first cuz people wanna watch now
       const aLiveCount = a.games.filter(g => isLive(g.start_time, g.end_time)).length
       const bLiveCount = b.games.filter(g => isLive(g.start_time, g.end_time)).length
       
@@ -300,10 +317,10 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
       if (aLiveCount === 0 && bLiveCount > 0) return 1
       if (aLiveCount !== bLiveCount) return bLiveCount - aLiveCount
       
-      return 0
+      return 0  // whatever same same
     })
 
-    // Add regular categories
+    // dump the rest of the categories here (football will be first cuz we sorted it)
     sortedCategories.forEach(cat => {
       const sortedGames = [...cat.games].sort((a, b) => {
         const aLive = isLive(a.start_time, a.end_time)
@@ -322,12 +339,12 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
       })
     })
 
-    // Last: 24/7 Always Live channels
+    // 24/7 channels go at the very bottom - they aint special, just always there
     alwaysLiveCategories.forEach(cat => {
       result.push({
         category: cat.category,
         games: cat.games,
-        icon: Clock
+        icon: Clock  // clock icon cuz time never stops or something deep like that
       })
     })
 
