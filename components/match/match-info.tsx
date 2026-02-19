@@ -3,13 +3,26 @@
 import { useEffect, useState } from "react"
 import "@/styles/match.css"
 
+interface Game {
+  id: number
+  name: string
+  poster: string
+  start_time: number
+  end_time: number
+  video_link: string
+  category: string
+}
+
+interface Category {
+  category: string
+  games: Game[]
+}
+
 interface Match {
-  id: string
+  id: string | number
   title: string
-  date: string
-  // Assuming the API returns team info like this, otherwise we parse the title
-  homeTeam?: { name: string, logo: string }
-  awayTeam?: { name: string, logo: string }
+  date: number | string
+  category?: string
 }
 
 export default function MatchInfo({ matchId }: { matchId: string }) {
@@ -24,18 +37,40 @@ export default function MatchInfo({ matchId }: { matchId: string }) {
         if (stored) {
             const parsed = JSON.parse(stored);
             if (String(parsed.id) === String(matchId)) {
-                setMatch(parsed);
+                const title = parsed.title || parsed.name || "Live Stream"
+                const date = parsed.date || parsed.start_time
+                setMatch({
+                    id: parsed.id,
+                    title: title,
+                    date: date,
+                    category: parsed.category
+                });
                 setLoading(false);
                 return;
             }
         }
 
-        // 2. Fetch from API if needed
-        const res = await fetch("/api/matches");
-        if(res.ok) {
-            const list = await res.json();
-            const found = list.find((m: Match) => String(m.id) === String(matchId));
-            if(found) setMatch(found);
+        // 2. Fetch from API if not in session storage
+        const res = await fetch("https://api.reedstreams.live/api/v1/streams");
+        if (res.ok) {
+            const data = await res.json();
+            if (data.categories) {
+                for (const cat of data.categories as Category[]) {
+                    if (cat.games) {
+                        const found = cat.games.find((g: Game) => String(g.id) === matchId);
+                        if (found) {
+                            setMatch({
+                                id: found.id,
+                                title: found.name,
+                                date: found.start_time,
+                                category: cat.category
+                            });
+                            setLoading(false);
+                            return;
+                        }
+                    }
+                }
+            }
         }
       } catch (e) {
         console.error("Info Load Error", e);
@@ -48,8 +83,11 @@ export default function MatchInfo({ matchId }: { matchId: string }) {
 
   if (loading || !match) return null; // Hide if loading/error to keep UI clean
 
-  // Helper to format date nicely
-  const dateObj = new Date(match.date);
+  // Helper to format date nicely (handle both string dates and unix timestamps)
+  const dateValue = match.date;
+  const dateObj = typeof dateValue === 'number' 
+    ? new Date(dateValue * 1000)  // Unix timestamp (seconds)
+    : new Date(dateValue);         // ISO string
   const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const dayDate = dateObj.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
 

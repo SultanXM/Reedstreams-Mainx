@@ -6,33 +6,76 @@ import { useRouter, usePathname } from 'next/navigation'
 import { Search, Menu, X, AlertCircle, Calendar, Home, Heart, Play, Send } from 'lucide-react'
 import '../../styles/header.css'
 
-const API_BASE = 'https://streamed.pk/api'
+const API_BASE = '/api/v1/streams'
+
+interface Game {
+    id: number;
+    name: string;
+    poster: string;
+    start_time: number;
+    end_time: number;
+    video_link: string;
+    category: string;
+}
+
+interface Category {
+    category: string;
+    games: Game[];
+}
 
 interface Match {
-    id: string; title: string; category: string; date: number; popular: boolean;
-    teams?: { home?: { badge: string; name: string }; away?: { badge: string; name: string }; };
-    sources?: { source: string; id: string }[];
+    id: string | number;
+    title: string;
+    category: string;
+    date: number;
+    popular?: boolean;
 }
 
-interface Sport { id: string; name: string; }
+interface Sport { 
+    id: string; 
+    name: string; 
+}
 
+// Map API category names to IDs (must match Sportsgrid.tsx exactly)
+const CATEGORY_TO_ID: Record<string, string> = {
+    'Football': 'soccer',
+    'Soccer': 'soccer',
+    'Basketball': 'basketball',
+    'Ice Hockey': 'hockey',
+    'Baseball': 'baseball',
+    'MMA / UFC': 'mma',
+    'Tennis': 'tennis',
+    'Golf': 'golf',
+    'Motorsports': 'motorsports',
+    'Cricket': 'cricket',
+    '2026 Winter Olympics': '2026 winter olympics',
+    'Combat Sports': 'combat sports',
+    'Darts': 'darts',
+    '24/7 Streams': '24/7 Streams'
+}
+
+// Display names for the header
 const DISPLAY_MAP: Record<string, string> = {
-    'basketball': 'NBA', 'soccer': 'Football', 'football': 'Football',
-    'american-football': 'NFL', 'nfl': 'NFL', 'icehockey': 'NHL',
-    'hockey': 'NHL', 'baseball': 'MLB', 'mma': 'UFC', 'ufc': 'UFC',
-    'boxing': 'Boxing', 'cricket': 'Cricket', 'motorsports': 'F1',
-    'racing': 'F1', 'tennis': 'Tennis', 'rugby': 'Rugby', 'golf': 'Golf', 'darts': 'Darts'
-}
-
-const URL_ID_MAP: Record<string, string> = {
-    'nfl': 'american-football', 'soccer': 'football', 'icehockey': 'hockey',
-    'racing': 'motorsport', 'motorsports': 'motorsport', 'ufc': 'mma'
+    'football': 'Football',
+    'soccer': 'Soccer', 
+    'basketball': 'Basketball',
+    'hockey': 'Ice Hockey',
+    'baseball': 'Baseball',
+    'mma': 'MMA / UFC',
+    'tennis': 'Tennis',
+    'golf': 'Golf',
+    'motorsports': 'Motorsports',
+    'cricket': 'Cricket',
+    '2026 winter olympics': 'Olympics',
+    'combat sports': 'COMBAT SPORTS',
+    'darts': 'Darts',
+    '24/7 Streams': '24/7 Streams'
 }
 
 const SORT_ORDER = [
-    'soccer', 'football', 'basketball', 'american-football', 'nfl',
-    'baseball', 'icehockey', 'hockey', 'mma', 'ufc', 'cricket',
-    'motorsports', 'tennis', 'rugby', 'golf', 'darts', 'boxing'
+    'football', 'soccer', 'basketball', 'hockey', 'baseball', 'mma',
+    'tennis', 'golf', 'motorsports', 'cricket', '2026 winter olympics',
+    'combat sports', 'darts', '24/7 Streams'
 ]
 
 export default function Header() {
@@ -57,34 +100,89 @@ export default function Header() {
 
     const fetchLiveCount = useCallback(async () => {
         try {
-            const response = await fetch(`${API_BASE}/matches/live`)
-            if (!response.ok) throw new Error('Failed to fetch live count')
+            console.log('[Header] Fetching from:', API_BASE)
+            const response = await fetch(API_BASE, { 
+                cache: 'no-store',
+                headers: { 'Accept': 'application/json' }
+            })
+            console.log('[Header] Response status:', response.status)
+            if (!response.ok) throw new Error(`HTTP ${response.status}`)
             const data = await response.json()
-            setLiveMatchesCount(Array.isArray(data) ? data.length : 0)
-        } catch (error) { console.error('Live count error:', error) }
+            console.log('[Header] API Response:', data)
+            
+            if (!data.categories || !Array.isArray(data.categories)) {
+                console.error('[Header] Invalid response - no categories:', data)
+                return
+            }
+            
+            const now = Math.floor(Date.now() / 1000)
+            console.log('[Header] Current time:', now)
+            
+            let liveCount = 0
+            data.categories.forEach((cat: Category) => {
+                console.log('[Header] Checking category:', cat.category, 'Games:', cat.games?.length)
+                if (cat.games && Array.isArray(cat.games)) {
+                    cat.games.forEach((g: Game) => {
+                        const isLive = now >= g.start_time && now <= g.end_time
+                        console.log('[Header] Game:', g.name, 'Start:', g.start_time, 'End:', g.end_time, 'Live:', isLive)
+                        if (isLive) liveCount++
+                    })
+                }
+            })
+            console.log('[Header] Total live count:', liveCount)
+            setLiveMatchesCount(liveCount)
+        } catch (error) { 
+            console.error('[Header] Live count error:', error) 
+        }
     }, [])
 
     const fetchSports = useCallback(async () => {
         try {
-            const response = await fetch(`${API_BASE}/sports`)
+            const response = await fetch(API_BASE)
             if (!response.ok) throw new Error('Failed to fetch sports')
-            const data: Sport[] = await response.json()
-            if (!Array.isArray(data)) return
-            const sorted = data.sort((a, b) => {
+            const data = await response.json()
+            if (!data.categories || !Array.isArray(data.categories)) return
+            
+            // Extract unique categories and map to Sport format using CATEGORY_TO_ID
+            const uniqueCategories = [...new Set(data.categories.map((c: Category) => c.category))]
+            const sportsList: Sport[] = uniqueCategories
+                .filter((cat: string) => CATEGORY_TO_ID[cat]) // Only include known categories
+                .map((cat: string) => ({
+                    id: CATEGORY_TO_ID[cat],
+                    name: DISPLAY_MAP[CATEGORY_TO_ID[cat]] || cat
+                }))
+            
+            const sorted = sportsList.sort((a, b) => {
                 const idxA = SORT_ORDER.indexOf(a.id); const idxB = SORT_ORDER.indexOf(b.id)
                 if (idxA !== -1 && idxB !== -1) return idxA - idxB
                 return idxA !== -1 ? -1 : idxB !== -1 ? 1 : a.name.localeCompare(b.name)
             })
-            setSports(sorted.slice(0, 12))
+            setSports(sorted.slice(0, 14))
         } catch (error) { console.error('Sports fetch error:', error) }
     }, [])
 
     const fetchSearchMatches = useCallback(async () => {
         try {
-            const response = await fetch(`${API_BASE}/matches/all-today`)
+            const response = await fetch(API_BASE)
             if (!response.ok) throw new Error('Failed to fetch matches')
-            const data: Match[] = await response.json()
-            setMatches(Array.isArray(data) ? data : [])
+            const data = await response.json()
+            if (!data.categories || !Array.isArray(data.categories)) return
+            
+            // Flatten all games into Match format
+            const allMatches: Match[] = []
+            data.categories.forEach((cat: Category) => {
+                if (cat.games && Array.isArray(cat.games)) {
+                    cat.games.forEach((g: Game) => {
+                        allMatches.push({
+                            id: g.id,
+                            title: g.name,
+                            category: cat.category,
+                            date: g.start_time
+                        })
+                    })
+                }
+            })
+            setMatches(allMatches)
         } catch (error) { console.error('Search matches error:', error) }
     }, [])
 
@@ -131,8 +229,7 @@ export default function Header() {
 
     const getDisplayName = (id: string) => DISPLAY_MAP[id] || sports.find(s => s.id === id)?.name || id
     const getSportUrl = (sport: Sport) => {
-        const validId = URL_ID_MAP[sport.id] || sport.id
-        return `/live-matches?sportId=${validId}&sportName=${encodeURIComponent(sport.name)}`
+        return `/live-matches?sportId=${encodeURIComponent(sport.id)}`
     }
 
     const hardNavigate = (e: React.MouseEvent, path: string) => {

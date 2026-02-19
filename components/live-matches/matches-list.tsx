@@ -3,243 +3,302 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, PlayCircle, Clock, ChevronRight, Search, X, Calendar, ChevronDown } from 'lucide-react'
+import { ArrowLeft, Clock, ChevronRight, Search, X, Calendar, ChevronDown, RefreshCw } from 'lucide-react'
 import '../../styles/live-matches.css'
 
-const API_BASE = 'https://streamed.pk'
+const API_URL = '/api/reedstreams/games'
 
-interface Match {
-  id: string;
-  title: string;
-  category: string;
-  date: number;
-  popular?: boolean;
-  poster?: string;
-  teams?: { 
-    home?: { badge: string; name: string }; 
-    away?: { badge: string; name: string } 
-  };
-  sources?: any[];
+interface Game {
+  id: number
+  name: string
+  poster: string
+  start_time: number
+  end_time: number
+  video_link: string
+  category: string
 }
 
-const getBadgeUrl = (badgeId: string): string => `${API_BASE}/api/images/badge/${badgeId}.webp`;
-
-const getPosterUrl = (posterRaw: string): string => {
-  if (!posterRaw) return '';
-  if (posterRaw.startsWith('/')) return `${API_BASE}${posterRaw}.webp`;
-  return `${API_BASE}/api/images/proxy/${posterRaw}.webp`;
+const isLive = (startTime: number, endTime: number, currentTimeMs: number = Date.now()): boolean => {
+  const now = Math.floor(currentTimeMs / 1000)
+  return now >= startTime && now <= endTime
 }
 
-const isLive = (timestamp: number): boolean => {
-  const now = Date.now();
-  const matchTime = new Date(timestamp).getTime();
-  return matchTime <= now && (now - matchTime) < (3 * 60 * 60 * 1000);
+const isUpcoming = (startTime: number, currentTimeMs: number = Date.now()): boolean => {
+  const now = Math.floor(currentTimeMs / 1000)
+  return startTime > now
 }
 
 const formatTime = (timestamp: number): string => {
-  return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-};
+  return new Date(timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
 
 const getDateLabel = (timestamp: number) => {
-  const date = new Date(timestamp);
-  const today = new Date();
-  const tomorrow = new Date();
-  tomorrow.setDate(today.getDate() + 1);
-  if (date.toDateString() === today.toDateString()) return "TODAY";
-  if (date.toDateString() === tomorrow.toDateString()) return "TOMORROW";
-  return date.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' }).toUpperCase();
-};
+  const date = new Date(timestamp * 1000)
+  const today = new Date()
+  const tomorrow = new Date()
+  tomorrow.setDate(today.getDate() + 1)
+  if (date.toDateString() === today.toDateString()) return "TODAY"
+  if (date.toDateString() === tomorrow.toDateString()) return "TOMORROW"
+  return date.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' }).toUpperCase()
+}
 
 const SkeletonRow = () => (
-    <div className="match-row skeleton-pulse">
-        <div className="row-poster-container" />
-        <div className="row-content-wrapper">
-            <div className="row-info">
-                <div className="sk-text sk-w-30" style={{ height: '12px', marginBottom: '12px' }} />
-                <div className="sk-text sk-w-60" style={{ height: '24px' }} />
-            </div>
-            <div className="row-meta-col sk-hide-mobile">
-                <div className="sk-text sk-w-100" style={{ height: '35px', borderRadius: '8px' }} />
-            </div>
-        </div>
+  <div className="match-row skeleton-pulse">
+    <div className="row-poster-container" />
+    <div className="row-content-wrapper">
+      <div className="row-info">
+        <div className="sk-text sk-w-30" style={{ height: '12px', marginBottom: '12px' }} />
+        <div className="sk-text sk-w-60" style={{ height: '24px' }} />
+      </div>
+      <div className="row-meta-col sk-hide-mobile">
+        <div className="sk-text sk-w-100" style={{ height: '35px', borderRadius: '8px' }} />
+      </div>
     </div>
-);
+  </div>
+)
 
-const MatchRow = React.memo(({ match, onImageError }: { match: Match; onImageError: (id: string) => void }) => {
-  const [imageError, setImageError] = useState(false);
-  const matchIsLive = isLive(match.date);
-  const homeName = match.teams?.home?.name || 'Home';
-  const awayName = match.teams?.away?.name || 'Away';
-  const homeBadgeUrl = match.teams?.home?.badge ? getBadgeUrl(match.teams.home.badge) : null;
-  const awayBadgeUrl = match.teams?.away?.badge ? getBadgeUrl(match.teams.away.badge) : null;
-
-  // Prioritize poster if available, but fallback to logos if poster fails
-  const showPoster = !!match.poster && !imageError;
+const MatchRow = React.memo(({ game, onImageError, currentTime }: { game: Game; onImageError: (id: number) => void; currentTime: number }) => {
+  const [imageError, setImageError] = useState(false)
+  const live = isLive(game.start_time, game.end_time, currentTime)
 
   return (
-    <Link href={`/match/${match.id}`} className="match-row-link" onClick={() => sessionStorage.setItem("currentMatch", JSON.stringify(match))}>
+    <Link href={`/match/${game.id}`} className="match-row-link">
       <article className="match-row">
         <div className="row-poster-container" style={{ width: '100px', flex: '0 0 100px', overflow: 'hidden' }}>
-           {showPoster ? (
-             <img 
-                src={getPosterUrl(match.poster!)}
-                alt={match.title}
-                referrerPolicy="no-referrer"
-                onError={() => {
-                    // If poster fails, try fallback to logos. If logos aren't available, hide match.
-                    if (homeBadgeUrl && awayBadgeUrl) setImageError(true);
-                    else onImageError(match.id);
-                }}
-                className="row-poster" 
-                style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'cover'
-                }} 
-             />
-           ) : (
-             <div className="row-logos-visual" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', height: '100%', padding: '5px' }}>
-                {homeBadgeUrl && <img 
-                  src={homeBadgeUrl} 
-                  alt={homeName} 
-                  referrerPolicy="no-referrer" 
-                  onError={() => onImageError(match.id)}
-                  style={{ width: '32px', height: '32px', objectFit: 'contain' }} 
-                />}
-                <span style={{ fontSize: '10px', fontWeight: '900', color: '#444' }}>VS</span>
-                {awayBadgeUrl && <img 
-                  src={awayBadgeUrl} 
-                  alt={awayName} 
-                  referrerPolicy="no-referrer" 
-                  onError={() => onImageError(match.id)}
-                  style={{ width: '32px', height: '32px', objectFit: 'contain' }} 
-                />}
-             </div>
-           )}
+          {!imageError && game.poster ? (
+            <img 
+              src={game.poster}
+              alt={game.name}
+              referrerPolicy="no-referrer"
+              onError={() => {
+                setImageError(true)
+                onImageError(game.id)
+              }}
+              className="row-poster" 
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+            />
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', background: '#1a1a1a' }}>
+              <span style={{ fontSize: '24px' }}>📺</span>
+            </div>
+          )}
         </div>
         <div className="row-content-wrapper">
           <div className="row-info">
-             <div className="row-category">{match.category}</div>
-             <div className="row-title">{showPoster ? match.title : `${homeName} vs ${awayName}`}</div>
+            <div className="row-category">{game.category}</div>
+            <div className="row-title">{game.name}</div>
           </div>
           <div className="row-meta-col">
-             <div className={`row-status-badge ${matchIsLive ? 'live' : 'upcoming'}`}>
-                 {matchIsLive ? <><span className="live-dot" /> LIVE</> : <><Clock size={12} /> {formatTime(match.date)}</>}
-             </div>
-             <div className="row-action-btn">WATCH <ChevronRight size={14} /></div>
+            <div className={`row-status-badge ${live ? 'live' : 'upcoming'}`}>
+              {live ? <><span className="live-dot" /> LIVE</> : <><Clock size={12} /> {formatTime(game.start_time)}</>}
+            </div>
+            <div className="row-action-btn">WATCH <ChevronRight size={14} /></div>
           </div>
         </div>
       </article>
     </Link>
-  );
-});
+  )
+})
 
 export default function LiveMatches() {
   const searchParams = useSearchParams()
   const urlSportId = searchParams.get('sportId') || 'all'
   
   const DISPLAY_NAMES: Record<string, string> = {
-    'american-football': 'NFL Football',
-    'football': 'Soccer',
-    'basketball': 'NBA Basketball',
-    'hockey': 'NHL Hockey',
-    'baseball': 'MLB Baseball',
-    'fight': 'MMA / UFC',
-    'motorsport': 'Racing',
-    'popular': 'Popular Today'
-  };
+    'football': 'Football',
+    'soccer': 'Soccer',
+    'basketball': 'Basketball',
+    'hockey': 'Ice Hockey',
+    'baseball': 'Baseball',
+    'mma': 'MMA / UFC',
+    'tennis': 'Tennis',
+    'golf': 'Golf',
+    'all': 'All Sports'
+  }
 
-  const urlSportName = useMemo(() => {
-    const paramName = searchParams.get('sportName');
-    if (paramName) return decodeURIComponent(paramName);
-    if (DISPLAY_NAMES[urlSportId]) return DISPLAY_NAMES[urlSportId];
-    return urlSportId.replace('-', ' ').toUpperCase();
-  }, [urlSportId, searchParams]);
+  const urlSportName = DISPLAY_NAMES[urlSportId] || urlSportId.replace('-', ' ').toUpperCase()
 
-  const [matches, setMatches] = useState<Match[]>([])
+  const [games, setGames] = useState<Game[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<'ALL' | 'LIVE' | 'UPCOMING'>('ALL')
   const [visibleCount, setVisibleCount] = useState(20)
-  const [hiddenMatchIds, setHiddenMatchIds] = useState<Set<string>>(new Set());
+  const [hiddenGameIds, setHiddenGameIds] = useState<Set<number>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [now, setNow] = useState(Date.now())
 
+  // Update 'now' every minute to recalculate live status
   useEffect(() => {
-    const fetchMatches = async () => {
-      setLoading(true)
-      try {
-        const res = await fetch(`${API_BASE}/api/matches/all-today`)
-        const data: Match[] = await res.json()
-        
-        // Syncing logic with Sportsgrid:
-        // 1. Must have sources
-        // 2. Must have either (Home Badge AND Away Badge) OR (Poster)
-        let validMatches = data.filter(m => {
-          const hasSources = (m.sources || []).length > 0;
-          if (!hasSources) return false;
+    const interval = setInterval(() => {
+      setNow(Date.now())
+    }, 60000) // Every 60 seconds
+    return () => clearInterval(interval)
+  }, [])
 
-          const hasHomeImg = !!m.teams?.home?.badge;
-          const hasAwayImg = !!m.teams?.away?.badge;
-          const hasPoster = !!m.poster;
-
-          return (hasHomeImg && hasAwayImg) || hasPoster;
-        });
-
-        if (urlSportId !== 'all') {
-          validMatches = validMatches.filter(m => {
-            const cat = m.category.toLowerCase().replace(/\s+/g, '');
-            const title = m.title.toLowerCase();
-            const normUrl = urlSportId.toLowerCase();
-
-            if (normUrl === 'fight' || normUrl === 'mma') {
-              return cat.includes('mma') || cat.includes('ufc') || cat.includes('fight') || cat.includes('boxing') || title.includes('ufc');
-            }
-            if (normUrl === 'american-football') return cat.includes('nfl') || cat.includes('american') || cat.includes('ncaa');
-            if (normUrl === 'football' || normUrl === 'soccer') {
-              return (cat.includes('soccer') || cat.includes('football')) && !cat.includes('nfl') && !cat.includes('american');
-            }
-            return cat.includes(normUrl.replace('-', ''));
-          });
+  const fetchData = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await fetch(API_URL)
+      
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`)
+      }
+      
+      const data = await res.json()
+      
+      if (!data.categories || !Array.isArray(data.categories)) {
+        throw new Error('Invalid API response format')
+      }
+      
+      // Flatten all games from all categories
+      let allGames: Game[] = []
+      data.categories.forEach((cat: any) => {
+        if (cat.games && Array.isArray(cat.games)) {
+          cat.games.forEach((g: any) => {
+            allGames.push({
+              id: g.id,
+              name: g.name,
+              poster: g.poster,
+              start_time: g.start_time,
+              end_time: g.end_time,
+              video_link: g.video_link,
+              category: cat.category
+            })
+          })
         }
-        setMatches(validMatches.sort((a, b) => a.date - b.date))
-      } catch (e) { console.error(e) }
-      finally { setLoading(false) }
+      })
+      
+      // Remove duplicates by ID
+      const seen = new Set<number>()
+      allGames = allGames.filter(g => {
+        if (seen.has(g.id)) return false
+        seen.add(g.id)
+        return true
+      })
+      
+      // Sort: live first, then upcoming by time, then past
+      const nowSec = Math.floor(now / 1000)
+      allGames.sort((a, b) => {
+        const aLive = isLive(a.start_time, a.end_time, now)
+        const bLive = isLive(b.start_time, b.end_time, now)
+        const aUpcoming = isUpcoming(a.start_time, now)
+        const bUpcoming = isUpcoming(b.start_time, now)
+        
+        if (aLive && !bLive) return -1
+        if (!aLive && bLive) return 1
+        if (aUpcoming && bUpcoming) return a.start_time - b.start_time
+        if (aUpcoming && !bUpcoming) return -1
+        if (!aUpcoming && bUpcoming) return 1
+        return b.end_time - a.end_time
+      })
+      
+      setGames(allGames)
+    } catch (err: any) {
+      console.error('[LiveMatches] Fetch error:', err)
+      setError(err.message || 'Failed to load matches')
+    } finally {
+      setLoading(false)
     }
-    fetchMatches()
-  }, [urlSportId])
+  }
 
-  const handleImageError = (matchId: string) => {
-    setHiddenMatchIds(prev => new Set(prev).add(matchId));
-  };
-
-  // Reset pagination when filters change
   useEffect(() => {
-    setVisibleCount(20);
-  }, [filter, searchQuery, urlSportId]);
+    fetchData()
+  }, [])
 
-  const filteredMatches = useMemo(() => {
-    return matches.filter(m => {
-      // Filter out matches that have image errors
-      if (hiddenMatchIds.has(m.id)) return false;
+  useEffect(() => {
+    setVisibleCount(20)
+  }, [filter, searchQuery, urlSportId])
 
-      const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesFilter = filter === 'LIVE' ? isLive(m.date) : filter === 'UPCOMING' ? (!isLive(m.date) && m.date > Date.now()) : true;
-      return matchesSearch && matchesFilter;
-    });
-  }, [matches, filter, searchQuery, hiddenMatchIds]);
+  const handleImageError = (id: number) => {
+    setHiddenGameIds(prev => new Set(prev).add(id))
+  }
 
-  const groupedMatches = useMemo(() => {
-    // Slice the filtered list for pagination
-    const sliced = filteredMatches.slice(0, visibleCount);
-    const groups: { [key: string]: Match[] } = {};
+  const filteredGames = useMemo(() => {
+    return games.filter(g => {
+      if (hiddenGameIds.has(g.id)) return false
+
+      const matchesSearch = searchQuery === '' || 
+        g.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        g.category.toLowerCase().includes(searchQuery.toLowerCase())
+      
+      const matchesFilter = filter === 'LIVE' 
+        ? isLive(g.start_time, g.end_time, now)
+        : filter === 'UPCOMING' 
+          ? isUpcoming(g.start_time, now)
+          : true
+
+      const catLower = g.category.toLowerCase()
+      const nameLower = g.name.toLowerCase()
+      
+      let matchesSport = urlSportId === 'all'
+      
+      if (!matchesSport) {
+        switch(urlSportId) {
+          case 'football':
+            // American football - check for NFL in name but NOT soccer/football category
+            matchesSport = (nameLower.includes('nfl') || nameLower.includes('american football')) && 
+                          !catLower.includes('football')
+            break
+          case 'soccer':
+            // Soccer - the "Football" category in API is actually soccer (European football)
+            matchesSport = catLower === 'football' || 
+                          catLower.includes('soccer') || 
+                          catLower.includes('premier league') || 
+                          catLower.includes('la liga') || 
+                          catLower.includes('bundesliga') ||
+                          catLower.includes('serie a') || 
+                          catLower.includes('ligue 1') ||
+                          catLower.includes('champions league') ||
+                          catLower.includes('uel') ||
+                          catLower.includes('uecl') ||
+                          catLower.includes('world cup') ||
+                          catLower.includes('fa cup')
+            break
+          case 'basketball':
+            matchesSport = catLower.includes('basketball')
+            break
+          case 'hockey':
+            matchesSport = catLower.includes('hockey')
+            break
+          case 'baseball':
+            matchesSport = catLower.includes('baseball')
+            break
+          case 'mma':
+            matchesSport = catLower.includes('mma') || 
+                          catLower.includes('ufc') || 
+                          catLower.includes('boxing') ||
+                          catLower.includes('fight') ||
+                          catLower.includes('wrestling')
+            break
+          case 'tennis':
+            matchesSport = catLower.includes('tennis')
+            break
+          case 'golf':
+            matchesSport = catLower.includes('golf')
+            break
+          default:
+            matchesSport = catLower.includes(urlSportId.toLowerCase()) ||
+                          nameLower.includes(urlSportId.toLowerCase())
+        }
+      }
+
+      return matchesSearch && matchesFilter && matchesSport
+    })
+  }, [games, filter, searchQuery, urlSportId, hiddenGameIds])
+
+  const groupedGames = useMemo(() => {
+    const sliced = filteredGames.slice(0, visibleCount)
+    const groups: { [key: string]: Game[] } = {}
     
-    sliced.forEach(m => {
-      const label = getDateLabel(m.date);
-      if (!groups[label]) groups[label] = [];
-      groups[label].push(m);
-    });
-    return groups;
-  }, [filteredMatches, visibleCount]);
+    sliced.forEach(g => {
+      const label = getDateLabel(g.start_time)
+      if (!groups[label]) groups[label] = []
+      groups[label].push(g)
+    })
+    return groups
+  }, [filteredGames, visibleCount])
 
   return (
     <div className="page-wrapper">
@@ -248,28 +307,32 @@ export default function LiveMatches() {
           <Link href="/" className="back-link"><ArrowLeft size={16} /> Back Home</Link>
           <div className="header-title-row">
             <h1 className="page-title">{urlSportName}</h1>
-            <span className="match-count">{Object.values(groupedMatches).flat().length} Matches</span>
+            <span className="match-count">
+              {loading ? 'Loading...' : `${filteredGames.length} Matches`}
+            </span>
           </div>
+
           <div className="filter-area">
             <div className="filter-bar">
-                <button className={`filter-pill ${filter === 'ALL' ? 'active' : ''}`} onClick={() => setFilter('ALL')}>ALL</button>
-                <button className={`filter-pill ${filter === 'LIVE' ? 'active' : ''}`} onClick={() => setFilter('LIVE')}><div className="live-dot" /> LIVE</button>
-                <button className={`filter-pill ${filter === 'UPCOMING' ? 'active' : ''}`} onClick={() => setFilter('UPCOMING')}>UPCOMING</button>
-                <button className={`search-toggle-btn ${isSearchOpen ? 'active' : ''}`} onClick={() => setIsSearchOpen(!isSearchOpen)}>
-                    {isSearchOpen ? <X size={16} /> : <Search size={16} />}
-                </button>
+              <button className={`filter-pill ${filter === 'ALL' ? 'active' : ''}`} onClick={() => setFilter('ALL')}>ALL</button>
+              <button className={`filter-pill ${filter === 'LIVE' ? 'active' : ''}`} onClick={() => setFilter('LIVE')}><div className="live-dot" /> LIVE</button>
+              <button className={`filter-pill ${filter === 'UPCOMING' ? 'active' : ''}`} onClick={() => setFilter('UPCOMING')}>UPCOMING</button>
+              <button className={`search-toggle-btn ${isSearchOpen ? 'active' : ''}`} onClick={() => setIsSearchOpen(!isSearchOpen)}>
+                {isSearchOpen ? <X size={16} /> : <Search size={16} />}
+              </button>
+
             </div>
             {isSearchOpen && (
-                <div className="search-input-wrapper">
-                    <input 
-                        type="text" 
-                        placeholder={`Search in ${urlSportName}...`}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="sport-search-input"
-                        autoFocus
-                    />
-                </div>
+              <div className="search-input-wrapper">
+                <input 
+                  type="text" 
+                  placeholder={`Search in ${urlSportName}...`}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="sport-search-input"
+                  autoFocus
+                />
+              </div>
             )}
           </div>
         </div>
@@ -277,24 +340,42 @@ export default function LiveMatches() {
         <div className="matches-list-wrapper">
           {loading ? (
             <div className="matches-list-container">
-                {Array(6).fill(0).map((_, i) => <SkeletonRow key={i} />)}
+              {Array(6).fill(0).map((_, i) => <SkeletonRow key={i} />)}
+            </div>
+          ) : error ? (
+            <div className="empty-state" style={{ textAlign: 'center', padding: '60px 20px' }}>
+              <div style={{ fontSize: '48px', marginBottom: '20px' }}>⚠️</div>
+              <h3 style={{ color: '#ef4444', marginBottom: '10px' }}>Failed to load matches</h3>
+              <p style={{ color: '#666', marginBottom: '20px' }}>{error}</p>
+              <button 
+                onClick={fetchData}
+                style={{
+                  background: '#8db902', color: '#000', border: 'none',
+                  padding: '12px 30px', borderRadius: '6px', fontWeight: 'bold',
+                  cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px'
+                }}
+              >
+                <RefreshCw size={16} /> Try Again
+              </button>
             </div>
           ) : (
-            Object.keys(groupedMatches).length > 0 ? (
+            Object.keys(groupedGames).length > 0 ? (
               <>
-                {Object.entries(groupedMatches).map(([dateLabel, dateMatches]) => (
+                {Object.entries(groupedGames).map(([dateLabel, dateGames]) => (
                   <div key={dateLabel} className="date-group">
                     <div className="date-stamp">
-                      <span className="stamp-line"></span><span className="stamp-text">{dateLabel}</span><span className="stamp-line"></span>
+                      <span className="stamp-line"></span>
+                      <span className="stamp-text">{dateLabel}</span>
+                      <span className="stamp-line"></span>
                     </div>
                     <div className="matches-list-container">
-                      {dateMatches.map(m => {
-                          return <MatchRow key={m.id} match={m} onImageError={handleImageError} />
-                      })}
+                      {dateGames.map(g => (
+                        <MatchRow key={g.id} game={g} onImageError={handleImageError} currentTime={now} />
+                      ))}
                     </div>
                   </div>
                 ))}
-                {filteredMatches.length > visibleCount && (
+                {filteredGames.length > visibleCount && (
                   <div className="load-more-container">
                     <button className="load-more-btn" onClick={() => setVisibleCount(prev => prev + 20)}>
                       Load More <ChevronDown size={16} />
@@ -307,6 +388,11 @@ export default function LiveMatches() {
                 <Calendar size={60} style={{ opacity: 0.1, marginBottom: '20px' }} />
                 <h3>No {urlSportName} matches found.</h3>
                 <p>Check back later or try another category.</p>
+                {urlSportId !== 'all' && (
+                  <Link href="/live-matches" style={{ display: 'inline-block', marginTop: '15px', color: '#8db902' }}>
+                    View All Sports →
+                  </Link>
+                )}
               </div>
             )
           )}

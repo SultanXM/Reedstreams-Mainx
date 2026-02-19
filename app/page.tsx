@@ -4,17 +4,23 @@ import SportsGrid from '@/components/sports/Sportsgrid'
 
 // This function runs on the Server
 async function getInitialMatches() {
-  const res = await fetch('https://streamed.pk/api/matches/all-today', {
-    // Vercel will refresh this data every 60 seconds in the background
-    next: { revalidate: 60 } 
-  });
-  if (!res.ok) return [];
-  return res.json();
+  try {
+    const res = await fetch('https://api.reedstreams.live/api/v1/streams', {
+      // Vercel will refresh this data every 60 seconds in the background
+      next: { revalidate: 60 }
+    });
+    if (!res.ok) return { categories: [] };
+    return res.json();
+  } catch (error) {
+    console.error('Failed to fetch initial matches:', error);
+    // Return empty data during build or if API is unavailable
+    return { categories: [] };
+  }
 }
 
 export default async function Home() {
   // Fetch data BEFORE the page is sent to the user
-  const initialMatches = await getInitialMatches();
+  const initialData = await getInitialMatches();
 
   return (
     <main className="min-h-screen relative overflow-hidden">
@@ -28,7 +34,7 @@ export default async function Home() {
       <div className="relative z-10">
         <Header />
         {/* Pass the server-fetched data into your component */}
-        <SportsGrid initialData={initialMatches} />
+        <SportsGrid initialData={initialData} />
       </div>
     </main>
   )
