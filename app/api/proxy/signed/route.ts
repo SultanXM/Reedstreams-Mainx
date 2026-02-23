@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next-server';
+import { NextRequest, NextResponse } from 'next/server';
 import { REED_API_BASE } from '@/config/api';
 
 const corsHeaders = {

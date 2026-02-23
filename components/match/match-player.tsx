@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo, useRef } from "react"
 import { useUniversalAdBlocker } from "@/hooks/useUniversalAdBlocker"
 import { Clock, AlertCircle, Loader2 } from "lucide-react"
 import { API_BASE_URL } from "@/config/api"
+// API_BASE_URL kept for potential future use
 import ReedVideoJS from "./ReedVideoJS"
 
 const formatTime = (ms: number) => {
@@ -78,7 +79,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         hasFetched.current = true
 
         // Use our local API endpoint
-        const res = await fetch(`https://reedstreams-edge-v1.fly.dev/api/reedstreams/stream/${matchId}`, {
+        const res = await fetch(`/api/reedstreams/stream/${matchId}`, {
           cache: 'no-store',
         })
 
