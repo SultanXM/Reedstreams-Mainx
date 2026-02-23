@@ -12,7 +12,7 @@ const nextConfig = {
     return [
       {
         source: '/api/v1/:path*',
-        destination: 'https://api.reedstreams.live/api/v1/:path*',  // UPDATE THIS AND config/api.ts WHEN CHANGING API!
+        destination: 'https://reedstreams-edge-v1.fly.dev/api/v1/:path*',
       },
     ]
   },
