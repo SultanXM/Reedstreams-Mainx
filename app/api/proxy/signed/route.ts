@@ -25,14 +25,13 @@ export async function GET(request: NextRequest) {
     }
 
     // If it's a relative /api/v1/proxy path, convert to external URL
-    // The upstream API returns URLs like /api/v1/proxy?url=...
     if (targetUrl.startsWith('/api/v1/')) {
       targetUrl = `${REED_API_BASE}${targetUrl}`;
     }
 
     console.log('[SIGNED PROXY] Fetching:', targetUrl.substring(0, 150));
 
-    // Fetch through reedstreams proxy with all original params intact
+    // Fetch from edge API
     const response = await fetch(targetUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -50,39 +49,50 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get the content type
     const contentType = response.headers.get('Content-Type') || 'application/vnd.apple.mpegurl';
     
-    // For M3U8 manifests, we need to rewrite URLs to go through our proxy
+    // For M3U8 manifests, rewrite relative URLs to absolute edge URLs
     if (contentType.includes('mpegurl') || contentType.includes('m3u8')) {
       const manifestText = await response.text();
-      
-      // Rewrite segment URLs in the manifest to go through our segment proxy
       const baseUrl = new URL(targetUrl);
+      
+      // Extract the base path for the stream (everything before the last /)
+      const streamBaseUrl = targetUrl.substring(0, targetUrl.lastIndexOf('/') + 1);
+      
       const rewrittenManifest = manifestText.split('\n').map(line => {
         const trimmed = line.trim();
-        // Skip comments and empty lines
-        if (!trimmed || trimmed.startsWith('#')) {
-          // Handle KEY URI attributes
+        
+        // Skip empty lines and comments (but handle special tags)
+        if (!trimmed) return line;
+        
+        // Handle KEY URI attributes - make them absolute edge URLs
+        if (trimmed.startsWith('#')) {
           if (trimmed.startsWith('#EXT-X-KEY')) {
             return trimmed.replace(/URI="([^"]*)"/, (match, uri) => {
-              const absoluteUri = uri.startsWith('http') ? uri : new URL(uri, baseUrl).toString();
-              const encodedUri = Buffer.from(absoluteUri).toString('base64');
-              return `URI="/api/proxy/segment?url=${encodeURIComponent(encodedUri)}"`;
+              // If already absolute, keep it; otherwise make it absolute to edge
+              const absoluteUri = uri.startsWith('http') ? uri : `${REED_API_BASE}${uri.startsWith('/') ? '' : '/'}${uri}`;
+              return `URI="${absoluteUri}"`;
             });
           }
           return line;
         }
         
-        // It's a segment URL - convert to absolute and wrap in our proxy
-        const absoluteUrl = trimmed.startsWith('http') 
-          ? trimmed 
-          : new URL(trimmed, baseUrl).toString();
-        const encodedUrl = Buffer.from(absoluteUrl).toString('base64');
-        return `/api/proxy/segment?url=${encodeURIComponent(encodedUrl)}`;
+        // It's a segment/media URL - make it absolute to the edge API
+        if (trimmed.startsWith('http')) {
+          return trimmed; // Already absolute
+        }
+        
+        // Relative URL - prepend the edge API base
+        // The edge API returns paths like /api/v1/proxy?url=... for segments
+        if (trimmed.startsWith('/')) {
+          return `${REED_API_BASE}${trimmed}`;
+        }
+        
+        // Relative path without leading slash - use stream base URL
+        return `${streamBaseUrl}${trimmed}`;
       }).join('\n');
 
-      console.log(`[SIGNED PROXY] Rewrote M3U8 manifest`);
+      console.log(`[SIGNED PROXY] Rewrote manifest with edge URLs`);
 
       return new NextResponse(rewrittenManifest, {
         headers: {
@@ -93,10 +103,10 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // For non-manifest content, just proxy through
+    // For non-manifest content (segments, keys), just proxy through with CORS
     const body = await response.arrayBuffer();
     
-    console.log(`[SIGNED PROXY] Success: ${contentType}, ${body.byteLength} bytes`);
+    console.log(`[SIGNED PROXY] Proxying segment: ${contentType}, ${body.byteLength} bytes`);
 
     return new NextResponse(body, {
       headers: {
