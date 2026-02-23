@@ -77,19 +77,23 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         setLoading(true)
         hasFetched.current = true
 
-        const res = await fetch(`/api/v1/streams/ppvsu/${matchId}/signed-url`, {
+        // Use our local API endpoint
+        const res = await fetch(`https://reedstreams-edge-v1.fly.dev/api/reedstreams/stream/${matchId}`, {
           cache: 'no-store',
         })
 
         if (!res.ok) throw new Error("Uplink Refused")
 
-        const data = await res.json()
-        if (isMounted && data.signed_url) {
-          const domain = new URL(API_BASE_URL).hostname
-          const url = data.signed_url.includes(domain)
-            ? data.signed_url.split(domain)[1]
-            : data.signed_url
-          setStreamUrl(url)
+        const streams = await res.json()
+        
+        // The API returns an array of stream objects
+        if (isMounted && Array.isArray(streams) && streams.length > 0 && streams[0].embedUrl) {
+          setStreamUrl(streams[0].embedUrl)
+        } else if (isMounted && streams.embedUrl) {
+          // Handle single object response
+          setStreamUrl(streams.embedUrl)
+        } else {
+          throw new Error("No stream URL in response")
         }
       } catch (e) {
         if (isMounted) {
