@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo, useRef } from "react"
 import { useUniversalAdBlocker } from "@/hooks/useUniversalAdBlocker"
 import { Clock, AlertCircle, Loader2 } from "lucide-react"
+import { API_BASE_URL } from "@/config/api"
 import ReedVideoJS from "./ReedVideoJS"
 
 const formatTime = (ms: number) => {
@@ -84,8 +85,9 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
         const data = await res.json()
         if (isMounted && data.signed_url) {
-          const url = data.signed_url.includes('api.reedstreams.live')
-            ? data.signed_url.split('api.reedstreams.live')[1]
+          const domain = new URL(API_BASE_URL).hostname
+          const url = data.signed_url.includes(domain)
+            ? data.signed_url.split(domain)[1]
             : data.signed_url
           setStreamUrl(url)
         }

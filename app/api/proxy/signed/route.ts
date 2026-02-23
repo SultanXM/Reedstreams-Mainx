@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const REED_API_BASE = 'https://api.reedstreams.live';
+import { REED_API_BASE } from '@/config/api';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;

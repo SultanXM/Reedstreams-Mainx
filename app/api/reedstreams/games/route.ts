@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-
-const REED_API_BASE = 'https://api.reedstreams.live/api/v1';
+import { REED_API_V1 } from '@/config/api';
 
 export async function GET() {
   try {
-    const res = await fetch(`${REED_API_BASE}/streams`, {
+    const res = await fetch(`${REED_API_V1}/streams`, {
       next: { revalidate: 60 },
     });
 

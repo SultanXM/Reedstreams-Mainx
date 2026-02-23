@@ -5,7 +5,9 @@ import Link from 'next/link'
 import { Trophy, Clock } from 'lucide-react'
 import '../../styles/Sportsgrid.css'
 
-const API_URL = 'https://api.reedstreams.live/api/v1/streams'
+import { API_STREAMS_URL } from '@/config/api'
+
+const API_URL = API_STREAMS_URL
 
 interface Game {
   id: number

@@ -1,11 +1,12 @@
 // app/page.tsx
 import Header from '@/components/layout/header'
 import SportsGrid from '@/components/sports/Sportsgrid'
+import { API_STREAMS_URL } from '@/config/api'
 
 // This function runs on the Server
 async function getInitialMatches() {
   try {
-    const res = await fetch('https://api.reedstreams.live/api/v1/streams', {
+    const res = await fetch(API_STREAMS_URL, {
       // Vercel will refresh this data every 60 seconds in the background
       next: { revalidate: 60 }
     });

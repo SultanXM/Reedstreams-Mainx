@@ -1,10 +1,11 @@
 import Header from '@/components/layout/header'
 import SportsGrid from '@/components/sports/Sportsgrid'
+import { API_STREAMS_URL } from '@/config/api'
 
 // This function runs on the Server
 async function getInitialMatches() {
   try {
-    const res = await fetch('https://api.reedstreams.live/api/v1/streams', {
+    const res = await fetch(API_STREAMS_URL, {
       next: { revalidate: 60 }
     });
     if (!res.ok) return { categories: [] };

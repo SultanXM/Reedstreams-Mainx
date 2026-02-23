@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-
-const REED_API_BASE = 'https://api.reedstreams.live/api/v1';
+import { REED_API_V1 } from '@/config/api';
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -13,7 +12,7 @@ export async function GET(request: Request, { params }: RouteParams) {
     console.log(`[REED GAME] Fetching game ${id}`);
 
     // Fetch all games and find the one with matching ID
-    const res = await fetch(`${REED_API_BASE}/streams`, {
+    const res = await fetch(`${REED_API_V1}/streams`, {
       next: { revalidate: 60 },
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',

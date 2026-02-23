@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { API_STREAMS_URL } from "@/config/api"
 import "@/styles/match.css"
 
 interface Game {
@@ -51,7 +52,7 @@ export default function MatchInfo({ matchId }: { matchId: string }) {
         }
 
         // 2. Fetch from API if not in session storage
-        const res = await fetch("https://api.reedstreams.live/api/v1/streams");
+        const res = await fetch(API_STREAMS_URL);
         if (res.ok) {
             const data = await res.json();
             if (data.categories) {

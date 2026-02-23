@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-
-const REED_API_BASE = 'https://api.reedstreams.live';
-const REED_API_V1 = `${REED_API_BASE}/api/v1`;
+import { REED_API_BASE, REED_API_V1 } from '@/config/api';
 
 interface RouteParams {
   params: Promise<{ id: string }>
