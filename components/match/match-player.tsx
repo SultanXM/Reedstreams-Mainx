@@ -1,10 +1,8 @@
 "use client"
 
-import { useEffect, useState, useMemo, useRef } from "react"
+import { useEffect, useState, useMemo, useRef, useCallback } from "react"
 import { useUniversalAdBlocker } from "@/hooks/useUniversalAdBlocker"
-import { Clock, AlertCircle, Loader2 } from "lucide-react"
-import { API_BASE_URL } from "@/config/api"
-// API_BASE_URL kept for potential future use
+import { Clock, AlertCircle, Loader2, RefreshCw } from "lucide-react"
 import ReedVideoJS from "./ReedVideoJS"
 
 const formatTime = (ms: number) => {
@@ -23,11 +21,13 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
   const [playerState, setPlayerState] = useState<'countdown' | 'initial' | 'ready'>('initial')
   const [startTime, setStartTime] = useState<number | null>(null)
   const [timeRemaining, setTimeRemaining] = useState<number>(0)
+  const [retryAttempt, setRetryAttempt] = useState(0)
 
   const hasFetched = useRef(false)
   const playerContainerRef = useRef<HTMLDivElement>(null)
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // 1. Load Start Time
+  // load match start time from cache
   useEffect(() => {
     try {
       const cached = sessionStorage.getItem("currentMatch")
@@ -44,11 +44,11 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         }
       }
     } catch (e) {
-      console.error("Cache error", e)
+      // cache busted, whatever
     }
   }, [matchId])
 
-  // 2. Countdown
+  // countdown timer
   useEffect(() => {
     if (!startTime) return
     const timer = setInterval(() => {
@@ -68,48 +68,70 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     return () => clearInterval(timer)
   }, [startTime, playerState])
 
-  // 3. Fetch stream
-  useEffect(() => {
-    if (playerState === 'countdown' || hasFetched.current) return
+  // fetch stream with auto-retry logic
+  const fetchStream = useCallback(async () => {
+    if (playerState === 'countdown') return
+    
+    setLoading(true)
+    setError(null)
+    
+    const maxRetries = 5
+    const baseDelay = 2000
 
-    let isMounted = true
-    async function fetchStream() {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
-        setLoading(true)
-        hasFetched.current = true
-
-        // Use our local API endpoint
         const res = await fetch(`/api/reedstreams/stream/${matchId}`, {
           cache: 'no-store',
         })
 
-        if (!res.ok) throw new Error("Uplink Refused")
+        if (!res.ok) throw new Error("Stream not ready")
 
         const streams = await res.json()
         
-        // The API returns an array of stream objects
-        if (isMounted && Array.isArray(streams) && streams.length > 0 && streams[0].embedUrl) {
+        if (Array.isArray(streams) && streams.length > 0 && streams[0].embedUrl) {
           setStreamUrl(streams[0].embedUrl)
-        } else if (isMounted && streams.embedUrl) {
-          // Handle single object response
+          setLoading(false)
+          return
+        } else if (streams.embedUrl) {
           setStreamUrl(streams.embedUrl)
+          setLoading(false)
+          return
         } else {
           throw new Error("No stream URL in response")
         }
       } catch (e) {
-        if (isMounted) {
-          setError("Stream currently offline.")
-          hasFetched.current = false
+        const isLastAttempt = attempt === maxRetries - 1
+        
+        if (isLastAttempt) {
+          setError("Stream not available right now. Servers might be busy.")
+          setLoading(false)
+          return
         }
-      } finally {
-        if (isMounted) setLoading(false)
+        
+        // wait before retry with exponential backoff
+        const delay = baseDelay * Math.pow(1.5, attempt)
+        await new Promise(r => setTimeout(r, delay))
       }
     }
-    fetchStream()
-    return () => { isMounted = false }
   }, [matchId, playerState])
 
-  // Ghost audio fix – force mute when hidden
+  // trigger fetch when needed
+  useEffect(() => {
+    if (playerState === 'countdown' || hasFetched.current) return
+    hasFetched.current = true
+    fetchStream()
+  }, [playerState, fetchStream])
+
+  // cleanup retry timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  // force mute when hidden
   useEffect(() => {
     if (playerState !== 'initial' || !playerContainerRef.current) return
 
@@ -132,12 +154,17 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     }
   }
 
+  const handleRetry = () => {
+    setRetryAttempt(c => c + 1)
+    hasFetched.current = false
+    setError(null)
+    setLoading(true)
+    fetchStream()
+  }
+
   const countdownDisplay = useMemo(() => formatTime(timeRemaining), [timeRemaining])
 
-  // ────────────────────────────────────────────────
-  //               INLINE STYLES
-  // ────────────────────────────────────────────────
-
+  // styles
   const wrapperStyle = {
     width: '100%',
     aspectRatio: '16/9',
@@ -173,7 +200,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
-    transition: 'background 0.3s ease',
   }
 
   const playCircleStyle = {
@@ -185,8 +211,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'all 0.2s ease-in-out',
-    backdropFilter: 'blur(4px)',
   }
 
   const playTriangleStyle = {
@@ -196,7 +220,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     borderTop: '14px solid transparent',
     borderBottom: '14px solid transparent',
     marginLeft: 8,
-    transition: 'border-left-color 0.2s ease-in-out',
   }
 
   const videoStageStyle = {
@@ -228,12 +251,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     borderRadius: 4,
     cursor: 'pointer',
     fontSize: 12,
-    transition: 'background 0.2s',
   }
-
-  // ────────────────────────────────────────────────
-  //                   RENDER
-  // ────────────────────────────────────────────────
 
   if (playerState === 'countdown') {
     return (
@@ -255,7 +273,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         <div style={stateContainerStyle}>
           <Loader2 className="animate-spin" size={40} color="#8db902" />
           <span style={{ marginTop: 15, fontWeight: 'bold', fontSize: 12, letterSpacing: '1px', color: '#fff' }}>
-            ESTABLISHING SATELLITE LINK...
+            FINDING STREAM...
           </span>
         </div>
       </div>
@@ -267,12 +285,15 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
       <div style={wrapperStyle}>
         <div style={stateContainerStyle}>
           <AlertCircle color="#ef4444" size={48} />
-          <span style={{ marginTop: 15, fontWeight: 'bold', color: '#fff' }}>{error}</span>
+          <span style={{ marginTop: 15, fontWeight: 'bold', color: '#fff', textAlign: 'center', padding: '0 20px' }}>
+            {error}
+          </span>
           <button
-            onClick={() => window.location.reload()}
-            style={{ ...retryBtnStyle, ':hover': { background: '#9edc00' } }}
+            onClick={handleRetry}
+            style={retryBtnStyle}
           >
-            REBOOT SYSTEM
+            <RefreshCw size={14} style={{ marginRight: 6, display: 'inline' }} />
+            TRY AGAIN
           </button>
         </div>
       </div>
@@ -320,7 +341,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         </div>
       )}
 
-      {/* Keyframes can't be inline — you can keep minimal global style for animations or use a tiny <style> tag */}
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes pulse { 50% { opacity: 0.4; } }

@@ -33,7 +33,7 @@ export default function MatchInfo({ matchId }: { matchId: string }) {
   useEffect(() => {
     async function load() {
       try {
-        // 1. Check Session Storage first (Speed)
+        // check cache first - faster than api call
         const stored = sessionStorage.getItem("currentMatch");
         if (stored) {
             const parsed = JSON.parse(stored);
@@ -51,7 +51,7 @@ export default function MatchInfo({ matchId }: { matchId: string }) {
             }
         }
 
-        // 2. Fetch from API if not in session storage
+        // cache miss, hit the api
         const res = await fetch(API_STREAMS_URL);
         if (res.ok) {
             const data = await res.json();
@@ -74,6 +74,7 @@ export default function MatchInfo({ matchId }: { matchId: string }) {
             }
         }
       } catch (e) {
+        // shit happened, log and move on
         console.error("Info Load Error", e);
       } finally {
         setLoading(false);
@@ -82,35 +83,31 @@ export default function MatchInfo({ matchId }: { matchId: string }) {
     load();
   }, [matchId]);
 
-  if (loading || !match) return null; // Hide if loading/error to keep UI clean
+  if (loading || !match) return null;
 
-  // Helper to format date nicely (handle both string dates and unix timestamps)
+  // format the date nicely
   const dateValue = match.date;
   const dateObj = typeof dateValue === 'number' 
-    ? new Date(dateValue * 1000)  // Unix timestamp (seconds)
-    : new Date(dateValue);         // ISO string
+    ? new Date(dateValue * 1000)  // unix timestamp
+    : new Date(dateValue);         // iso string
   const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const dayDate = dateObj.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
 
-  // PARSING TEAMS (If your API just gives a "Title" string like "Team A vs Team B")
-  // If your API gives real team objects, use those instead.
+  // split title to get teams - "Team A vs Team B"
   const teams = match.title.split(' vs ');
   const homeName = teams[0] || "Home Team";
   const awayName = teams[1] || "Away Team";
 
   return (
     <div className="match-info-strip">
-        {/* LEFT: MATCH STATUS / TIME */}
         <div className="info-time-block">
             <div className="info-time">{time}</div>
             <div className="info-date">{dayDate}</div>
         </div>
 
-        {/* MIDDLE: THE TEAMS */}
         <div className="info-teams-block">
             <div className="team-side home">
                 <span className="team-name">{homeName}</span>
-                {/* Placeholder Logos (Replace src with real data if you have it) */}
                 <div className="team-logo-placeholder">{homeName[0]}</div>
             </div>
             
@@ -122,7 +119,6 @@ export default function MatchInfo({ matchId }: { matchId: string }) {
             </div>
         </div>
 
-        {/* RIGHT: LIVE BADGE */}
         <div className="info-status-block">
             <div className="live-badge">LIVE EVENT</div>
         </div>

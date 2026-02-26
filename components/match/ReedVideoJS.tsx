@@ -14,7 +14,6 @@ export default function ReedVideoJS({ src }: { src: string }) {
         if (!playerRef.current) {
             const videoElement = document.createElement("video-js");
             videoElement.classList.add("vjs-big-play-centered");
-            // Ensure the video element takes up the full container
             videoElement.style.width = "100%";
             videoElement.style.height = "100%";
             
@@ -46,7 +45,6 @@ export default function ReedVideoJS({ src }: { src: string }) {
                 console.error("VideoJS Error:", player.error());
             });
         } else {
-            
             const player = playerRef.current;
             player.src({ src, type: "application/x-mpegURL"});
         }

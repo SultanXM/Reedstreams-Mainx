@@ -128,11 +128,11 @@ export default function LiveMatches() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [now, setNow] = useState(Date.now())
 
-  // Update 'now' every minute to recalculate live status
+  // update "now" every minute so live badges work
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(Date.now())
-    }, 60000) // Every 60 seconds
+    }, 60000)
     return () => clearInterval(interval)
   }, [])
 
@@ -152,7 +152,7 @@ export default function LiveMatches() {
         throw new Error('Invalid API response format')
       }
       
-      // Flatten all games from all categories
+      // flatten all games from all categories
       let allGames: Game[] = []
       data.categories.forEach((cat: any) => {
         if (cat.games && Array.isArray(cat.games)) {
@@ -170,7 +170,7 @@ export default function LiveMatches() {
         }
       })
       
-      // Remove duplicates by ID
+      // dedupe by id
       const seen = new Set<number>()
       allGames = allGames.filter(g => {
         if (seen.has(g.id)) return false
@@ -178,7 +178,7 @@ export default function LiveMatches() {
         return true
       })
       
-      // Sort: live first, then upcoming by time, then past
+      // sort: live first, then upcoming, then past
       const nowSec = Math.floor(now / 1000)
       allGames.sort((a, b) => {
         const aLive = isLive(a.start_time, a.end_time, now)
@@ -237,12 +237,12 @@ export default function LiveMatches() {
       if (!matchesSport) {
         switch(urlSportId) {
           case 'football':
-            // American football - check for NFL in name but NOT soccer/football category
+            // nfl stuff, not soccer
             matchesSport = (nameLower.includes('nfl') || nameLower.includes('american football')) && 
                           !catLower.includes('football')
             break
           case 'soccer':
-            // Soccer - the "Football" category in API is actually soccer (European football)
+            // actual football (the one with the round ball)
             matchesSport = catLower === 'football' || 
                           catLower.includes('soccer') || 
                           catLower.includes('premier league') || 
@@ -286,7 +286,7 @@ export default function LiveMatches() {
 
       return matchesSearch && matchesFilter && matchesSport
     })
-  }, [games, filter, searchQuery, urlSportId, hiddenGameIds])
+  }, [games, filter, searchQuery, urlSportId, hiddenGameIds, now])
 
   const groupedGames = useMemo(() => {
     const sliced = filteredGames.slice(0, visibleCount)
