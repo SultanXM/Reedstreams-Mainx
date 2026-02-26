@@ -6,16 +6,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  
-  // 🟢 DUAL REWRITE: This handles both the JSON data and the Video Fragments
-  async rewrites() {
-    return [
-      {
-        source: '/api/v1/:path*',
-        destination: 'https://reedstreams-edge-v1.fly.dev/api/v1/:path*',
-      },
-    ]
-  },
 
   allowedDevOrigins: [
     'http://192.168.100.5:3000',

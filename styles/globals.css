@@ -1,3 +1,150 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* Shaka Player Custom Styling */
+[data-shaka-player-container] {
+  --shaka-player-accent-color: #8db902;
+  --shaka-player-background-color: rgba(0, 0, 0, 0.8);
+  --shaka-player-text-color: #ffffff;
+  --shaka-player-tooltip-background: rgba(0, 0, 0, 0.9);
+  --shaka-player-tooltip-color: #ffffff;
+  --shaka-player-control-bar-height: 48px;
+  --shaka-player-button-size: 40px;
+  --shaka-slider-active-color: #8db902;
+  --shaka-slider-inactive-color: rgba(255, 255, 255, 0.3);
+  --shaka-slider-buffered-color: rgba(255, 255, 255, 0.54);
+}
+
+/* Control panel styling */
+[data-shaka-player-container] .shaka-controls-container {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+  padding: 20px 16px 16px;
+}
+
+/* Buttons */
+[data-shaka-player-container] .shaka-controls-button-panel button {
+  color: white !important;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  margin: 0 2px;
+}
+
+[data-shaka-player-container] .shaka-controls-button-panel button:hover {
+  background-color: rgba(141, 185, 2, 0.2) !important;
+  color: #8db902 !important;
+}
+
+/* Time display */
+[data-shaka-player-container] .shaka-current-time,
+[data-shaka-player-container] .shaka-duration {
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Seek bar */
+[data-shaka-player-container] .shaka-seek-bar-container {
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+[data-shaka-player-container] .shaka-seek-bar-container:hover {
+  height: 8px;
+}
+
+[data-shaka-player-container] .shaka-seek-bar-container input[type="range"] {
+  cursor: pointer;
+}
+
+/* Volume bar */
+[data-shaka-player-container] .shaka-volume-bar-container {
+  height: 4px;
+  border-radius: 2px;
+}
+
+/* Spinner/loading */
+[data-shaka-player-container] .shaka-spinner-container {
+  display: none !important;
+}
+
+/* Overflow menu */
+[data-shaka-player-container] .shaka-overflow-menu,
+[data-shaka-player-container] .shaka-settings-menu {
+  background: rgba(0, 0, 0, 0.95) !important;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-shaka-player-container] .shaka-overflow-menu button,
+[data-shaka-player-container] .shaka-settings-menu button {
+  color: white !important;
+}
+
+[data-shaka-player-container] .shaka-overflow-menu button:hover,
+[data-shaka-player-container] .shaka-settings-menu button:hover {
+  background-color: rgba(141, 185, 2, 0.2) !important;
+}
+
+[data-shaka-player-container] .shaka-overflow-menu button[aria-selected="true"],
+[data-shaka-player-container] .shaka-settings-menu button[aria-selected="true"] {
+  color: #8db902 !important;
+}
+
+/* Range input styling */
+[data-shaka-player-container] input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+[data-shaka-player-container] input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #8db902;
+  cursor: pointer;
+  margin-top: -4px;
+  box-shadow: 0 0 10px rgba(141, 185, 2, 0.5);
+}
+
+[data-shaka-player-container] input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+[data-shaka-player-container] input[type="range"]:focus {
+  outline: none;
+}
+
+/* Cast button */
+[data-shaka-player-container] .shaka-cast-button {
+  color: white !important;
+}
+
+[data-shaka-player-container] .shaka-cast-button:hover {
+  color: #8db902 !important;
+}
+
+/* Buffering spinner animation override */
+@keyframes shaka-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Tooltip styling */
+[data-shaka-player-container] .shaka-tooltip {
+  background: rgba(0, 0, 0, 0.9) !important;
+  border-radius: 4px !important;
+  padding: 6px 10px !important;
+  font-size: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Big play button (for paused state) */
+[data-shaka-player-container] .shaka-play-button-container {
+  display: none;
+}

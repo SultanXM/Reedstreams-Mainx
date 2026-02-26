@@ -42,7 +42,6 @@ export default function StatusPage() {
       
       const data: ApiResponse = await res.json()
       
-      // check if response looks right
       if (
         data.categories && 
         Array.isArray(data.categories) && 
@@ -91,7 +90,7 @@ export default function StatusPage() {
               fontSize: '18px',
               margin: 0,
             }}>
-              checking...
+              Checking status...
             </p>
           </div>
         )}
@@ -100,19 +99,19 @@ export default function StatusPage() {
           <div style={{ textAlign: 'center' }}>
             <p style={{ 
               color: '#8db902', 
-              fontSize: '32px',
+              fontSize: '24px',
               fontWeight: 600,
               margin: '0 0 12px 0',
               lineHeight: 1.3,
             }}>
-              alright watch streamss bro
+              Service Operational
             </p>
             <p style={{ 
               color: '#444', 
               fontSize: '14px',
               margin: 0,
             }}>
-              {gameCount} streams ready
+              {gameCount} streams available
             </p>
           </div>
         )}
@@ -121,31 +120,23 @@ export default function StatusPage() {
           <div style={{ textAlign: 'center' }}>
             <p style={{ 
               color: '#ef4444', 
-              fontSize: '32px',
+              fontSize: '24px',
               fontWeight: 600,
               margin: '0 0 12px 0',
               lineHeight: 1.3,
             }}>
-              shit need a restart
+              Service Unavailable
             </p>
             <p style={{ 
               color: '#666', 
               fontSize: '14px',
               margin: '0 0 4px 0',
             }}>
-              text me
-            </p>
-            <p style={{ 
-              color: '#333', 
-              fontSize: '12px',
-              margin: 0,
-            }}>
-              sultan sleeping probably
+              Please try again later
             </p>
           </div>
         )}
 
-        {/* footer */}
         <div style={{
           marginTop: '60px',
           textAlign: 'center',
@@ -156,13 +147,13 @@ export default function StatusPage() {
             style={{
               background: 'transparent',
               border: 'none',
-              color: status === 'checking' ? '#333' : '#222',
+              color: status === 'checking' ? '#333' : '#444',
               cursor: status === 'checking' ? 'not-allowed' : 'pointer',
               fontSize: '12px',
               padding: '8px 16px',
             }}
           >
-            {status === 'checking' ? '...' : 'check again'}
+            {status === 'checking' ? 'Checking...' : 'Refresh'}
           </button>
           
           {lastCheck && (
@@ -171,7 +162,7 @@ export default function StatusPage() {
               fontSize: '11px',
               margin: '8px 0 0 0',
             }}>
-              checked {lastCheck.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              Last checked: {lastCheck.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </p>
           )}
         </div>

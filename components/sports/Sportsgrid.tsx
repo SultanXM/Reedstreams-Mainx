@@ -103,8 +103,8 @@ const MatchCard = React.memo(({ game, onImageError }: { game: Game; onImageError
               }} 
             />
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-              <span style={{ fontSize: '32px' }}>📺</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', background: '#1a1a1a' }}>
+              <span style={{ color: '#444', fontSize: '14px' }}>No Image</span>
             </div>
           )}
         </div>
@@ -120,7 +120,7 @@ MatchCard.displayName = 'MatchCard'
 
 const SportsCategorySelector = ({ loading }: { loading: boolean }) => {
   const sports = [
-    { id: 'football', name: 'Football 🔥', icon: '🏈' },
+    { id: 'football', name: 'Football', icon: '🏈' },
     { id: 'soccer', name: 'Soccer', icon: '⚽' },
     { id: 'basketball', name: 'Basketball', icon: '🏀' },
     { id: 'hockey', name: 'Ice Hockey', icon: '🏒' },
@@ -131,7 +131,7 @@ const SportsCategorySelector = ({ loading }: { loading: boolean }) => {
     { id: 'motorsports', name: 'Motorsports', icon: '🏎️' },
     { id: 'cricket', name: 'Cricket', icon: '🏏' },
     { id: '2026 winter olympics', name: 'Olympics', icon: '🎿' },
-    { id: 'combat sports', name: 'COMBAT SPORTS', icon: '🥋' },
+    { id: 'combat sports', name: 'Combat Sports', icon: '🥋' },
     { id: 'darts', name: 'Darts', icon: '🎯' },
     { id: '24/7 Streams', name: '24/7 Streams', icon: '📺' },
   ]
@@ -169,7 +169,7 @@ const MatchCarousel = ({ category, games, onImageError, icon: Icon }: { category
         <div className="title-block">
           {Icon && <Icon size={20} color="var(--accent-color)" />}
           <h2 className="section-title">{category}</h2>
-          {liveCount > 0 && <span className="live-count-tag">{liveCount} LIVE</span>}
+          {liveCount > 0 && <span className="live-count-tag">{liveCount} Live</span>}
         </div>
       </div>
       <div className="carousel-track">
@@ -207,7 +207,7 @@ function useRetryFetch<T>(
         if (attempt < maxRetries - 1) {
           await new Promise(r => setTimeout(r, retryDelay * (attempt + 1)))
         } else {
-          setError('Failed to load matches. API might be napping.')
+          setError('Unable to load content. Please try again.')
           setLoading(false)
         }
       }
@@ -328,7 +328,7 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
     // add popular section on top
     if (popularGames.length > 0) {
       result.push({
-        category: '🔥 Popular',
+        category: 'Popular',
         games: popularGames,
         icon: undefined
       })
@@ -409,8 +409,8 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
               alignItems: 'center',
               gap: '20px'
             }}>
-              <div style={{ fontSize: '48px' }}>😴</div>
-              <p>API is sleeping or something...</p>
+              <p style={{ fontSize: '18px', fontWeight: 500, color: '#999' }}>Connection Error</p>
+              <p style={{ fontSize: '14px', color: '#666' }}>Unable to load content</p>
               <button 
                 onClick={retry}
                 style={{
@@ -439,8 +439,8 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
               alignItems: 'center',
               gap: '20px'
             }}>
-              <div style={{ fontSize: '48px' }}>🤷‍♂️</div>
-              <p>No matches found right now.</p>
+              <p style={{ fontSize: '18px', fontWeight: 500, color: '#999' }}>No Content Available</p>
+              <p style={{ fontSize: '14px', color: '#666' }}>Check back later</p>
               <button 
                 onClick={retry}
                 style={{

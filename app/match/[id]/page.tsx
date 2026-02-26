@@ -355,7 +355,7 @@ function MatchPageContent() {
     // 2. Fallback: Fetch from API
     async function fetchMatchDetails() {
       try {
-        const res = await fetch('/api/v1/streams')
+        const res = await fetch('https://reedstreams-edge-v1.fly.dev/api/v1/streams')
         if (res.ok) {
           const data = await res.json()
           if (data.categories) {
