@@ -60,7 +60,7 @@ const pageStyles = `
     width: 36px;
     height: 36px;
     background: #1a1a1a;
-    border-radius: 6px; 
+    border-radius: 0; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -98,7 +98,7 @@ const pageStyles = `
     margin-top: 20px;
     background: #0a0a0a; 
     border: 1px solid #1a1a1a;
-    border-radius: 8px;
+    border-radius: 0;
     padding: 20px 25px; 
     display: flex;
     justify-content: space-between;
@@ -139,7 +139,7 @@ const pageStyles = `
     font-size: 11px;
     font-weight: 900;
     padding: 3px 8px;
-    border-radius: 4px;
+    border-radius: 0;
     text-transform: uppercase;
     animation: pulse-live 2s infinite;
   }
@@ -153,7 +153,7 @@ const pageStyles = `
     font-weight: 600;
     background: #111;
     padding: 4px 10px;
-    border-radius: 4px;
+    border-radius: 0;
     border: 1px solid #222;
   }
 
@@ -172,7 +172,7 @@ const pageStyles = `
     flex-direction: column;
     height: 700px;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 0;
   }
 
   /* LOADING SCREEN */
@@ -209,7 +209,7 @@ const pageStyles = `
     background: #111;
     border: 1px solid #222;
     width: 90%; max-width: 400px;
-    border-radius: 12px;
+    border-radius: 0;
     padding: 25px;
     position: relative;
     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
@@ -231,7 +231,7 @@ const pageStyles = `
     max-width: 450px;
     background: #000;
     border: 1px solid #8db902;
-    border-radius: 12px;
+    border-radius: 0;
     z-index: 20000; /* Ensure it stays above everything */
     padding: 16px;
     display: flex;
@@ -244,6 +244,22 @@ const pageStyles = `
   @keyframes alertSlideDown {
     from { transform: translate(-50%, -100%); opacity: 0; }
     to { transform: translate(-50%, 0); opacity: 1; }
+  }
+
+  /* DESKTOP/LAPTOP - Player at top after header */
+  @media (min-width: 1025px) {
+    .match-page-container {
+      padding-top: 0 !important;
+    }
+    .match-grid {
+      padding-top: 0 !important;
+    }
+    .player-section {
+      margin-top: 0 !important;
+    }
+    .player-wrapper {
+      border-radius: 0 !important;
+    }
   }
 
   /* MOBILE OPTIMIZATIONS */

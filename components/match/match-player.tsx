@@ -4,6 +4,11 @@ import { useEffect, useState, useMemo, useRef, useCallback } from "react"
 import { useUniversalAdBlocker } from "@/hooks/useUniversalAdBlocker"
 import { Clock, AlertCircle, Loader2, RefreshCw } from "lucide-react"
 import HLSPlayer from "./HLSPlayer"
+import ReedVideoJS from "./ReedVideoJS"
+import ShakaPlayer from "./ShakaPlayer"
+import PlayerSelector from "./player-selector"
+import { usePlayerPreference } from "@/hooks/usePlayerPreference"
+import { PlayerType } from "@/hooks/usePlayerPreference"
 
 const formatTime = (ms: number) => {
   const h = Math.floor(ms / 3600000)
@@ -21,10 +26,20 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
   const [playerState, setPlayerState] = useState<'countdown' | 'initial' | 'ready'>('initial')
   const [startTime, setStartTime] = useState<number | null>(null)
   const [timeRemaining, setTimeRemaining] = useState<number>(0)
-  const [retryAttempt, setRetryAttempt] = useState(0)
+  
+  // For seamless player switching
+  const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("hls")
+  const [resumeTime, setResumeTime] = useState<number | undefined>(undefined)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const playerContainerRef = useRef<HTMLDivElement>(null)
+  const { preferredPlayer, setPreferredPlayer } = usePlayerPreference()
+
+  // Sync preferred player with current player on initial load
+  useEffect(() => {
+    setCurrentPlayer(preferredPlayer)
+  }, [preferredPlayer])
 
   const hasFetched = useRef(false)
-  const playerContainerRef = useRef<HTMLDivElement>(null)
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // load match start time from cache
@@ -44,7 +59,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         }
       }
     } catch (e) {
-      // cache busted, whatever
+      // cache busted
     }
   }, [matchId])
 
@@ -108,7 +123,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
           return
         }
         
-        // wait before retry with exponential backoff
         const delay = baseDelay * Math.pow(1.5, attempt)
         await new Promise(r => setTimeout(r, delay))
       }
@@ -147,6 +161,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
   const handlePlayClick = () => {
     setPlayerState('ready')
+    setIsPlaying(true)
     const video = playerContainerRef.current?.querySelector('video') as HTMLVideoElement | null
     if (video) {
       video.muted = false
@@ -155,197 +170,257 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
   }
 
   const handleRetry = () => {
-    setRetryAttempt(c => c + 1)
     hasFetched.current = false
     setError(null)
     setLoading(true)
     fetchStream()
   }
 
+  // SEAMLESS PLAYER SWITCHING
+  const handlePlayerSwitch = useCallback((newPlayer: PlayerType) => {
+    if (newPlayer === currentPlayer) return;
+
+    // Capture current playback state before switching
+    const video = playerContainerRef.current?.querySelector('video') as HTMLVideoElement | null;
+    if (video && video.currentTime > 0) {
+      console.log(`[MatchPlayer] Switching players. Captured time: ${video.currentTime}, playing: ${!video.paused}`);
+      setResumeTime(video.currentTime);
+      setIsPlaying(!video.paused);
+    } else {
+      setResumeTime(undefined);
+    }
+
+    // Update both local state and preference
+    setCurrentPlayer(newPlayer);
+    setPreferredPlayer(newPlayer);
+  }, [currentPlayer, setPreferredPlayer]);
+
+  const handlePlayerError = (err: string) => {
+    setError(err)
+  }
+
   const countdownDisplay = useMemo(() => formatTime(timeRemaining), [timeRemaining])
 
-  // styles
-  const wrapperStyle = {
+  // Common styles
+  const wrapperStyle: React.CSSProperties = {
     width: '100%',
     aspectRatio: '16/9',
     background: '#000',
     color: 'white',
-    borderRadius: '12px',
+    borderRadius: 0,
     overflow: 'hidden',
-    position: 'relative' as const,
-    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-    border: '1px solid #1a1a1a',
+    position: 'relative',
   }
 
-  const stateContainerStyle = {
+  const stateContainerStyle: React.CSSProperties = {
     width: '100%',
     height: '100%',
     display: 'flex',
-    flexDirection: 'column' as const,
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    background: '#050505',
-    position: 'absolute' as const,
+    background: '#000',
+    position: 'absolute',
     top: 0,
     left: 0,
   }
 
-  const playOverlayStyle = {
-    position: 'absolute' as const,
+  const playOverlayStyle: React.CSSProperties = {
+    position: 'absolute',
     inset: 0,
-    background: 'rgba(0,0,0,0.4)',
-    zIndex: 100,
+    background: 'rgba(0,0,0,0.5)',
+    zIndex: 10,
     display: 'flex',
-    flexDirection: 'column' as const,
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
   }
 
-  const playCircleStyle = {
-    width: 80,
-    height: 80,
-    background: 'rgba(0,0,0,0.6)',
-    border: '2px solid #fff',
-    borderRadius: '50%',
+  const playCircleStyle: React.CSSProperties = {
+    width: 72,
+    height: 72,
+    background: 'rgba(0,0,0,0.7)',
+    border: '2px solid rgba(255,255,255,0.8)',
+    borderRadius: 0,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    transition: 'all 0.2s ease',
   }
 
-  const playTriangleStyle = {
+  const playTriangleStyle: React.CSSProperties = {
     width: 0,
     height: 0,
-    borderLeft: '24px solid white',
-    borderTop: '14px solid transparent',
-    borderBottom: '14px solid transparent',
-    marginLeft: 8,
+    borderLeft: '20px solid white',
+    borderTop: '12px solid transparent',
+    borderBottom: '12px solid transparent',
+    marginLeft: 6,
   }
 
-  const videoStageStyle = {
-    position: 'absolute' as const,
+  const videoStageStyle: React.CSSProperties = {
+    position: 'absolute',
     top: 0,
     left: 0,
     width: '100%',
     height: '100%',
   }
 
-  const hiddenStyle = { opacity: 0, pointerEvents: 'none' as const }
-  const visibleStyle = { opacity: 1, pointerEvents: 'auto' as const }
+  const hiddenStyle: React.CSSProperties = { opacity: 0, pointerEvents: 'none' }
+  const visibleStyle: React.CSSProperties = { opacity: 1, pointerEvents: 'auto' }
 
-  const countdownStyle = {
-    fontSize: 42,
-    fontWeight: 900,
-    color: '#8db902',
-    fontFamily: "'Courier New', monospace",
-    marginTop: 10,
-  }
-
-  const retryBtnStyle = {
-    marginTop: 20,
-    background: '#8db902',
+  const retryBtnStyle: React.CSSProperties = {
+    marginTop: 16,
+    background: '#fff',
     color: '#000',
-    padding: '10px 20px',
-    fontWeight: 900,
+    padding: '8px 16px',
+    fontWeight: 600,
     border: 'none',
-    borderRadius: 4,
+    borderRadius: 0,
     cursor: 'pointer',
     fontSize: 12,
   }
 
+  // Render the current player
+  const renderPlayer = () => {
+    if (!streamUrl) return null;
+
+    const commonProps = {
+      src: streamUrl,
+      matchId,
+      startTime: resumeTime,
+      autoPlay: isPlaying || playerState === 'ready',
+      onError: handlePlayerError,
+    };
+
+    switch (currentPlayer) {
+      case "videojs":
+        return <ReedVideoJS {...commonProps} />;
+      case "shaka":
+        return <ShakaPlayer {...commonProps} />;
+      case "hls":
+      default:
+        return <HLSPlayer {...commonProps} />;
+    }
+  };
+
+  // Countdown state
   if (playerState === 'countdown') {
     return (
       <div style={wrapperStyle}>
         <div style={stateContainerStyle}>
-          <Clock size={48} color="#8db902" style={{ animation: 'pulse 2s infinite' }} />
-          <h2 style={{ marginTop: 20, letterSpacing: '2px', fontWeight: 900, color: '#fff' }}>
-            EVENT STARTING SOON
+          <Clock size={40} color="#888" />
+          <h2 style={{ marginTop: 16, fontSize: 14, letterSpacing: 1, fontWeight: 600, color: '#888' }}>
+            STARTING SOON
           </h2>
-          <div style={countdownStyle}>{countdownDisplay}</div>
+          <div style={{ fontSize: 36, fontWeight: 700, color: '#fff', fontFamily: 'monospace', marginTop: 12 }}>
+            {countdownDisplay}
+          </div>
         </div>
       </div>
     )
   }
 
+  // Loading state
   if (loading && !streamUrl) {
     return (
       <div style={wrapperStyle}>
         <div style={stateContainerStyle}>
-          <Loader2 className="animate-spin" size={40} color="#8db902" />
-          <span style={{ marginTop: 15, fontWeight: 'bold', fontSize: 12, letterSpacing: '1px', color: '#fff' }}>
-            FINDING STREAM...
+          <Loader2 size={32} color="#666" style={{ animation: 'spin 1s linear infinite' }} />
+          <span style={{ marginTop: 12, fontWeight: 500, fontSize: 12, letterSpacing: 0.5, color: '#666' }}>
+            LOADING STREAM
           </span>
         </div>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     )
   }
 
+  // Error state
   if (error && !streamUrl) {
     return (
       <div style={wrapperStyle}>
         <div style={stateContainerStyle}>
-          <AlertCircle color="#ef4444" size={48} />
-          <span style={{ marginTop: 15, fontWeight: 'bold', color: '#fff', textAlign: 'center', padding: '0 20px' }}>
+          <AlertCircle color="#c44" size={40} />
+          <span style={{ marginTop: 12, fontWeight: 500, color: '#aaa', textAlign: 'center', padding: '0 20px', fontSize: 13 }}>
             {error}
           </span>
-          <button
-            onClick={handleRetry}
-            style={retryBtnStyle}
-          >
-            <RefreshCw size={14} style={{ marginRight: 6, display: 'inline' }} />
-            TRY AGAIN
+          <button onClick={handleRetry} style={retryBtnStyle}>
+            <RefreshCw size={12} style={{ marginRight: 6, display: 'inline', verticalAlign: 'middle' }} />
+            RETRY
           </button>
         </div>
       </div>
     )
   }
 
+  // Main player UI
   return (
-    <div style={wrapperStyle} ref={playerContainerRef}>
-
-      {playerState === 'initial' && (
-        <div
-          onClick={handlePlayClick}
-          style={playOverlayStyle}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(0,0,0,0.2)'
-            const circle = e.currentTarget.querySelector<HTMLDivElement>('[data-circle]')
-            if (circle) {
-              circle.style.borderColor = '#8db902'
-              circle.style.transform = 'scale(1.05)'
-            }
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(0,0,0,0.4)'
-            const circle = e.currentTarget.querySelector<HTMLDivElement>('[data-circle]')
-            if (circle) {
-              circle.style.borderColor = '#fff'
-              circle.style.transform = 'scale(1)'
-            }
-          }}
-        >
-          <div data-circle style={playCircleStyle}>
-            <div style={playTriangleStyle} />
+    <div>
+      {/* Player Container */}
+      <div style={wrapperStyle} ref={playerContainerRef}>
+        {/* Play Button Overlay */}
+        {playerState === 'initial' && (
+          <div
+            onClick={handlePlayClick}
+            style={playOverlayStyle}
+            onMouseEnter={(e) => {
+              const circle = e.currentTarget.querySelector<HTMLDivElement>('[data-circle]')
+              if (circle) {
+                circle.style.borderColor = '#fff'
+                circle.style.transform = 'scale(1.1)'
+                circle.style.background = 'rgba(0,0,0,0.9)'
+              }
+            }}
+            onMouseLeave={(e) => {
+              const circle = e.currentTarget.querySelector<HTMLDivElement>('[data-circle]')
+              if (circle) {
+                circle.style.borderColor = 'rgba(255,255,255,0.8)'
+                circle.style.transform = 'scale(1)'
+                circle.style.background = 'rgba(0,0,0,0.7)'
+              }
+            }}
+          >
+            <div data-circle style={playCircleStyle}>
+              <div style={playTriangleStyle} />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {streamUrl && (
-        <div
-          style={{
-            ...videoStageStyle,
-            ...(playerState === 'ready' ? visibleStyle : hiddenStyle),
-          }}
-        >
-          <HLSPlayer src={streamUrl} matchId={matchId} onError={(err) => setError(err)} />
-        </div>
-      )}
+        {/* Video Player - Always rendered when stream is ready */}
+        {streamUrl && (
+          <div
+            style={{
+              ...videoStageStyle,
+              ...(playerState === 'ready' ? visibleStyle : hiddenStyle),
+            }}
+          >
+            {renderPlayer()}
+          </div>
+        )}
+      </div>
 
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes pulse { 50% { opacity: 0.4; } }
-        .animate-spin { animation: spin 1s linear infinite; }
-      `}</style>
+      {/* Player Selector Bar - Always visible for instant switching */}
+      <div style={{ 
+        marginTop: 10, 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        background: '#0a0a0a',
+        padding: '8px 12px',
+        borderRadius: 0,
+      }}>
+        <div style={{ fontSize: 11, color: '#555' }}>
+          Player: <span style={{ color: '#888' }}>
+            {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : "Shaka"}
+          </span>
+        </div>
+        <PlayerSelector 
+          compact 
+          selected={currentPlayer} 
+          onSelect={handlePlayerSwitch} 
+        />
+      </div>
     </div>
   )
 }

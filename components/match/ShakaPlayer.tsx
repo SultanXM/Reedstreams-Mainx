@@ -7,18 +7,29 @@ import "shaka-player/dist/controls.css";
 interface ShakaPlayerProps {
   src: string;
   matchId?: string;
+  startTime?: number;
+  autoPlay?: boolean;
   onError?: (error: string) => void;
+  onReady?: () => void;
   onSuccess?: () => void;
 }
 
-export default function ShakaPlayer({ src, matchId, onError, onSuccess }: ShakaPlayerProps) {
+export default function ShakaPlayer({ 
+  src, 
+  matchId, 
+  startTime,
+  autoPlay = true,
+  onError, 
+  onReady,
+  onSuccess 
+}: ShakaPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<shaka.Player | null>(null);
   const uiRef = useRef<shaka.ui.Overlay | null>(null);
-  const cleanupFunctions = useRef<{ saveInterval?: NodeJS.Timeout }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasSeekedRef = useRef(false);
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const isMountedRef = useRef(true);
@@ -31,29 +42,6 @@ export default function ShakaPlayer({ src, matchId, onError, onSuccess }: ShakaP
     const video = videoRef.current;
     const container = containerRef.current;
 
-    // Playback position helpers
-    const getStorageKey = () => `video_position_match_${matchId || 'unknown'}`;
-
-    const savePosition = (currentTime: number) => {
-      if (!matchId) return;
-      try {
-        localStorage.setItem(getStorageKey(), currentTime.toString());
-      } catch (err) {
-        console.warn("Failed to save playback position:", err);
-      }
-    };
-
-    const loadPosition = (): number | null => {
-      if (!matchId) return null;
-      try {
-        const saved = localStorage.getItem(getStorageKey());
-        return saved ? parseFloat(saved) : null;
-      } catch (err) {
-        return null;
-      }
-    };
-
-    // Install Shaka polyfills
     shaka.polyfill.installAll();
 
     const initPlayer = async () => {
@@ -66,12 +54,11 @@ export default function ShakaPlayer({ src, matchId, onError, onSuccess }: ShakaP
           throw new Error("Video or container element not found");
         }
 
-        // Check browser support
         if (!shaka.Player.isBrowserSupported()) {
           throw new Error("Your browser is not supported for video playback");
         }
 
-        // Cleanup any existing player
+        // Cleanup existing
         if (uiRef.current) {
           try {
             uiRef.current.destroy();
@@ -82,18 +69,15 @@ export default function ShakaPlayer({ src, matchId, onError, onSuccess }: ShakaP
           playerRef.current = null;
         }
 
-        // Create new player and UI
         const player = new shaka.Player();
         playerRef.current = player;
 
         const ui = new shaka.ui.Overlay(player, container, video);
         uiRef.current = ui;
 
-        // Attach player to video element
         await player.attach(video);
         if (signal.aborted) return;
 
-        // Configure UI controls
         ui.configure({
           controlPanelElements: [
             "play_pause",
@@ -108,11 +92,10 @@ export default function ShakaPlayer({ src, matchId, onError, onSuccess }: ShakaP
           seekBarColors: {
             base: "rgba(255, 255, 255, 0.3)",
             buffered: "rgba(255, 255, 255, 0.54)",
-            played: "rgb(141, 185, 2)", // Your brand green color
+            played: "rgb(141, 185, 2)",
           },
         });
 
-        // Configure player streaming settings
         player.configure({
           streaming: {
             safeSeekOffset: 30,
@@ -127,11 +110,8 @@ export default function ShakaPlayer({ src, matchId, onError, onSuccess }: ShakaP
           },
         });
 
-        // Error handling
         player.addEventListener("error", (event) => {
           const shakaError = (event as any).detail;
-          
-          // Treat memory (1001) and minor network gaps (3016) as non-fatal
           const isRecoverable =
             shakaError.severity === shaka.util.Error.Severity.RECOVERABLE ||
             shakaError.code === 1001 ||
@@ -149,36 +129,28 @@ export default function ShakaPlayer({ src, matchId, onError, onSuccess }: ShakaP
           }
         });
 
-        // Load the stream
         await player.load(src);
         if (signal.aborted) return;
 
-        // Restore playback position for VOD (not live)
-        const savedPosition = loadPosition();
-        if (savedPosition && savedPosition > 0 && video.duration && !isNaN(video.duration)) {
-          video.currentTime = savedPosition;
+        console.log("[ShakaPlayer] Loaded, seeking to:", startTime);
+        
+        // Seek to start time if provided
+        if (startTime && startTime > 0 && !hasSeekedRef.current) {
+          hasSeekedRef.current = true;
+          video.currentTime = startTime;
         }
 
-        // Start playback
-        try {
-          await video.play();
-        } catch (playErr) {
-          console.warn("Autoplay blocked:", playErr);
-        }
-
-        // Save position every 5 seconds
-        const saveInterval = setInterval(() => {
-          if (video && video.currentTime > 0 && !video.paused && video.duration && !isNaN(video.duration)) {
-            savePosition(video.currentTime);
+        if (autoPlay) {
+          try {
+            await video.play();
+          } catch (playErr) {
+            console.warn("Autoplay blocked:", playErr);
           }
-        }, 5000);
-
-        cleanupFunctions.current.saveInterval = saveInterval;
-
-        if (!signal.aborted) {
-          setIsLoading(false);
-          onSuccess?.();
         }
+
+        setIsLoading(false);
+        onReady?.();
+        onSuccess?.();
       } catch (err) {
         if (signal.aborted) return;
         const errorMsg = err instanceof Error ? err.message : "Failed to load video";
@@ -196,24 +168,6 @@ export default function ShakaPlayer({ src, matchId, onError, onSuccess }: ShakaP
         abortControllerRef.current.abort();
       }
 
-      // Clear save interval
-      if (cleanupFunctions.current.saveInterval) {
-        clearInterval(cleanupFunctions.current.saveInterval);
-      }
-
-      // Save final position before destroying
-      if (video && matchId && video.currentTime > 0) {
-        try {
-          localStorage.setItem(
-            `video_position_match_${matchId}`,
-            video.currentTime.toString()
-          );
-        } catch (e) {
-          console.warn("Failed to save final position:", e);
-        }
-      }
-
-      // Destroy UI and player
       const ui = uiRef.current;
       if (ui) {
         try {
@@ -225,20 +179,28 @@ export default function ShakaPlayer({ src, matchId, onError, onSuccess }: ShakaP
         playerRef.current = null;
       }
 
-      // Clear video source
       if (video) {
         video.src = "";
         video.load();
       }
     };
-  }, [src, matchId, onError, onSuccess]);
+  }, [src]); // Only re-run on src change
+
+  // Handle startTime updates
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video && startTime && startTime > 0 && !hasSeekedRef.current) {
+      hasSeekedRef.current = true;
+      video.currentTime = startTime;
+    }
+  }, [startTime]);
 
   if (error) {
     return (
-      <div className="relative w-full h-full bg-black flex items-center justify-center">
-        <div className="text-center p-4">
-          <div className="text-red-500 font-semibold mb-2">Playback Error</div>
-          <p className="text-gray-400 text-sm">{error}</p>
+      <div style={{ width: '100%', height: '100%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ color: '#c44', fontWeight: 600, marginBottom: 8 }}>Playback Error</div>
+          <p style={{ color: '#666', fontSize: 12 }}>{error}</p>
         </div>
       </div>
     );
@@ -247,23 +209,26 @@ export default function ShakaPlayer({ src, matchId, onError, onSuccess }: ShakaP
   return (
     <div 
       ref={containerRef}
-      className="relative w-full h-full bg-black"
+      style={{ width: '100%', height: '100%', background: '#000', position: 'relative', borderRadius: 0 }}
       data-shaka-player-container
-      data-shaka-player-cast-receiver-id="930DEB06"
     >
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center z-50 bg-black/80">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#8db902]/30 border-t-[#8db902]" />
+        <div style={{
+          position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 50, background: 'rgba(0,0,0,0.8)'
+        }}>
+          <div style={{ width: 40, height: 40, border: '3px solid rgba(255,255,255,0.1)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
         </div>
       )}
       <video
         ref={videoRef}
-        className={`w-full h-full object-contain transition-opacity duration-300 ${isLoading ? "opacity-0" : "opacity-100"}`}
+        style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 0 }}
         playsInline
-        autoPlay
-        muted
+        autoPlay={autoPlay}
+        muted={isLoading}
         data-shaka-player
       />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
