@@ -3,8 +3,7 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react"
 import { useUniversalAdBlocker } from "@/hooks/useUniversalAdBlocker"
 import { Clock, AlertCircle, Loader2, RefreshCw } from "lucide-react"
-import ShakaPlayer from "./ShakaPlayer"
-import { API_BASE_URL } from "@/config/api"
+import HLSPlayer from "./HLSPlayer"
 
 const formatTime = (ms: number) => {
   const h = Math.floor(ms / 3600000)
@@ -69,7 +68,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     return () => clearInterval(timer)
   }, [startTime, playerState])
 
-  // fetch stream directly from edge server
+  // fetch stream with auto-retry logic
   const fetchStream = useCallback(async () => {
     if (playerState === 'countdown') return
     
@@ -81,31 +80,25 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
-        // Get signed URL directly from edge server
-        const signedUrlRes = await fetch(`${API_BASE_URL}/api/v1/streams/ppvsu/${matchId}/signed-url`, {
+        const res = await fetch(`/api/reedstreams/stream/${matchId}`, {
           cache: 'no-store',
-          headers: {
-            'Accept': 'application/json',
-          }
         })
 
-        if (!signedUrlRes.ok) throw new Error("Stream not ready")
+        if (!res.ok) throw new Error("Stream not ready")
 
-        const signedData = await signedUrlRes.json()
+        const streams = await res.json()
         
-        if (!signedData.signed_url) {
+        if (Array.isArray(streams) && streams.length > 0 && streams[0].embedUrl) {
+          setStreamUrl(streams[0].embedUrl)
+          setLoading(false)
+          return
+        } else if (streams.embedUrl) {
+          setStreamUrl(streams.embedUrl)
+          setLoading(false)
+          return
+        } else {
           throw new Error("No stream URL in response")
         }
-
-        // Build full URL
-        const fullSignedUrl = signedData.signed_url.startsWith('http') 
-          ? signedData.signed_url 
-          : `${API_BASE_URL}${signedData.signed_url}`
-
-        setStreamUrl(fullSignedUrl)
-        setLoading(false)
-        return
-
       } catch (e) {
         const isLastAttempt = attempt === maxRetries - 1
         
@@ -344,12 +337,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
             ...(playerState === 'ready' ? visibleStyle : hiddenStyle),
           }}
         >
-          <ShakaPlayer 
-            src={streamUrl} 
-            matchId={matchId}
-            onError={(err) => setError(err)}
-            onSuccess={() => console.log('[ShakaPlayer] Stream loaded successfully')}
-          />
+          <HLSPlayer src={streamUrl} matchId={matchId} onError={(err) => setError(err)} />
         </div>
       )}
 
