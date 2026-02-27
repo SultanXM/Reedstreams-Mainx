@@ -242,7 +242,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     height: 72,
     background: 'rgba(0,0,0,0.7)',
     border: '2px solid rgba(255,255,255,0.8)',
-    borderRadius: 0,
+    borderRadius: '50%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -370,6 +370,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                 circle.style.borderColor = '#fff'
                 circle.style.transform = 'scale(1.1)'
                 circle.style.background = 'rgba(0,0,0,0.9)'
+                circle.style.borderRadius = '50%'
               }
             }}
             onMouseLeave={(e) => {
@@ -378,6 +379,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                 circle.style.borderColor = 'rgba(255,255,255,0.8)'
                 circle.style.transform = 'scale(1)'
                 circle.style.background = 'rgba(0,0,0,0.7)'
+                circle.style.borderRadius = '50%'
               }
             }}
           >

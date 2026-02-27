@@ -39,7 +39,7 @@
     background: #000;
     overflow: hidden;
     /* SHARP CORNERS */
-    border-radius: 0; 
+    border-radius: 50%; 
 }
 
 .video-iframe {
