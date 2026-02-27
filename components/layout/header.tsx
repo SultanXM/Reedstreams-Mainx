@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { Search, Menu, X, AlertCircle, Calendar, Home, Heart, Play, Send } from 'lucide-react'
 import '../../styles/header.css'
 
-const API_BASE = 'https://reedstreams-edge-v1.fly.dev/api/v1/streams'
+const API_BASE = 'https://reedstreams-edge-v2.fly.dev/api/v1/streams'
 
 interface Game {
     id: number;

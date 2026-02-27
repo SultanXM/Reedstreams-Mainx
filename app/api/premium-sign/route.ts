@@ -8,7 +8,7 @@ export async function GET(request: Request) {
 
     try {
         // We do the fetch from the SERVER where there is no CSP
-        const response = await fetch(`https://reedstreams-edge-v1.fly.dev/api/v1/streams/ppvsu/${id}/signed-url`);
+        const response = await fetch(`https://reedstreams-edge-v2.fly.dev/api/v1/streams/ppvsu/${id}/signed-url`);
         const data = await response.json();
         return NextResponse.json(data);
     } catch (error) {
