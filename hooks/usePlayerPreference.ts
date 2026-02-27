@@ -7,7 +7,7 @@ export type PlayerType = "hls" | "videojs" | "shaka";
 const STORAGE_KEY = "reedstreams_preferred_player";
 
 export function usePlayerPreference() {
-  const [preferredPlayer, setPreferredPlayerState] = useState<PlayerType>("hls");
+  const [preferredPlayer, setPreferredPlayerState] = useState<PlayerType>("shaka");
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load from localStorage on mount

@@ -28,7 +28,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
   const [timeRemaining, setTimeRemaining] = useState<number>(0)
   
   // For seamless player switching
-  const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("hls")
+  const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("shaka")
   const [resumeTime, setResumeTime] = useState<number | undefined>(undefined)
   const [isPlaying, setIsPlaying] = useState(false)
   const playerContainerRef = useRef<HTMLDivElement>(null)
