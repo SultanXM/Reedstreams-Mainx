@@ -500,11 +500,9 @@ function MatchPageContent() {
                   <div className="meta-row">
                     <span className="live-tag">{t.live || "LIVE"}</span>
                     {startTime && (<span className="time-tag"><Clock size={12} /> {startTime}</span>)}
-                    {viewCount > 0 && (
-                      <span className="views-tag" style={{color:'#888',fontSize:'13px',display:'flex',alignItems:'center',gap:'6px',fontWeight:600,background:'#111',padding:'4px 10px',borderRadius:'0',border:'1px solid #222'}}>
-                        <Eye size={12} /> {formatViewCount(viewCount)} watching
-                      </span>
-                    )}
+                    <span className="views-tag" style={{color:'#888',fontSize:'13px',display:'flex',alignItems:'center',gap:'6px',fontWeight:600,background:'#111',padding:'4px 10px',borderRadius:'0',border:'1px solid #222'}}>
+                      <Eye size={12} /> {formatViewCount(viewCount)} watching
+                    </span>
                   </div>
                   <h1 className="match-main-title">{matchTitle}</h1>
                 </div>
