@@ -27,6 +27,8 @@ import Header from "@/components/layout/header"
 
 // 🔥 IMPORT LANGUAGE HOOK
 import { useLanguage } from "@/context/language-context"
+import { incrementView, getViewCount, formatViewCount } from "@/lib/views"
+import { Eye } from "lucide-react"
 
 // 🔥 RESPONSIVE CSS ENGINE
 const pageStyles = `
@@ -346,7 +348,23 @@ function MatchPageContent() {
   const [matchTitle, setMatchTitle] = useState("Loading Stream...")
   const [startTime, setStartTime] = useState<string | null>(null)
   
+  // VIEWS COUNTER
+  const [viewCount, setViewCount] = useState<number>(0)
+  
   useEffect(() => {
+    // 🔥 TRACK VIEW - increment when page loads
+    const trackView = async () => {
+      const views = await incrementView(matchId)
+      setViewCount(views)
+    }
+    trackView()
+    
+    // Refresh view count every 30 seconds to see updates from other users
+    const viewInterval = setInterval(async () => {
+      const views = await getViewCount(matchId)
+      setViewCount(views)
+    }, 30000)
+    
     // 1. Try Session Storage first
     const stored = sessionStorage.getItem("currentMatch")
     if (stored) {
@@ -416,8 +434,13 @@ function MatchPageContent() {
           return prev - 1;
         });
       }, 1000);
-      return () => clearInterval(countdown);
+      return () => {
+        clearInterval(countdown);
+        clearInterval(viewInterval);
+      };
     }
+    
+    return () => clearInterval(viewInterval);
   }, [])
 
   // SHARING LOGIC
@@ -474,7 +497,15 @@ function MatchPageContent() {
               <div className="player-wrapper"><MatchPlayer matchId={matchId} /></div>
               <div className="info-bar">
                 <div className="match-title-group">
-                  <div className="meta-row"><span className="live-tag">{t.live || "LIVE"}</span>{startTime && (<span className="time-tag"><Clock size={12} /> {startTime}</span>)}</div>
+                  <div className="meta-row">
+                    <span className="live-tag">{t.live || "LIVE"}</span>
+                    {startTime && (<span className="time-tag"><Clock size={12} /> {startTime}</span>)}
+                    {viewCount > 0 && (
+                      <span className="views-tag" style={{color:'#888',fontSize:'13px',display:'flex',alignItems:'center',gap:'6px',fontWeight:600,background:'#111',padding:'4px 10px',borderRadius:'0',border:'1px solid #222'}}>
+                        <Eye size={12} /> {formatViewCount(viewCount)} watching
+                      </span>
+                    )}
+                  </div>
                   <h1 className="match-main-title">{matchTitle}</h1>
                 </div>
                 <div style={{display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'10px', width: '100%', flex: '1', maxWidth: '500px'}}>
