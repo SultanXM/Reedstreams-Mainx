@@ -2,12 +2,42 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
-import { Trophy, Clock, RefreshCw } from 'lucide-react'
+import { Trophy, Clock, RefreshCw, Eye } from 'lucide-react'
 import '../../styles/Sportsgrid.css'
 
 import { API_STREAMS_URL } from '@/config/api'
 
 const API_URL = API_STREAMS_URL
+
+// View counter utility
+async function fetchViewCounts(matchIds: number[]): Promise<Map<number, number>> {
+  if (matchIds.length === 0) return new Map()
+  try {
+    const res = await fetch('/api/views/batch/count', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ match_ids: matchIds.map(String) })
+    })
+    if (!res.ok) throw new Error('Failed to fetch view counts')
+    const data = await res.json()
+    const counts = new Map<number, number>()
+    if (data.counts) {
+      data.counts.forEach((item: { match_id: string; views: number }) => {
+        counts.set(parseInt(item.match_id), item.views)
+      })
+    }
+    return counts
+  } catch (err) {
+    console.error('[Views] Error fetching counts:', err)
+    return new Map()
+  }
+}
+
+function formatViewCount(count: number): string {
+  if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
+  if (count >= 1000) return (count / 1000).toFixed(1) + 'K'
+  return count.toString()
+}
 
 interface Game {
   id: number
@@ -75,7 +105,7 @@ const SkeletonMatchCard = () => (
   </div>
 )
 
-const MatchCard = React.memo(({ game, onImageError }: { game: Game; onImageError: (id: number) => void }) => {
+const MatchCard = React.memo(({ game, viewCount, onImageError }: { game: Game; viewCount?: number; onImageError: (id: number) => void }) => {
   const [imageError, setImageError] = useState(false)
   const live = isLive(game.start_time, game.end_time)
   const alwaysLive = isAlwaysLive(game.category)
@@ -91,6 +121,12 @@ const MatchCard = React.memo(({ game, onImageError }: { game: Game; onImageError
             <span className={`status-badge ${live || alwaysLive ? 'live' : 'upcoming'}`}>
               {live || alwaysLive ? 'LIVE' : formatTime(game.start_time)}
             </span>
+            {(viewCount !== undefined && viewCount > 0) && (
+              <span className="view-count-badge">
+                <Eye size={10} />
+                {formatViewCount(viewCount)}
+              </span>
+            )}
           </div>
           {!imageError ? (
             <img 
@@ -160,7 +196,7 @@ const SportsCategorySelector = ({ loading }: { loading: boolean }) => {
   )
 }
 
-const MatchCarousel = ({ category, games, onImageError, icon: Icon }: { category: string, games: Game[], onImageError: (id: number) => void, icon?: React.ComponentType<{size: number, color: string}> }) => {
+const MatchCarousel = ({ category, games, viewCounts, onImageError, icon: Icon }: { category: string, games: Game[], viewCounts: Map<number, number>, onImageError: (id: number) => void, icon?: React.ComponentType<{size: number, color: string}> }) => {
   const liveCount = games.filter(g => isLive(g.start_time, g.end_time) || isAlwaysLive(g.category)).length
 
   return (
@@ -174,7 +210,7 @@ const MatchCarousel = ({ category, games, onImageError, icon: Icon }: { category
       </div>
       <div className="carousel-track">
         {games.map(game => (
-          <MatchCard key={game.id} game={game} onImageError={onImageError} />
+          <MatchCard key={game.id} game={game} viewCount={viewCounts.get(game.id)} onImageError={onImageError} />
         ))}
       </div>
     </section>
@@ -227,6 +263,7 @@ function useRetryFetch<T>(
 
 export default function SportsGrid({ initialData }: { initialData?: InitialData }) {
   const [hiddenGameIds, setHiddenGameIds] = useState<Set<number>>(new Set())
+  const [viewCounts, setViewCounts] = useState<Map<number, number>>(new Map())
 
   const fetchCategories = useCallback(async () => {
     const res = await fetch(API_URL)
@@ -248,6 +285,22 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
   const handleImageError = useCallback((id: number) => {
     setHiddenGameIds(prev => new Set(prev).add(id))
   }, [])
+  
+  // Fetch view counts for all games
+  useEffect(() => {
+    const allGames = finalCategories.flatMap(cat => cat.games)
+    if (allGames.length === 0) return
+    
+    const loadViewCounts = async () => {
+      const counts = await fetchViewCounts(allGames.map(g => g.id))
+      setViewCounts(counts)
+    }
+    
+    loadViewCounts()
+    // Refresh view counts every 30 seconds
+    const interval = setInterval(loadViewCounts, 30000)
+    return () => clearInterval(interval)
+  }, [finalCategories])
 
   // organize games so they look nice
   const organizedCategories = useMemo(() => {
@@ -465,6 +518,7 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
                 key={cat.category}
                 category={cat.category}
                 games={cat.games}
+                viewCounts={viewCounts}
                 onImageError={handleImageError}
                 icon={cat.icon}
               />

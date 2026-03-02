@@ -3,10 +3,40 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Clock, ChevronRight, Search, X, Calendar, ChevronDown, RefreshCw } from 'lucide-react'
+import { ArrowLeft, Clock, ChevronRight, Search, X, Calendar, ChevronDown, RefreshCw, Eye } from 'lucide-react'
 import '../../styles/live-matches.css'
 
 const API_URL = '/api/reedstreams/games'
+
+// View counter utility
+async function fetchViewCounts(matchIds: number[]): Promise<Map<number, number>> {
+  if (matchIds.length === 0) return new Map()
+  try {
+    const res = await fetch('/api/views/batch/count', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ match_ids: matchIds.map(String) })
+    })
+    if (!res.ok) throw new Error('Failed to fetch view counts')
+    const data = await res.json()
+    const counts = new Map<number, number>()
+    if (data.counts) {
+      data.counts.forEach((item: { match_id: string; views: number }) => {
+        counts.set(parseInt(item.match_id), item.views)
+      })
+    }
+    return counts
+  } catch (err) {
+    console.error('[Views] Error fetching counts:', err)
+    return new Map()
+  }
+}
+
+function formatViewCount(count: number): string {
+  if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
+  if (count >= 1000) return (count / 1000).toFixed(1) + 'K'
+  return count.toString()
+}
 
 interface Game {
   id: number
@@ -57,7 +87,7 @@ const SkeletonRow = () => (
   </div>
 )
 
-const MatchRow = React.memo(({ game, onImageError, currentTime }: { game: Game; onImageError: (id: number) => void; currentTime: number }) => {
+const MatchRow = React.memo(({ game, viewCount, onImageError, currentTime }: { game: Game; viewCount?: number; onImageError: (id: number) => void; currentTime: number }) => {
   const [imageError, setImageError] = useState(false)
   const live = isLive(game.start_time, game.end_time, currentTime)
 
@@ -85,7 +115,15 @@ const MatchRow = React.memo(({ game, onImageError, currentTime }: { game: Game; 
         </div>
         <div className="row-content-wrapper">
           <div className="row-info">
-            <div className="row-category">{game.category}</div>
+            <div className="row-category">
+              {game.category}
+              {(viewCount !== undefined && viewCount > 0) && (
+                <span className="row-view-count">
+                  <Eye size={10} />
+                  {formatViewCount(viewCount)}
+                </span>
+              )}
+            </div>
             <div className="row-title">{game.name}</div>
           </div>
           <div className="row-meta-col">
@@ -127,6 +165,7 @@ export default function LiveMatches() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [now, setNow] = useState(Date.now())
+  const [viewCounts, setViewCounts] = useState<Map<number, number>>(new Map())
 
   // update "now" every minute so live badges work
   useEffect(() => {
@@ -135,6 +174,21 @@ export default function LiveMatches() {
     }, 60000)
     return () => clearInterval(interval)
   }, [])
+  
+  // Fetch view counts for all games
+  useEffect(() => {
+    if (games.length === 0) return
+    
+    const loadViewCounts = async () => {
+      const counts = await fetchViewCounts(games.map(g => g.id))
+      setViewCounts(counts)
+    }
+    
+    loadViewCounts()
+    // Refresh view counts every 30 seconds
+    const interval = setInterval(loadViewCounts, 30000)
+    return () => clearInterval(interval)
+  }, [games])
 
   const fetchData = async () => {
     setLoading(true)
@@ -370,7 +424,7 @@ export default function LiveMatches() {
                     </div>
                     <div className="matches-list-container">
                       {dateGames.map(g => (
-                        <MatchRow key={g.id} game={g} onImageError={handleImageError} currentTime={now} />
+                        <MatchRow key={g.id} game={g} viewCount={viewCounts.get(g.id)} onImageError={handleImageError} currentTime={now} />
                       ))}
                     </div>
                   </div>

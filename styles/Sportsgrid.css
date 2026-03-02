@@ -178,6 +178,20 @@
 .status-badge.live { background: #e00; color: #fff; box-shadow: 0 0 10px rgba(220,0,0,0.5); }
 .status-badge.upcoming { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); color: #ddd; border: 1px solid rgba(255,255,255,0.1); }
 
+.view-count-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0,0,0,0.7);
+  padding: 4px 8px;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
 .logos-wrapper { display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%; }
 .team-logo {
   width: 55px; height: 55px;

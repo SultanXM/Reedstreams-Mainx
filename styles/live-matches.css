@@ -173,6 +173,23 @@ body {
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.row-view-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .row-title {
