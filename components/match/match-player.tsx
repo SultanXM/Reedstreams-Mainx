@@ -293,14 +293,15 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
       onError: handlePlayerError,
     };
 
+    // Add key to force remount when switching players for clean state
     switch (currentPlayer) {
       case "videojs":
-        return <ReedVideoJS {...commonProps} />;
+        return <ReedVideoJS key={`videojs-${matchId}`} {...commonProps} />;
       case "shaka":
-        return <ShakaPlayer {...commonProps} />;
+        return <ShakaPlayer key={`shaka-${matchId}`} {...commonProps} />;
       case "hls":
       default:
-        return <HLSPlayer {...commonProps} />;
+        return <HLSPlayer key={`hls-${matchId}`} {...commonProps} />;
     }
   };
 

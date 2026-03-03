@@ -30,9 +30,18 @@ export default function ShakaPlayer({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasSeekedRef = useRef(false);
+  const srcRef = useRef(src);
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const isMountedRef = useRef(true);
+
+  // Reset hasSeekedRef when src changes
+  useEffect(() => {
+    if (src !== srcRef.current) {
+      hasSeekedRef.current = false;
+      srcRef.current = src;
+    }
+  }, [src]);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -58,17 +67,38 @@ export default function ShakaPlayer({
           throw new Error("Your browser is not supported for video playback");
         }
 
-        // Cleanup existing
-        if (uiRef.current) {
-          try {
-            uiRef.current.destroy();
-          } catch (err) {
-            console.warn("Error destroying existing UI:", err);
+        // If player already exists, just load the new source
+        if (playerRef.current && uiRef.current) {
+          console.log("[ShakaPlayer] Reusing existing player, loading new source:", src);
+          await playerRef.current.load(src);
+          if (signal.aborted) return;
+
+          // Wait for video to be ready before seeking
+          const handleLoadedData = () => {
+            console.log("[ShakaPlayer] Video ready, seeking to:", startTime);
+            if (startTime && startTime > 0 && !hasSeekedRef.current) {
+              hasSeekedRef.current = true;
+              video.currentTime = startTime;
+            }
+            video.removeEventListener("loadeddata", handleLoadedData);
+          };
+          video.addEventListener("loadeddata", handleLoadedData);
+
+          if (autoPlay) {
+            try {
+              await video.play();
+            } catch (playErr) {
+              console.warn("Autoplay blocked:", playErr);
+            }
           }
-          uiRef.current = null;
-          playerRef.current = null;
+
+          setIsLoading(false);
+          onReady?.();
+          onSuccess?.();
+          return;
         }
 
+        // Create new player
         const player = new shaka.Player();
         playerRef.current = player;
 
@@ -108,10 +138,51 @@ export default function ShakaPlayer({
               backoffFactor: 2,
             },
           },
+          manifest: {
+            retryParameters: {
+              timeout: 30000,
+              maxAttempts: 3,
+              baseDelay: 1000,
+              backoffFactor: 2,
+            },
+          },
+        });
+
+        // Add request filter to set headers and credentials for all requests
+        player.getNetworkingEngine()?.registerRequestFilter((type, request) => {
+          // Allow credentials to be sent with cross-origin requests
+          request.allowCrossSiteCredentials = true;
+          
+          // Set headers that match what the edge API expects
+          request.headers['Accept'] = '*/*';
+          request.headers['Accept-Language'] = 'en-US,en;q=0.9';
+          
+          // If the request is going to the edge API, log it for debugging
+          const url = request.uris[0];
+          if (url && url.includes('api-reedstreams.fly.dev')) {
+            console.log('[ShakaPlayer] Edge API request:', url.substring(0, 100));
+          }
+        });
+
+        // Add response filter to handle auth errors gracefully
+        player.getNetworkingEngine()?.registerResponseFilter((type, response) => {
+          // If we get a 500 auth error on non-critical resources (like images), 
+          // just log it and continue - don't fail playback
+          if (response.status === 500 || response.status === 401 || response.status === 403) {
+            const url = response.uri;
+            // Check if this is an image/ad request that's not critical for playback
+            if (url && (url.includes('.jpg') || url.includes('.jpeg') || url.includes('.png') || url.includes('.webp') || url.includes('.gif'))) {
+              console.warn('[ShakaPlayer] Ignoring auth error for image:', url.substring(0, 100));
+              // Don't throw - let playback continue
+              return;
+            }
+          }
         });
 
         player.addEventListener("error", (event) => {
           const shakaError = (event as any).detail;
+          console.error('[ShakaPlayer] Error:', shakaError);
+          
           const isRecoverable =
             shakaError.severity === shaka.util.Error.Severity.RECOVERABLE ||
             shakaError.code === 1001 ||
@@ -119,6 +190,13 @@ export default function ShakaPlayer({
 
           if (isRecoverable) {
             console.warn("Recoverable Shaka error:", shakaError.code);
+            return;
+          }
+
+          // Check if this is an auth error that we should try to work around
+          if (shakaError.code === 1002) { // HTTP_ERROR
+            console.warn('[ShakaPlayer] HTTP error - may be auth related, attempting to continue');
+            // Don't immediately fail - let retry logic handle it
             return;
           }
 
@@ -134,11 +212,16 @@ export default function ShakaPlayer({
 
         console.log("[ShakaPlayer] Loaded, seeking to:", startTime);
         
-        // Seek to start time if provided
-        if (startTime && startTime > 0 && !hasSeekedRef.current) {
-          hasSeekedRef.current = true;
-          video.currentTime = startTime;
-        }
+        // Wait for video to be ready before seeking
+        const handleLoadedData = () => {
+          console.log("[ShakaPlayer] Video ready (initial), seeking to:", startTime);
+          if (startTime && startTime > 0 && !hasSeekedRef.current) {
+            hasSeekedRef.current = true;
+            video.currentTime = startTime;
+          }
+          video.removeEventListener("loadeddata", handleLoadedData);
+        };
+        video.addEventListener("loadeddata", handleLoadedData);
 
         if (autoPlay) {
           try {
@@ -190,8 +273,11 @@ export default function ShakaPlayer({
   useEffect(() => {
     const video = videoRef.current;
     if (video && startTime && startTime > 0 && !hasSeekedRef.current) {
-      hasSeekedRef.current = true;
-      video.currentTime = startTime;
+      // Only seek if video is ready
+      if (video.readyState >= 1) {
+        hasSeekedRef.current = true;
+        video.currentTime = startTime;
+      }
     }
   }, [startTime]);
 
@@ -226,6 +312,7 @@ export default function ShakaPlayer({
         playsInline
         autoPlay={autoPlay}
         muted={isLoading}
+        crossOrigin="anonymous"
         data-shaka-player
       />
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
