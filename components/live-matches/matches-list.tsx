@@ -6,13 +6,15 @@ import Link from 'next/link'
 import { ArrowLeft, Clock, ChevronRight, Search, X, Calendar, ChevronDown, RefreshCw, Eye } from 'lucide-react'
 import '../../styles/live-matches.css'
 
-const API_URL = '/api/reedstreams/games'
+import { API_STREAMS_URL } from '@/config/api'
+
+const API_URL = 'https://api.reedstreams.live/reedstreams/games'
 
 // View counter utility
 async function fetchViewCounts(matchIds: number[]): Promise<Map<number, number>> {
   if (matchIds.length === 0) return new Map()
   try {
-    const res = await fetch('/api/views/batch/count', {
+    const res = await fetch('https://api.reedstreams.live/views/batch/count', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ match_ids: matchIds.map(String) })
@@ -38,17 +40,20 @@ function formatViewCount(count: number): string {
   return count.toString()
 }
 
+// Unified Game Type
 interface Game {
-  id: number
+  id: number | string
   name: string
   poster: string
   start_time: number
   end_time: number
-  video_link: string
   category: string
+  source: 'ppvsu' | 'sportsurge'
+  is_live?: boolean
 }
 
-const isLive = (startTime: number, endTime: number, currentTimeMs: number = Date.now()): boolean => {
+const isLive = (startTime: number, endTime: number, currentTimeMs: number = Date.now(), isLiveFlag?: boolean): boolean => {
+  if (isLiveFlag) return true
   const now = Math.floor(currentTimeMs / 1000)
   return now >= startTime && now <= endTime
 }
@@ -87,12 +92,17 @@ const SkeletonRow = () => (
   </div>
 )
 
-const MatchRow = React.memo(({ game, viewCount, onImageError, currentTime }: { game: Game; viewCount?: number; onImageError: (id: number) => void; currentTime: number }) => {
+const MatchRow = React.memo(({ game, viewCount, onImageError, currentTime }: { 
+  game: Game
+  viewCount?: number
+  onImageError: (id: number | string) => void
+  currentTime: number 
+}) => {
   const [imageError, setImageError] = useState(false)
-  const live = isLive(game.start_time, game.end_time, currentTime)
+  const live = isLive(game.start_time, game.end_time, currentTime, game.is_live)
 
   return (
-    <Link href={`/match/${game.id}`} className="match-row-link">
+    <Link href={`/match/${game.id}?source=${game.source}`} className="match-row-link">
       <article className="match-row">
         <div className="row-poster-container" style={{ width: '100px', flex: '0 0 100px', overflow: 'hidden' }}>
           {!imageError && game.poster ? (
@@ -161,7 +171,7 @@ export default function LiveMatches() {
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<'ALL' | 'LIVE' | 'UPCOMING'>('ALL')
   const [visibleCount, setVisibleCount] = useState(20)
-  const [hiddenGameIds, setHiddenGameIds] = useState<Set<number>>(new Set())
+  const [hiddenGameIds, setHiddenGameIds] = useState<Set<number | string>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [now, setNow] = useState(Date.now())
@@ -175,17 +185,17 @@ export default function LiveMatches() {
     return () => clearInterval(interval)
   }, [])
   
-  // Fetch view counts for all games
+  // Fetch view counts for ppvsu games only
   useEffect(() => {
-    if (games.length === 0) return
+    const ppvsuGames = games.filter(g => g.source === 'ppvsu' && typeof g.id === 'number')
+    if (ppvsuGames.length === 0) return
     
     const loadViewCounts = async () => {
-      const counts = await fetchViewCounts(games.map(g => g.id))
+      const counts = await fetchViewCounts(ppvsuGames.map(g => g.id as number))
       setViewCounts(counts)
     }
     
     loadViewCounts()
-    // Refresh view counts every 30 seconds
     const interval = setInterval(loadViewCounts, 30000)
     return () => clearInterval(interval)
   }, [games])
@@ -194,6 +204,7 @@ export default function LiveMatches() {
     setLoading(true)
     setError(null)
     try {
+      // Fetch from PPVSU
       const res = await fetch(API_URL)
       
       if (!res.ok) {
@@ -217,15 +228,15 @@ export default function LiveMatches() {
               poster: g.poster,
               start_time: g.start_time,
               end_time: g.end_time,
-              video_link: g.video_link,
-              category: cat.category
+              category: cat.category,
+              source: 'ppvsu' as const
             })
           })
         }
       })
       
       // dedupe by id
-      const seen = new Set<number>()
+      const seen = new Set<number | string>()
       allGames = allGames.filter(g => {
         if (seen.has(g.id)) return false
         seen.add(g.id)
@@ -235,8 +246,8 @@ export default function LiveMatches() {
       // sort: live first, then upcoming, then past
       const nowSec = Math.floor(now / 1000)
       allGames.sort((a, b) => {
-        const aLive = isLive(a.start_time, a.end_time, now)
-        const bLive = isLive(b.start_time, b.end_time, now)
+        const aLive = isLive(a.start_time, a.end_time, now, a.is_live)
+        const bLive = isLive(b.start_time, b.end_time, now, b.is_live)
         const aUpcoming = isUpcoming(a.start_time, now)
         const bUpcoming = isUpcoming(b.start_time, now)
         
@@ -259,13 +270,13 @@ export default function LiveMatches() {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [urlSportId])
 
   useEffect(() => {
     setVisibleCount(20)
   }, [filter, searchQuery, urlSportId])
 
-  const handleImageError = (id: number) => {
+  const handleImageError = (id: number | string) => {
     setHiddenGameIds(prev => new Set(prev).add(id))
   }
 
@@ -278,7 +289,7 @@ export default function LiveMatches() {
         g.category.toLowerCase().includes(searchQuery.toLowerCase())
       
       const matchesFilter = filter === 'LIVE' 
-        ? isLive(g.start_time, g.end_time, now)
+        ? isLive(g.start_time, g.end_time, now, g.is_live)
         : filter === 'UPCOMING' 
           ? isUpcoming(g.start_time, now)
           : true
@@ -291,12 +302,10 @@ export default function LiveMatches() {
       if (!matchesSport) {
         switch(urlSportId) {
           case 'football':
-            // nfl stuff, not soccer
             matchesSport = (nameLower.includes('nfl') || nameLower.includes('american football')) && 
                           !catLower.includes('football')
             break
           case 'soccer':
-            // actual football (the one with the round ball)
             matchesSport = catLower === 'football' || 
                           catLower.includes('soccer') || 
                           catLower.includes('premier league') || 
@@ -424,7 +433,13 @@ export default function LiveMatches() {
                     </div>
                     <div className="matches-list-container">
                       {dateGames.map(g => (
-                        <MatchRow key={g.id} game={g} viewCount={viewCounts.get(g.id)} onImageError={handleImageError} currentTime={now} />
+                        <MatchRow 
+                          key={`${g.source}-${g.id}`} 
+                          game={g} 
+                          viewCount={typeof g.id === 'number' ? viewCounts.get(g.id) : undefined} 
+                          onImageError={handleImageError} 
+                          currentTime={now} 
+                        />
                       ))}
                     </div>
                   </div>

@@ -245,7 +245,7 @@ async function flushTestResults(): Promise<void> {
     testResults.length = 0;
 
     try {
-        await fetch('/api/analytics/ab-test-results', {
+        await fetch('https://api.reedstreams.live/analytics/ab-test-results', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ results }),

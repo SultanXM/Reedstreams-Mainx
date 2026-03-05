@@ -1,8 +1,9 @@
 'use client'
 
 import { Suspense, useState, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import MatchPlayer from "@/components/match/match-player"
+import SportsurgePlayer from "@/components/match/SportsurgePlayer"
 import { 
   ArrowLeft, 
   Minimize, 
@@ -329,7 +330,10 @@ function MatchPageLoading() {
 function MatchPageContent() {
   const router = useRouter()
   const params = useParams()
+  const searchParams = useSearchParams()
   const matchId = String(params.id)
+  const source = searchParams.get('source') || 'ppvsu' // Default to ppvsu if no source
+  const isSportsurge = source === 'sportsurge'
   const { t } = useLanguage()
 
   // --- STATES ---
@@ -352,18 +356,20 @@ function MatchPageContent() {
   const [viewCount, setViewCount] = useState<number>(0)
   
   useEffect(() => {
-    // 🔥 TRACK VIEW - increment when page loads
-    const trackView = async () => {
-      const views = await incrementView(matchId)
-      setViewCount(views)
+    // 🔥 TRACK VIEW - increment when page loads (only for ppvsu streams)
+    if (!isSportsurge) {
+      const trackView = async () => {
+        const views = await incrementView(matchId)
+        setViewCount(views)
+      }
+      trackView()
+      
+      // Refresh view count every 30 seconds to see updates from other users
+      var viewInterval = setInterval(async () => {
+        const views = await getViewCount(matchId)
+        setViewCount(views)
+      }, 30000)
     }
-    trackView()
-    
-    // Refresh view count every 30 seconds to see updates from other users
-    const viewInterval = setInterval(async () => {
-      const views = await getViewCount(matchId)
-      setViewCount(views)
-    }, 30000)
     
     // 1. Try Session Storage first
     const stored = sessionStorage.getItem("currentMatch")
@@ -386,10 +392,28 @@ function MatchPageContent() {
       }
     }
     
-    // 2. Fallback: Fetch from API
+    // 2. Fallback: Fetch from API (check both ppvsu and sportsurge)
     async function fetchMatchDetails() {
       try {
-        const res = await fetch('https://api-reedstreams.fly.dev/api/v1/streams')
+        // If sportsurge source, try sportsurge API first
+        if (isSportsurge) {
+          const srRes = await fetch('https://api.reedstreams.live/api/v1/streams/sportsurge')
+          if (srRes.ok) {
+            const srData = await srRes.json()
+            if (srData.events) {
+              const match = srData.events.find((e: any) => String(e.id) === matchId)
+              if (match) {
+                setMatchTitle(match.title)
+                const dateObj = new Date(match.start_time * 1000)
+                setStartTime(dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}))
+                return
+              }
+            }
+          }
+        }
+        
+        // Try ppvsu API
+        const res = await fetch('https://api.reedstreams.live/api/v1/streams')
         if (res.ok) {
           const data = await res.json()
           if (data.categories) {
@@ -436,11 +460,11 @@ function MatchPageContent() {
       }, 1000);
       return () => {
         clearInterval(countdown);
-        clearInterval(viewInterval);
+        if (typeof viewInterval !== 'undefined') clearInterval(viewInterval);
       };
     }
     
-    return () => clearInterval(viewInterval);
+    return () => { if (typeof viewInterval !== 'undefined') clearInterval(viewInterval); }
   }, [])
 
   // SHARING LOGIC
@@ -494,7 +518,13 @@ function MatchPageContent() {
       <div className="match-page-container" style={{ background: cinemaMode ? '#000' : '#050505', paddingTop: cinemaMode ? '0' : 'calc(0px + 3vh)' }}>
         <div className={`match-grid ${cinemaMode ? 'layout-cinema' : 'layout-standard'}`}>
           <div className="player-section">
-              <div className="player-wrapper"><MatchPlayer matchId={matchId} /></div>
+              <div className="player-wrapper">
+                {isSportsurge ? (
+                  <SportsurgePlayer matchId={matchId} />
+                ) : (
+                  <MatchPlayer matchId={matchId} />
+                )}
+              </div>
               <div className="info-bar">
                 <div className="match-title-group">
                   <div className="meta-row">

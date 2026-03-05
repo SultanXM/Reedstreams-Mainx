@@ -95,25 +95,28 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
-        const res = await fetch(`/api/reedstreams/stream/${matchId}`, {
+        // Step 1: Get signed URL from ppvsu endpoint
+        const res = await fetch(`https://api.reedstreams.live/api/v1/streams/ppvsu/${matchId}/signed-url`, {
           cache: 'no-store',
         })
 
         if (!res.ok) throw new Error("Stream not ready")
 
-        const streams = await res.json()
+        const data = await res.json()
         
-        if (Array.isArray(streams) && streams.length > 0 && streams[0].embedUrl) {
-          setStreamUrl(streams[0].embedUrl)
-          setLoading(false)
-          return
-        } else if (streams.embedUrl) {
-          setStreamUrl(streams.embedUrl)
-          setLoading(false)
-          return
-        } else {
-          throw new Error("No stream URL in response")
+        // Step 2: Get the signed_url from response
+        if (!data.signed_url) {
+          throw new Error("No signed URL in response")
         }
+        
+        // Step 3: Build full URL (signed_url is relative like /api/v1/proxy?url=...)
+        const fullStreamUrl = data.signed_url.startsWith('http') 
+          ? data.signed_url 
+          : `https://api.reedstreams.live${data.signed_url}`
+        
+        setStreamUrl(fullStreamUrl)
+        setLoading(false)
+        return
       } catch (e) {
         const isLastAttempt = attempt === maxRetries - 1
         

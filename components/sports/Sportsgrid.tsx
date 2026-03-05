@@ -2,44 +2,15 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
-import { Trophy, Clock, RefreshCw, Eye } from 'lucide-react'
+import { Trophy, Clock, RefreshCw } from 'lucide-react'
 import '../../styles/Sportsgrid.css'
 
 import { API_STREAMS_URL } from '@/config/api'
 
-const API_URL = API_STREAMS_URL
+const PPVSU_URL = API_STREAMS_URL
 
-// View counter utility
-async function fetchViewCounts(matchIds: number[]): Promise<Map<number, number>> {
-  if (matchIds.length === 0) return new Map()
-  try {
-    const res = await fetch('/api/views/batch/count', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ match_ids: matchIds.map(String) })
-    })
-    if (!res.ok) throw new Error('Failed to fetch view counts')
-    const data = await res.json()
-    const counts = new Map<number, number>()
-    if (data.counts) {
-      data.counts.forEach((item: { match_id: string; views: number }) => {
-        counts.set(parseInt(item.match_id), item.views)
-      })
-    }
-    return counts
-  } catch (err) {
-    console.error('[Views] Error fetching counts:', err)
-    return new Map()
-  }
-}
-
-function formatViewCount(count: number): string {
-  if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
-  if (count >= 1000) return (count / 1000).toFixed(1) + 'K'
-  return count.toString()
-}
-
-interface Game {
+// PPVSU Types
+interface PpvsuGame {
   id: number
   name: string
   poster: string
@@ -49,13 +20,33 @@ interface Game {
   category: string
 }
 
-interface Category {
+interface PpvsuCategory {
   category: string
-  games: Game[]
+  games: PpvsuGame[]
 }
 
-interface InitialData {
-  categories?: Category[]
+interface PpvsuData {
+  categories?: PpvsuCategory[]
+}
+
+// Unified Game Type for UI
+interface UnifiedGame {
+  id: number | string
+  name: string
+  poster: string
+  start_time: number
+  end_time: number
+  category: string
+  source: 'ppvsu'
+  is_live: boolean
+  league?: string
+}
+
+interface UnifiedCategory {
+  category: string
+  games: UnifiedGame[]
+  icon?: React.ComponentType<{size: number, color: string}>
+  source: 'ppvsu'
 }
 
 const isLive = (startTime: number, endTime: number): boolean => {
@@ -68,13 +59,6 @@ const isAlwaysLive = (category: string): boolean => {
   return alwaysLiveCategories.some(cat => category.toLowerCase().includes(cat.toLowerCase()))
 }
 
-// soccer = football everywhere except america lol
-const isSoccer = (category: string): boolean => {
-  const soccerTerms = ['soccer', 'football']
-  return soccerTerms.some(term => category.toLowerCase().includes(term.toLowerCase()))
-}
-
-// nfl stuff - the one with helmets and commercials every 5 seconds
 const isAmericanFootball = (category: string): boolean => {
   const cat = category.toLowerCase()
   return (cat.includes('football') && !cat.includes('soccer')) || cat.includes('nfl')
@@ -105,14 +89,19 @@ const SkeletonMatchCard = () => (
   </div>
 )
 
-const MatchCard = React.memo(({ game, viewCount, onImageError }: { game: Game; viewCount?: number; onImageError: (id: number) => void }) => {
+const MatchCard = React.memo(({ game, onImageError }: { 
+  game: UnifiedGame
+  onImageError: (id: number | string) => void 
+}) => {
   const [imageError, setImageError] = useState(false)
-  const live = isLive(game.start_time, game.end_time)
+  
+  // Live tag logic: use is_live from API or calculate from time
+  const live = game.is_live || isLive(game.start_time, game.end_time)
   const alwaysLive = isAlwaysLive(game.category)
 
   return (
     <Link
-      href={`/match/${game.id}`}
+      href={`/match/${game.id}?source=${game.source}`}
       className="match-card-link"
     >
       <article className="match-card">
@@ -121,12 +110,6 @@ const MatchCard = React.memo(({ game, viewCount, onImageError }: { game: Game; v
             <span className={`status-badge ${live || alwaysLive ? 'live' : 'upcoming'}`}>
               {live || alwaysLive ? 'LIVE' : formatTime(game.start_time)}
             </span>
-            {(viewCount !== undefined && viewCount > 0) && (
-              <span className="view-count-badge">
-                <Eye size={10} />
-                {formatViewCount(viewCount)}
-              </span>
-            )}
           </div>
           {!imageError ? (
             <img 
@@ -146,7 +129,7 @@ const MatchCard = React.memo(({ game, viewCount, onImageError }: { game: Game; v
         </div>
         <div className="match-info">
           <p className="match-main-title">{game.name}</p>
-          <p className="match-sub-meta">{game.category}</p>
+          <p className="match-sub-meta">{game.league || game.category}</p>
         </div>
       </article>
     </Link>
@@ -196,8 +179,18 @@ const SportsCategorySelector = ({ loading }: { loading: boolean }) => {
   )
 }
 
-const MatchCarousel = ({ category, games, viewCounts, onImageError, icon: Icon }: { category: string, games: Game[], viewCounts: Map<number, number>, onImageError: (id: number) => void, icon?: React.ComponentType<{size: number, color: string}> }) => {
-  const liveCount = games.filter(g => isLive(g.start_time, g.end_time) || isAlwaysLive(g.category)).length
+const MatchCarousel = ({ 
+  category, 
+  games, 
+  onImageError, 
+  icon: Icon 
+}: { 
+  category: string
+  games: UnifiedGame[]
+  onImageError: (id: number | string) => void
+  icon?: React.ComponentType<{size: number, color: string}>
+}) => {
+  const liveCount = games.filter(g => g.is_live || isLive(g.start_time, g.end_time) || isAlwaysLive(g.category)).length
 
   return (
     <section className="matches-section">
@@ -210,14 +203,49 @@ const MatchCarousel = ({ category, games, viewCounts, onImageError, icon: Icon }
       </div>
       <div className="carousel-track">
         {games.map(game => (
-          <MatchCard key={game.id} game={game} viewCount={viewCounts.get(game.id)} onImageError={onImageError} />
+          <MatchCard 
+            key={`${game.source}-${game.id}`} 
+            game={game} 
+            onImageError={onImageError} 
+          />
         ))}
       </div>
     </section>
   )
 }
 
-// retry hook cuz sometimes api be sleeping
+// Fetch both PPVSU and Sportsurge data
+async function fetchAllStreams(): Promise<UnifiedCategory[]> {
+  const ppvsuRes = await fetch(PPVSU_URL)
+
+  const result: UnifiedCategory[] = []
+
+  // Process PPVSU data
+  if (ppvsuRes.ok) {
+    const ppvsuData: PpvsuData = await ppvsuRes.json()
+    if (ppvsuData.categories) {
+      ppvsuData.categories.forEach(cat => {
+        result.push({
+          category: cat.category,
+          games: cat.games.map(g => ({
+            id: g.id,
+            name: g.name,
+            poster: g.poster,
+            start_time: g.start_time,
+            end_time: g.end_time,
+            category: g.category,
+            source: 'ppvsu' as const,
+            is_live: isLive(g.start_time, g.end_time)
+          })),
+          source: 'ppvsu'
+        })
+      })
+    }
+  }
+
+  return result
+}
+
 function useRetryFetch<T>(
   fetchFn: () => Promise<T>,
   maxRetries = 3,
@@ -261,62 +289,36 @@ function useRetryFetch<T>(
   return { data, loading, error, retry }
 }
 
-export default function SportsGrid({ initialData }: { initialData?: InitialData }) {
-  const [hiddenGameIds, setHiddenGameIds] = useState<Set<number>>(new Set())
-  const [viewCounts, setViewCounts] = useState<Map<number, number>>(new Map())
-
-  const fetchCategories = useCallback(async () => {
-    const res = await fetch(API_URL)
-    const data = await res.json()
-    if (!data.categories) throw new Error('No categories found')
-    return data.categories as Category[]
-  }, [])
+export default function SportsGrid() {
+  const [hiddenGameIds, setHiddenGameIds] = useState<Set<number | string>>(new Set())
 
   const { data: categories, loading, error, retry } = useRetryFetch(
-    fetchCategories,
+    fetchAllStreams,
     3,
     2000
   )
 
-  // use server data if we got it
-  const finalCategories = initialData?.categories || categories || []
-  const finalLoading = initialData?.categories ? false : loading
-
-  const handleImageError = useCallback((id: number) => {
+  const handleImageError = useCallback((id: number | string) => {
     setHiddenGameIds(prev => new Set(prev).add(id))
   }, [])
-  
-  // Fetch view counts for all games
-  useEffect(() => {
-    const allGames = finalCategories.flatMap(cat => cat.games)
-    if (allGames.length === 0) return
-    
-    const loadViewCounts = async () => {
-      const counts = await fetchViewCounts(allGames.map(g => g.id))
-      setViewCounts(counts)
-    }
-    
-    loadViewCounts()
-    // Refresh view counts every 30 seconds
-    const interval = setInterval(loadViewCounts, 30000)
-    return () => clearInterval(interval)
-  }, [finalCategories])
 
-  // organize games so they look nice
+  // organize games
   const organizedCategories = useMemo(() => {
+    if (!categories) return []
+    
     // filter out broken image games
-    const filtered = finalCategories
+    const filtered = categories
       .map(cat => ({
         ...cat,
         games: cat.games.filter(g => !hiddenGameIds.has(g.id))
       }))
       .filter(cat => cat.games.length > 0)
 
-    const result: Array<{category: string, games: Game[], icon?: React.ComponentType<{size: number, color: string}>}> = []
+    const result: UnifiedCategory[] = []
 
-    // split 24/7 channels from normal stuff
-    const regularCategories: Category[] = []
-    const alwaysLiveCategories: Category[] = []
+    // split categories
+    const regularCategories: UnifiedCategory[] = []
+    const alwaysLiveCategories: UnifiedCategory[] = []
     
     filtered.forEach(cat => {
       if (isAlwaysLive(cat.category)) {
@@ -326,9 +328,9 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
       }
     })
 
-    // build "Popular" section - grab mix from everywhere
-    const popularGames: Game[] = []
-    const gamesPerCategory = new Map<number, number>()
+    // build "Popular" section
+    const popularGames: UnifiedGame[] = []
+    const gamesPerCategory = new Map<string, number>()
     const minGamesFromEach = 1
     const maxGamesFromEach = 3
     const targetPopularCount = 12
@@ -336,8 +338,8 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
     // grab at least 1 from each category first
     regularCategories.forEach(cat => {
       const sortedGames = [...cat.games].sort((a, b) => {
-        const aLive = isLive(a.start_time, a.end_time)
-        const bLive = isLive(b.start_time, b.end_time)
+        const aLive = a.is_live || isLive(a.start_time, a.end_time)
+        const bLive = b.is_live || isLive(b.start_time, b.end_time)
         if (aLive && !bLive) return -1
         if (!aLive && bLive) return 1
         return a.start_time - b.start_time
@@ -345,17 +347,17 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
       
       const toAdd = sortedGames.slice(0, minGamesFromEach)
       popularGames.push(...toAdd)
-      gamesPerCategory.set(cat.games[0]?.id || 0, toAdd.length)
+      gamesPerCategory.set(cat.category, toAdd.length)
     })
 
     // fill up to target
     if (popularGames.length < targetPopularCount) {
       regularCategories.forEach(cat => {
-        const currentCount = gamesPerCategory.get(cat.games[0]?.id || 0) || 0
+        const currentCount = gamesPerCategory.get(cat.category) || 0
         if (currentCount < maxGamesFromEach) {
           const sortedGames = [...cat.games].sort((a, b) => {
-            const aLive = isLive(a.start_time, a.end_time)
-            const bLive = isLive(b.start_time, b.end_time)
+            const aLive = a.is_live || isLive(a.start_time, a.end_time)
+            const bLive = b.is_live || isLive(b.start_time, b.end_time)
             if (aLive && !bLive) return -1
             if (!aLive && bLive) return 1
             return a.start_time - b.start_time
@@ -371,23 +373,24 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
 
     // sort popular - live first
     popularGames.sort((a, b) => {
-      const aLive = isLive(a.start_time, a.end_time)
-      const bLive = isLive(b.start_time, b.end_time)
+      const aLive = a.is_live || isLive(a.start_time, a.end_time)
+      const bLive = b.is_live || isLive(b.start_time, b.end_time)
       if (aLive && !bLive) return -1
       if (!aLive && bLive) return 1
       return a.start_time - b.start_time
     })
 
-    // add popular section on top
+    // add popular section
     if (popularGames.length > 0) {
       result.push({
         category: 'Popular',
         games: popularGames,
-        icon: undefined
+        icon: undefined,
+        source: 'ppvsu'
       })
     }
 
-    // sort categories - football goes 2nd row
+    // sort regular categories - football first
     const sortedCategories = [...regularCategories].sort((a, b) => {
       const aIsFootball = isAmericanFootball(a.category)
       const bIsFootball = isAmericanFootball(b.category)
@@ -395,9 +398,8 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
       if (aIsFootball && !bIsFootball) return -1
       if (!aIsFootball && bIsFootball) return 1
       
-      // live games first
-      const aLiveCount = a.games.filter(g => isLive(g.start_time, g.end_time)).length
-      const bLiveCount = b.games.filter(g => isLive(g.start_time, g.end_time)).length
+      const aLiveCount = a.games.filter(g => g.is_live || isLive(g.start_time, g.end_time)).length
+      const bLiveCount = b.games.filter(g => g.is_live || isLive(g.start_time, g.end_time)).length
       
       if (aLiveCount > 0 && bLiveCount === 0) return -1
       if (aLiveCount === 0 && bLiveCount > 0) return 1
@@ -406,11 +408,11 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
       return 0
     })
 
-    // dump rest of categories
+    // add regular categories
     sortedCategories.forEach(cat => {
       const sortedGames = [...cat.games].sort((a, b) => {
-        const aLive = isLive(a.start_time, a.end_time)
-        const bLive = isLive(b.start_time, b.end_time)
+        const aLive = a.is_live || isLive(a.start_time, a.end_time)
+        const bLive = b.is_live || isLive(b.start_time, b.end_time)
         
         if (aLive && !bLive) return -1
         if (!aLive && bLive) return 1
@@ -421,7 +423,8 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
       result.push({
         category: cat.category,
         games: sortedGames,
-        icon: undefined
+        icon: cat.icon,
+        source: cat.source
       })
     })
 
@@ -430,20 +433,21 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
       result.push({
         category: cat.category,
         games: cat.games,
-        icon: Clock
+        icon: Clock,
+        source: cat.source
       })
     })
 
     return result
-  }, [finalCategories, hiddenGameIds])
+  }, [categories, hiddenGameIds])
 
   return (
     <div className="dashboard-wrapper">
       <div className="content-container">
-        <SportsCategorySelector loading={finalLoading} />
+        <SportsCategorySelector loading={loading} />
 
         <div className="matches-grid-container">
-          {finalLoading ? (
+          {loading ? (
             Array(3).fill(0).map((_, rowIndex) => (
               <React.Fragment key={rowIndex}>
                 <div className="skeleton-header skeleton-pulse" />
@@ -518,7 +522,6 @@ export default function SportsGrid({ initialData }: { initialData?: InitialData 
                 key={cat.category}
                 category={cat.category}
                 games={cat.games}
-                viewCounts={viewCounts}
                 onImageError={handleImageError}
                 icon={cat.icon}
               />

@@ -6,7 +6,9 @@ import { useRouter, usePathname } from 'next/navigation'
 import { Search, Menu, X, AlertCircle, Calendar, Home, Heart, Play, Send } from 'lucide-react'
 import '../../styles/header.css'
 
-const API_BASE = 'https://api-reedstreams.fly.dev/api/v1/streams'
+import { API_STREAMS_URL } from '@/config/api'
+
+const API_BASE = API_STREAMS_URL
 
 interface Game {
     id: number;
@@ -138,19 +140,25 @@ export default function Header() {
 
     const fetchSports = useCallback(async () => {
         try {
-            const response = await fetch(API_BASE)
-            if (!response.ok) throw new Error('Failed to fetch sports')
-            const data = await response.json()
-            if (!data.categories || !Array.isArray(data.categories)) return
+            const ppvsuRes = await fetch(API_BASE)
             
-            // Extract unique categories and map to Sport format using CATEGORY_TO_ID
-            const uniqueCategories = [...new Set(data.categories.map((c: Category) => c.category))]
-            const sportsList: Sport[] = uniqueCategories
-                .filter((cat: string) => CATEGORY_TO_ID[cat]) // Only include known categories
-                .map((cat: string) => ({
-                    id: CATEGORY_TO_ID[cat],
-                    name: DISPLAY_MAP[CATEGORY_TO_ID[cat]] || cat
-                }))
+            const sportsList: Sport[] = []
+            
+            // Process PPVSU data
+            if (ppvsuRes.ok) {
+                const data = await ppvsuRes.json()
+                if (data.categories && Array.isArray(data.categories)) {
+                    const uniqueCategories = [...new Set(data.categories.map((c: Category) => c.category))]
+                    uniqueCategories
+                        .filter((cat: string) => CATEGORY_TO_ID[cat])
+                        .forEach((cat: string) => {
+                            sportsList.push({
+                                id: CATEGORY_TO_ID[cat],
+                                name: DISPLAY_MAP[CATEGORY_TO_ID[cat]] || cat
+                            })
+                        })
+                }
+            }
             
             const sorted = sportsList.sort((a, b) => {
                 const idxA = SORT_ORDER.indexOf(a.id); const idxB = SORT_ORDER.indexOf(b.id)

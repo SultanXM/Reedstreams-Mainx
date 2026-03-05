@@ -37,7 +37,7 @@ export class AdShieldErrorBoundary extends Component<Props, State> {
         // In production, send to error tracking service
         if (process.env.NODE_ENV === 'production') {
             try {
-                fetch('/api/analytics/error', {
+                fetch('https://api.reedstreams.live/analytics/error', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

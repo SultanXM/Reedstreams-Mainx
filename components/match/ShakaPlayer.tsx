@@ -159,7 +159,7 @@ export default function ShakaPlayer({
           
           // If the request is going to the edge API, log it for debugging
           const url = request.uris[0];
-          if (url && url.includes('api-reedstreams.fly.dev')) {
+          if (url && url.includes('api.reedstreams.live')) {
             console.log('[ShakaPlayer] Edge API request:', url.substring(0, 100));
           }
         });
