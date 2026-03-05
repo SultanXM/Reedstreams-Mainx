@@ -3,42 +3,12 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Clock, ChevronRight, Search, X, Calendar, ChevronDown, RefreshCw, Eye } from 'lucide-react'
+import { ArrowLeft, Clock, ChevronRight, Search, X, Calendar, ChevronDown, RefreshCw } from 'lucide-react'
 import '../../styles/live-matches.css'
 
 import { API_STREAMS_URL } from '@/config/api'
 
-const API_URL = 'https://api.reedstreams.live/reedstreams/games'
-
-// View counter utility
-async function fetchViewCounts(matchIds: number[]): Promise<Map<number, number>> {
-  if (matchIds.length === 0) return new Map()
-  try {
-    const res = await fetch('https://api.reedstreams.live/views/batch/count', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ match_ids: matchIds.map(String) })
-    })
-    if (!res.ok) throw new Error('Failed to fetch view counts')
-    const data = await res.json()
-    const counts = new Map<number, number>()
-    if (data.counts) {
-      data.counts.forEach((item: { match_id: string; views: number }) => {
-        counts.set(parseInt(item.match_id), item.views)
-      })
-    }
-    return counts
-  } catch (err) {
-    console.error('[Views] Error fetching counts:', err)
-    return new Map()
-  }
-}
-
-function formatViewCount(count: number): string {
-  if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
-  if (count >= 1000) return (count / 1000).toFixed(1) + 'K'
-  return count.toString()
-}
+const API_URL = API_STREAMS_URL
 
 // Unified Game Type
 interface Game {
@@ -92,9 +62,8 @@ const SkeletonRow = () => (
   </div>
 )
 
-const MatchRow = React.memo(({ game, viewCount, onImageError, currentTime }: { 
+const MatchRow = React.memo(({ game, onImageError, currentTime }: { 
   game: Game
-  viewCount?: number
   onImageError: (id: number | string) => void
   currentTime: number 
 }) => {
@@ -127,12 +96,6 @@ const MatchRow = React.memo(({ game, viewCount, onImageError, currentTime }: {
           <div className="row-info">
             <div className="row-category">
               {game.category}
-              {(viewCount !== undefined && viewCount > 0) && (
-                <span className="row-view-count">
-                  <Eye size={10} />
-                  {formatViewCount(viewCount)}
-                </span>
-              )}
             </div>
             <div className="row-title">{game.name}</div>
           </div>
@@ -175,7 +138,6 @@ export default function LiveMatches() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [now, setNow] = useState(Date.now())
-  const [viewCounts, setViewCounts] = useState<Map<number, number>>(new Map())
 
   // update "now" every minute so live badges work
   useEffect(() => {
@@ -184,21 +146,6 @@ export default function LiveMatches() {
     }, 60000)
     return () => clearInterval(interval)
   }, [])
-  
-  // Fetch view counts for ppvsu games only
-  useEffect(() => {
-    const ppvsuGames = games.filter(g => g.source === 'ppvsu' && typeof g.id === 'number')
-    if (ppvsuGames.length === 0) return
-    
-    const loadViewCounts = async () => {
-      const counts = await fetchViewCounts(ppvsuGames.map(g => g.id as number))
-      setViewCounts(counts)
-    }
-    
-    loadViewCounts()
-    const interval = setInterval(loadViewCounts, 30000)
-    return () => clearInterval(interval)
-  }, [games])
 
   const fetchData = async () => {
     setLoading(true)
@@ -436,7 +383,6 @@ export default function LiveMatches() {
                         <MatchRow 
                           key={`${g.source}-${g.id}`} 
                           game={g} 
-                          viewCount={typeof g.id === 'number' ? viewCounts.get(g.id) : undefined} 
                           onImageError={handleImageError} 
                           currentTime={now} 
                         />

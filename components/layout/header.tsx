@@ -75,7 +75,7 @@ const DISPLAY_MAP: Record<string, string> = {
 }
 
 const SORT_ORDER = [
-    'football', 'soccer', 'basketball', 'hockey', 'baseball', 'mma',
+    'soccer', 'basketball', 'football', 'hockey', 'baseball', 'mma',
     'tennis', 'golf', 'motorsports', 'cricket', '2026 winter olympics',
     'combat sports', 'darts', '24/7 Streams'
 ]

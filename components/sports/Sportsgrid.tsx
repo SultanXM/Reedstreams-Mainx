@@ -139,9 +139,9 @@ MatchCard.displayName = 'MatchCard'
 
 const SportsCategorySelector = ({ loading }: { loading: boolean }) => {
   const sports = [
-    { id: 'football', name: 'Football', icon: '🏈' },
     { id: 'soccer', name: 'Soccer', icon: '⚽' },
     { id: 'basketball', name: 'Basketball', icon: '🏀' },
+    { id: 'football', name: 'Football', icon: '🏈' },
     { id: 'hockey', name: 'Ice Hockey', icon: '🏒' },
     { id: 'baseball', name: 'Baseball', icon: '⚾' },
     { id: 'mma', name: 'MMA / UFC', icon: '🥊' },
@@ -390,11 +390,18 @@ export default function SportsGrid() {
       })
     }
 
-    // sort regular categories - football first
+    // sort regular categories - basketball first, then football
     const sortedCategories = [...regularCategories].sort((a, b) => {
+      const aIsBasketball = a.category.toLowerCase().includes('basketball')
+      const bIsBasketball = b.category.toLowerCase().includes('basketball')
       const aIsFootball = isAmericanFootball(a.category)
       const bIsFootball = isAmericanFootball(b.category)
       
+      // Basketball first
+      if (aIsBasketball && !bIsBasketball) return -1
+      if (!aIsBasketball && bIsBasketball) return 1
+      
+      // Then Football
       if (aIsFootball && !bIsFootball) return -1
       if (!aIsFootball && bIsFootball) return 1
       
