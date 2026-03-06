@@ -13,7 +13,6 @@ export async function registerAdShieldServiceWorker(): Promise<boolean> {
 
     // Check if service workers are supported
     if (!('serviceWorker' in navigator)) {
-        console.warn('🛡️ [AdShield] Service Workers not supported');
         return false;
     }
 
@@ -23,7 +22,6 @@ export async function registerAdShieldServiceWorker(): Promise<boolean> {
             scope: '/'
         });
 
-        console.log('🛡️ [AdShield] Service Worker registered:', registration.scope);
 
         // Handle updates
         registration.addEventListener('updatefound', () => {
@@ -31,7 +29,6 @@ export async function registerAdShieldServiceWorker(): Promise<boolean> {
             if (newWorker) {
                 newWorker.addEventListener('statechange', () => {
                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        console.log('🛡️ [AdShield] New Service Worker available');
                         // Optionally notify user about update
                     }
                 });
@@ -40,7 +37,6 @@ export async function registerAdShieldServiceWorker(): Promise<boolean> {
 
         return true;
     } catch (error) {
-        console.error('🛡️ [AdShield] Service Worker registration failed:', error);
         return false;
     }
 }

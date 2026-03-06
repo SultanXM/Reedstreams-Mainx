@@ -81,7 +81,6 @@ export function logAdEvent(
             cleanup: '🧹'
         }[type];
 
-        console.log(`${emoji} [${layer.toUpperCase()}] ${action}`, details || '');
     }
 
     // Production: Buffer events for batch sending
@@ -122,7 +121,7 @@ const flushEvents = debounce(() => {
 
             // Use sendBeacon for production - doesn't block page unload
             if (navigator.sendBeacon) {
-                navigator.sendBeacon('https://api.reedstreams.live/analytics/ad-events', data);
+                navigator.sendBeacon('https://api-reedstreams-production-12c6.up.railway.app/analytics/ad-events', data);
             }
         } catch (e) {
             // Silently fail - don't break user experience
@@ -139,7 +138,7 @@ function trackBreakthrough(event: AdEvent) {
     // In production, send breakthrough events immediately
     if (isProduction) {
         try {
-            fetch('https://api.reedstreams.live/analytics/breakthrough', {
+            fetch('https://api-reedstreams-production-12c6.up.railway.app/analytics/breakthrough', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(event),
@@ -194,7 +193,6 @@ export function measurePerformance(operationName: string, fn: () => void): void 
         const duration = performance.now() - start;
 
         if (duration > 10) { // Only log slow operations (>10ms)
-            console.warn(`⏱️ [Performance] ${operationName} took ${duration.toFixed(2)}ms`);
         }
     } else {
         fn();

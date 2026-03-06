@@ -13,7 +13,6 @@ async function getInitialMatches() {
     if (!res.ok) return { categories: [] };
     return res.json();
   } catch (error) {
-    console.error('Failed to fetch initial matches:', error);
     // Return empty data during build or if API is unavailable
     return { categories: [] };
   }

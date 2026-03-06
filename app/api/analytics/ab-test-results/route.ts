@@ -43,7 +43,6 @@ export async function POST(request: NextRequest) {
             stats.userReports += result.metrics.userReported ? 1 : 0;
         });
 
-        console.log('🧪 [A/B Test API] Results received:', variantStats);
 
         // TODO: Store in database
         // await db.abTestResults.createMany({ data: results });
@@ -54,7 +53,6 @@ export async function POST(request: NextRequest) {
             variantStats
         });
     } catch (error) {
-        console.error('🧪 [A/B Test API] Error:', error);
         return NextResponse.json(
             { success: false, error: 'Failed to process results' },
             { status: 500 }

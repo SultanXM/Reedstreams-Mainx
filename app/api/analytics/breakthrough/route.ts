@@ -12,7 +12,6 @@ export async function POST(request: NextRequest) {
         const { type, layer, action, target, url, timestamp, userAgent, platform } = event;
 
         // Always log breakthroughs
-        console.error('🚨 [BREAKTHROUGH ALERT]', {
             layer,
             action,
             target,
@@ -43,7 +42,6 @@ export async function POST(request: NextRequest) {
             message: 'Breakthrough logged'
         });
     } catch (error) {
-        console.error('🚨 [Breakthrough API] Error:', error);
         return NextResponse.json(
             { success: false, error: 'Failed to log breakthrough' },
             { status: 500 }

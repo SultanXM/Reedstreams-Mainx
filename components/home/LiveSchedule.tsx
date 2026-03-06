@@ -132,7 +132,6 @@ export default function LiveSchedule() {
 
         setAllMatches(relevantMatches);
       } catch (error) {
-        console.error('Error loading schedule:', error);
         setAllMatches([]); // Ensure empty state on error
       } finally {
         setLoading(false);

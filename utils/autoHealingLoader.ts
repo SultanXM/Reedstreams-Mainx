@@ -72,7 +72,6 @@ export function loadCachedConfigs(): void {
         Object.entries(stored).forEach(([key, value]) => {
             workingConfigs.set(key, value as string | null);
         });
-        console.log('📦 [AutoHeal] Loaded', workingConfigs.size, 'cached configs');
     } catch (e) {
         // localStorage not available
     }
@@ -133,7 +132,6 @@ export function getBestSandboxConfig(
     // Check cache first
     const cached = getCachedConfig(provider, isMobile);
     if (cached !== undefined) {
-        console.log('📦 [AutoHeal] Using cached config for', provider, ':', cached ? 'sandbox' : 'no-sandbox');
         return {
             useSandbox: cached !== null && isMobile,
             sandboxString: cached
@@ -155,7 +153,6 @@ export function reportSuccess(provider: string, isMobile: boolean, sandboxString
     setCachedConfig(provider, isMobile, sandboxString);
     reportStreamLoad(provider, true);
 
-    console.log('✅ [AutoHeal]', provider, 'loaded successfully with', sandboxString ? 'sandbox' : 'no sandbox');
 }
 
 /**
@@ -176,10 +173,8 @@ export function reportFailure(provider: string, isMobile: boolean, error: string
     // Try next strategy
     const nextStrategy = strategies[currentIndex + 1];
     if (nextStrategy) {
-        console.log('🔄 [AutoHeal] Trying fallback strategy:', nextStrategy.name);
         setCachedConfig(provider, isMobile, nextStrategy.sandboxString);
     } else {
-        console.log('❌ [AutoHeal] All strategies exhausted for', provider);
     }
 }
 
@@ -197,19 +192,16 @@ export function monitorIframeLoad(
 ): Promise<boolean> {
     return new Promise((resolve) => {
         const timeout = setTimeout(() => {
-            console.log('⏱️ [AutoHeal] Iframe load timeout');
             resolve(false);
         }, timeoutMs);
 
         iframe.onload = () => {
             clearTimeout(timeout);
-            console.log('✅ [AutoHeal] Iframe loaded');
             resolve(true);
         };
 
         iframe.onerror = () => {
             clearTimeout(timeout);
-            console.log('❌ [AutoHeal] Iframe error');
             resolve(false);
         };
     });

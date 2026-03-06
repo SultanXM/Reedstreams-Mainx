@@ -57,7 +57,6 @@ export default function ReedVideoJS({
             }));
 
             player.on('loadedmetadata', () => {
-                console.log("[VideoJS] Metadata loaded, seeking to:", startTime);
                 
                 // Seek to start time if provided
                 if (startTime && startTime > 0 && !hasSeekedRef.current) {
@@ -71,7 +70,6 @@ export default function ReedVideoJS({
             
             player.on('error', () => {
                 const error = player.error();
-                console.error("[VideoJS] Error:", error);
                 onError?.(error?.message || 'Video.js playback error');
             });
             

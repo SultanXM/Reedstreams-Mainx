@@ -69,13 +69,11 @@ export default function ShakaPlayer({
 
         // If player already exists, just load the new source
         if (playerRef.current && uiRef.current) {
-          console.log("[ShakaPlayer] Reusing existing player, loading new source:", src);
           await playerRef.current.load(src);
           if (signal.aborted) return;
 
           // Wait for video to be ready before seeking
           const handleLoadedData = () => {
-            console.log("[ShakaPlayer] Video ready, seeking to:", startTime);
             if (startTime && startTime > 0 && !hasSeekedRef.current) {
               hasSeekedRef.current = true;
               video.currentTime = startTime;
@@ -88,7 +86,6 @@ export default function ShakaPlayer({
             try {
               await video.play();
             } catch (playErr) {
-              console.warn("Autoplay blocked:", playErr);
             }
           }
 
@@ -159,8 +156,7 @@ export default function ShakaPlayer({
           
           // If the request is going to the edge API, log it for debugging
           const url = request.uris[0];
-          if (url && url.includes('api.reedstreams.live')) {
-            console.log('[ShakaPlayer] Edge API request:', url.substring(0, 100));
+          if (url && url.includes('api-reedstreams-production-12c6.up.railway.app')) {
           }
         });
 
@@ -172,7 +168,6 @@ export default function ShakaPlayer({
             const url = response.uri;
             // Check if this is an image/ad request that's not critical for playback
             if (url && (url.includes('.jpg') || url.includes('.jpeg') || url.includes('.png') || url.includes('.webp') || url.includes('.gif'))) {
-              console.warn('[ShakaPlayer] Ignoring auth error for image:', url.substring(0, 100));
               // Don't throw - let playback continue
               return;
             }
@@ -181,7 +176,6 @@ export default function ShakaPlayer({
 
         player.addEventListener("error", (event) => {
           const shakaError = (event as any).detail;
-          console.error('[ShakaPlayer] Error:', shakaError);
           
           const isRecoverable =
             shakaError.severity === shaka.util.Error.Severity.RECOVERABLE ||
@@ -189,13 +183,11 @@ export default function ShakaPlayer({
             shakaError.code === 3016;
 
           if (isRecoverable) {
-            console.warn("Recoverable Shaka error:", shakaError.code);
             return;
           }
 
           // Check if this is an auth error that we should try to work around
           if (shakaError.code === 1002) { // HTTP_ERROR
-            console.warn('[ShakaPlayer] HTTP error - may be auth related, attempting to continue');
             // Don't immediately fail - let retry logic handle it
             return;
           }
@@ -210,11 +202,9 @@ export default function ShakaPlayer({
         await player.load(src);
         if (signal.aborted) return;
 
-        console.log("[ShakaPlayer] Loaded, seeking to:", startTime);
         
         // Wait for video to be ready before seeking
         const handleLoadedData = () => {
-          console.log("[ShakaPlayer] Video ready (initial), seeking to:", startTime);
           if (startTime && startTime > 0 && !hasSeekedRef.current) {
             hasSeekedRef.current = true;
             video.currentTime = startTime;
@@ -227,7 +217,6 @@ export default function ShakaPlayer({
           try {
             await video.play();
           } catch (playErr) {
-            console.warn("Autoplay blocked:", playErr);
           }
         }
 
@@ -256,7 +245,6 @@ export default function ShakaPlayer({
         try {
           ui.destroy();
         } catch (err) {
-          console.warn("Error destroying UI:", err);
         }
         uiRef.current = null;
         playerRef.current = null;

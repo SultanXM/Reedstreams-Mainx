@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
 
         // Log in development
         if (process.env.NODE_ENV === 'development') {
-            console.log('📊 [Analytics] Received ad events:', {
                 sessionId,
                 eventCount: events?.length || 0,
                 timestamp: new Date(timestamp).toISOString()
@@ -42,7 +41,6 @@ export async function POST(request: NextRequest) {
             received: events?.length || 0
         });
     } catch (error) {
-        console.error('📊 [Analytics] Error processing ad events:', error);
         return NextResponse.json(
             { success: false, error: 'Failed to process events' },
             { status: 500 }

@@ -155,7 +155,6 @@ export function getABTestVariant(): { testId: string; variant: ABTestVariant } |
                 }));
             } catch (e) { }
 
-            console.log('🧪 [A/B Test] Assigned to variant:', variant.name);
             return userVariant;
         }
     }
@@ -225,7 +224,6 @@ export function trackTestResult(metrics: ABTestResult['metrics']): void {
         flushTestResults();
     }
 
-    console.log('🧪 [A/B Test] Result tracked:', result.variantId, metrics);
 }
 
 function getSessionId(): string {
@@ -245,14 +243,13 @@ async function flushTestResults(): Promise<void> {
     testResults.length = 0;
 
     try {
-        await fetch('https://api.reedstreams.live/analytics/ab-test-results', {
+        await fetch('https://api-reedstreams-production-12c6.up.railway.app/analytics/ab-test-results', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ results }),
             keepalive: true
         });
     } catch (e) {
-        console.warn('🧪 [A/B Test] Failed to send results');
     }
 }
 

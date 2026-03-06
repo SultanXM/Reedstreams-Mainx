@@ -18,14 +18,12 @@ export default function NativeHLSPlayer({ streamUrl, onError, onSuccess }: Nativ
         setStatus('loading');
 
         const handleCanPlay = () => {
-            console.log('[NativePlayer] Can play!');
             setStatus('playing');
             video.play().catch(e => console.warn('Autoplay blocked:', e));
             onSuccess?.();
         };
 
         const handleError = (e: any) => {
-            console.error('[NativePlayer] Error:', video.error, e);
             setStatus('error');
             onError?.(video.error);
         };

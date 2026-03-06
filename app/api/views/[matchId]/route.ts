@@ -33,7 +33,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json(data);
     
   } catch (error) {
-    console.error('[Views API] Error:', error);
     // Return 0 views on error so UI doesn't break
     const { matchId } = await params;
     return NextResponse.json({ 

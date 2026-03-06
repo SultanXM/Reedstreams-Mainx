@@ -29,7 +29,6 @@ export async function GET(request: NextRequest) {
       targetUrl = `${REED_API_BASE}${targetUrl}`;
     }
 
-    console.log('[SIGNED PROXY] Fetching:', targetUrl.substring(0, 150));
 
     // Fetch from edge API
     const response = await fetch(targetUrl, {
@@ -42,7 +41,6 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
-      console.error(`[SIGNED PROXY] Upstream error: ${response.status}`);
       return NextResponse.json(
         { error: `Upstream error: ${response.status}` },
         { status: response.status, headers: corsHeaders }
@@ -92,7 +90,6 @@ export async function GET(request: NextRequest) {
         return `${streamBaseUrl}${trimmed}`;
       }).join('\n');
 
-      console.log(`[SIGNED PROXY] Rewrote manifest with edge URLs`);
 
       return new NextResponse(rewrittenManifest, {
         headers: {
@@ -106,7 +103,6 @@ export async function GET(request: NextRequest) {
     // For non-manifest content (segments, keys), just proxy through with CORS
     const body = await response.arrayBuffer();
     
-    console.log(`[SIGNED PROXY] Proxying segment: ${contentType}, ${body.byteLength} bytes`);
 
     return new NextResponse(body, {
       headers: {
@@ -116,7 +112,6 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error('[SIGNED PROXY] Error:', error);
     return NextResponse.json(
       { error: 'Proxy error' },
       { status: 500, headers: corsHeaders }

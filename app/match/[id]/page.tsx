@@ -388,7 +388,6 @@ function MatchPageContent() {
           return;
         }
       } catch (e) {
-        console.error("Session storage parse error", e)
       }
     }
     
@@ -397,7 +396,7 @@ function MatchPageContent() {
       try {
         // If sportsurge source, try sportsurge API first
         if (isSportsurge) {
-          const srRes = await fetch('https://api.reedstreams.live/api/v1/streams/sportsurge')
+          const srRes = await fetch('https://api-reedstreams-production-12c6.up.railway.app/api/v1/streams/sportsurge')
           if (srRes.ok) {
             const srData = await srRes.json()
             if (srData.events) {
@@ -413,7 +412,7 @@ function MatchPageContent() {
         }
         
         // Try ppvsu API
-        const res = await fetch('https://api.reedstreams.live/api/v1/streams')
+        const res = await fetch('https://api-reedstreams-production-12c6.up.railway.app/api/v1/streams')
         if (res.ok) {
           const data = await res.json()
           if (data.categories) {
@@ -434,7 +433,6 @@ function MatchPageContent() {
         // If not found, set generic title
         setMatchTitle("Live Stream")
       } catch (e) {
-        console.error("API fetch error", e)
         setMatchTitle("Live Stream")
       }
     }

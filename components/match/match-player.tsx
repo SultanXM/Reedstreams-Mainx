@@ -96,7 +96,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
         // Step 1: Get signed URL from ppvsu endpoint
-        const res = await fetch(`https://api.reedstreams.live/api/v1/streams/ppvsu/${matchId}/signed-url`, {
+        const res = await fetch(`https://api-reedstreams-production-12c6.up.railway.app/api/v1/streams/ppvsu/${matchId}/signed-url`, {
           cache: 'no-store',
         })
 
@@ -112,7 +112,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         // Step 3: Build full URL (signed_url is relative like /api/v1/proxy?url=...)
         const fullStreamUrl = data.signed_url.startsWith('http') 
           ? data.signed_url 
-          : `https://api.reedstreams.live${data.signed_url}`
+          : `https://api-reedstreams-production-12c6.up.railway.app${data.signed_url}`
         
         setStreamUrl(fullStreamUrl)
         setLoading(false)
@@ -186,7 +186,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     // Capture current playback state before switching
     const video = playerContainerRef.current?.querySelector('video') as HTMLVideoElement | null;
     if (video && video.currentTime > 0) {
-      console.log(`[MatchPlayer] Switching players. Captured time: ${video.currentTime}, playing: ${!video.paused}`);
       setResumeTime(video.currentTime);
       setIsPlaying(!video.paused);
     } else {

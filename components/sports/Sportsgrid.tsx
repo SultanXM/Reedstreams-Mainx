@@ -267,7 +267,6 @@ function useRetryFetch<T>(
         setLoading(false)
         return
       } catch (err) {
-        console.warn(`Attempt ${attempt + 1} failed, retrying...`)
         if (attempt < maxRetries - 1) {
           await new Promise(r => setTimeout(r, retryDelay * (attempt + 1)))
         } else {

@@ -182,7 +182,6 @@ export function reportStreamLoad(providerId: string, success: boolean): void {
     config.stats.lastUpdated = Date.now();
 
     // Log for monitoring
-    console.log(`📊 [StreamProvider] ${providerId}: ${success ? 'SUCCESS' : 'FAILED'} | Rate: ${((config.stats.successfulLoads / config.stats.totalLoads) * 100).toFixed(1)}%`);
 }
 
 /**

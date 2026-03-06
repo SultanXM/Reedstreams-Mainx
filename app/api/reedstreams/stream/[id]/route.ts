@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { REED_API_BASE, REED_API_V1 } from '@/config/api';
-// Using api.reedstreams.live - paths are now /streams/ppvsu/{id}
+// Using api-reedstreams-production-12c6.up.railway.app - paths are now /streams/ppvsu/{id}
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -20,7 +20,6 @@ export async function GET(request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
 
-    console.log(`[REED STREAM] Fetching signed URL for game ${id}`);
 
     // Get the signed URL from reedstreams API
     const signedUrlRes = await fetch(`${REED_API_V1}/streams/ppvsu/${id}/signed-url`, {
@@ -32,7 +31,6 @@ export async function GET(request: Request, { params }: RouteParams) {
     });
 
     if (!signedUrlRes.ok) {
-      console.error(`[REED STREAM] Error: ${signedUrlRes.status}`);
       return NextResponse.json({ error: `Failed: ${signedUrlRes.status}` }, { status: 500, headers: corsHeaders });
     }
 
@@ -53,7 +51,6 @@ export async function GET(request: Request, { params }: RouteParams) {
     // Create our proxy URL that keeps the signature intact
     const proxyUrl = `/api/proxy/signed?url=${encodeURIComponent(encodedUrl)}`;
 
-    console.log(`[REED STREAM] Proxy URL: ${proxyUrl.substring(0, 100)}...`);
 
     const streams = [{
       embedUrl: proxyUrl,
@@ -65,7 +62,6 @@ export async function GET(request: Request, { params }: RouteParams) {
 
     return NextResponse.json(streams, { headers: corsHeaders });
   } catch (error) {
-    console.error('[REED STREAM] Error:', error);
     return NextResponse.json({ error: 'Server Error' }, { status: 500, headers: corsHeaders });
   }
 }

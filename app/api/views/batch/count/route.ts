@@ -35,7 +35,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data);
     
   } catch (error) {
-    console.error('[Views Batch API] Error:', error);
     // Return empty counts on error
     return NextResponse.json({ 
       counts: []

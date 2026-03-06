@@ -14,16 +14,12 @@
 
     if (typeof window === 'undefined') return;
 
-    console.log('🛡️ ====================================');
-    console.log('🛡️ NUCLEAR AD SHIELD v4.0 LOADING');
-    console.log('🛡️ ====================================');
 
     // ============================================
     // BLOCK WINDOW.OPEN - NUCLEAR OPTION
     // ============================================
     const blockWindowOpen = () => {
         const nullFn = () => {
-            console.log('🛡️ BLOCKED: window.open');
             return null;
         };
 
@@ -100,7 +96,6 @@
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 el.remove();
-                console.log('🛡️ BLOCKED: Element with popup handler removed');
                 return false;
             }
             el = el.parentElement;
@@ -148,7 +143,6 @@
 
             if ((isPositioned && isEmpty && (isTransparent || highZ) && isLarge) || hasPopup) {
                 htmlEl.remove();
-                console.log('🛡️ REMOVED: Hidden overlay');
             }
         });
     };
@@ -176,7 +170,6 @@
                 src.includes('pop') ||
                 src.includes('click')) {
                 iframe.remove();
-                console.log('🛡️ REMOVED: Ad iframe');
             }
         });
     };
@@ -199,14 +192,12 @@
                         const src = (el.getAttribute('src') || '').toLowerCase();
                         if (src.includes('pop') || src.includes('ads') || src.includes('click')) {
                             el.remove();
-                            console.log('🛡️ REMOVED: Ad script');
                         }
                     }
 
                     // Remove suspicious iframes
                     if (el.tagName === 'IFRAME' && !el.classList.contains('video-iframe')) {
                         el.remove();
-                        console.log('🛡️ REMOVED: Injected iframe');
                     }
 
                     // Remove overlay divs
@@ -216,7 +207,6 @@
                             el.innerText.trim() === '' &&
                             parseInt(style.zIndex || '0') > 10) {
                             el.remove();
-                            console.log('🛡️ REMOVED: Injected overlay');
                         }
                     }
                 });
@@ -240,14 +230,10 @@
         // This helps catch some redirect attempts
     });
 
-    console.log('🛡️ ====================================');
-    console.log('🛡️ NUCLEAR AD SHIELD v4.0 ACTIVE');
-    console.log('🛡️ ====================================');
 
 })();
 
 // Export for React hook
 export function initAdaptiveAdShield() {
     // Already initialized via IIFE above
-    console.log('🛡️ Ad Shield hook called - already active');
 }

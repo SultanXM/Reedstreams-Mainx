@@ -53,7 +53,6 @@ export async function GET(request: Request) {
         });
 
     } catch (error) {
-        console.error('[Segment Proxy Error]', error);
         return new NextResponse('Proxy Error', { status: 500, headers: corsHeaders });
     }
 }

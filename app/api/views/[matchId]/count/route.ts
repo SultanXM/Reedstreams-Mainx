@@ -31,7 +31,6 @@ export async function GET(_request: Request, { params }: RouteParams) {
     return NextResponse.json(data);
     
   } catch (error) {
-    console.error('[Views Count API] Error:', error);
     const { matchId } = await params;
     return NextResponse.json({ 
       views: 0,

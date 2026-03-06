@@ -18,7 +18,6 @@ export function usePlayerPreference() {
         setPreferredPlayerState(saved as PlayerType);
       }
     } catch (e) {
-      console.warn("Failed to load player preference:", e);
     }
     setIsLoaded(true);
   }, []);
@@ -29,7 +28,6 @@ export function usePlayerPreference() {
       localStorage.setItem(STORAGE_KEY, player);
       setPreferredPlayerState(player);
     } catch (e) {
-      console.warn("Failed to save player preference:", e);
       setPreferredPlayerState(player);
     }
   }, []);

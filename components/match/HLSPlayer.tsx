@@ -48,12 +48,10 @@ export default function HLSPlayer({
     const isIOSDevice = isIOS();
     const canPlayNative = supportsNativeHLS();
     
-    console.log('[HLSPlayer] Starting playback, seeking to:', startTime);
 
     // Native HLS (iOS/Safari)
     if (isIOSDevice || canPlayNative) {
       const handleCanPlay = () => {
-        console.log('[HLSPlayer] Native ready, currentTime:', video.currentTime);
         
         // Seek to start time if provided and not already seeked
         if (startTime && startTime > 0 && !hasSeekedRef.current) {
@@ -71,7 +69,6 @@ export default function HLSPlayer({
       };
 
       const handleError = (e: Event) => {
-        console.error('[HLSPlayer] Native error:', video.error);
         onError?.(`Native HLS error: ${video.error?.code}`);
       };
 
@@ -105,7 +102,6 @@ export default function HLSPlayer({
       hlsRef.current = hls;
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        console.log('[HLSPlayer] Manifest parsed');
         setIsLoaded(true);
         onReady?.();
         
@@ -122,7 +118,6 @@ export default function HLSPlayer({
       });
 
       hls.on(Hls.Events.ERROR, (event, data) => {
-        console.error('[HLSPlayer] Error:', data);
         
         if (data.fatal) {
           switch (data.type) {

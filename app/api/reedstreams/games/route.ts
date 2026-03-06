@@ -14,7 +14,6 @@ export async function GET() {
     const data = await res.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error fetching reedstreams games:", error);
     return NextResponse.json({ categories: [] });
   }
 }

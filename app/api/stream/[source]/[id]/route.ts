@@ -22,9 +22,7 @@ export async function GET(request: Request, { params }: RouteParams) {
     const { source, id } = await params
 
     // LOGGING START
-    console.log(`[STREAM API] Request received for Source: ${source}, ID: ${id}`);
     const targetUrl = `${STREAMED_API_BASE}/stream/${source}/${id}`;
-    console.log(`[STREAM API] Fetching upstream: ${targetUrl}`);
     // LOGGING END
 
     const res = await fetch(targetUrl, {
@@ -36,16 +34,13 @@ export async function GET(request: Request, { params }: RouteParams) {
     })
 
     if (!res.ok) {
-      console.error(`[STREAM API] Upstream Error: ${res.status} ${res.statusText}`);
       return NextResponse.json({ error: `Upstream error ${res.status}` }, { status: res.status, headers: corsHeaders })
     }
 
     const streams = await res.json()
-    console.log(`[STREAM API] Success! Found ${Array.isArray(streams) ? streams.length : 0} streams.`);
 
     return NextResponse.json(streams, { headers: corsHeaders })
   } catch (error) {
-    console.error('[STREAM API] CRITICAL FAILURE:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500, headers: corsHeaders })
   }
 }

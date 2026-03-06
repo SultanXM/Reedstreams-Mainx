@@ -34,7 +34,6 @@ export async function GET(request: Request) {
     const match = html.match(regex);
 
     if (match && match[1]) {
-      console.log("EXTRACTED CLEAN STREAM:", match[1]);
       return NextResponse.json({ success: true, url: match[1] }, { headers: corsHeaders });
     }
 

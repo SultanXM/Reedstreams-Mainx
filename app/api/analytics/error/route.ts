@@ -12,7 +12,6 @@ export async function POST(request: NextRequest) {
         const { error, stack, componentStack, timestamp, userAgent, url } = errorData;
 
         // Log error (always, even in production)
-        console.error('❌ [Client Error]', {
             error,
             url,
             userAgent: userAgent?.substring(0, 50),
@@ -31,7 +30,6 @@ export async function POST(request: NextRequest) {
             message: 'Error logged'
         });
     } catch (error) {
-        console.error('❌ [Error API] Failed to log error:', error);
         return NextResponse.json(
             { success: false, error: 'Failed to log error' },
             { status: 500 }

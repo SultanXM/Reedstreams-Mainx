@@ -15,7 +15,6 @@ export async function GET() {
     const sports = await res.json()
     return NextResponse.json(Array.isArray(sports) ? sports : [])
   } catch (error) {
-    console.error("Error fetching sports:", error)
     return NextResponse.json([])
   }
 }

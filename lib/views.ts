@@ -19,7 +19,6 @@ export async function incrementView(matchId: string): Promise<number> {
     const data = await res.json();
     return data.views;
   } catch (error) {
-    console.error('[Views] Error incrementing:', error);
     return 0;
   }
 }
@@ -39,7 +38,6 @@ export async function getViewCount(matchId: string): Promise<number> {
     const data = await res.json();
     return data.views;
   } catch (error) {
-    console.error('[Views] Error getting count:', error);
     return 0;
   }
 }

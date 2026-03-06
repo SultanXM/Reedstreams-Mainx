@@ -88,7 +88,6 @@ export async function GET(request: Request) {
     });
 
   } catch (error) {
-    console.error('[Manifest Proxy Error]', error);
     return new NextResponse('Internal Server Error', { status: 500, headers: corsHeaders });
   }
 }

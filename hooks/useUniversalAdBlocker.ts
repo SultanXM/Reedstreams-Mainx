@@ -17,7 +17,6 @@ export function useUniversalAdBlocker(): void {
         // Additional protection: Block window.open directly in React context
         try {
             const blockOpen = () => {
-                console.log('🛡️ [React Hook] Blocked window.open');
                 return null;
             };
             Object.defineProperty(window, 'open', {

@@ -208,7 +208,6 @@ export default function LiveMatches() {
       
       setGames(allGames)
     } catch (err: any) {
-      console.error('[LiveMatches] Fetch error:', err)
       setError(err.message || 'Failed to load matches')
     } finally {
       setLoading(false)

@@ -11,7 +11,6 @@ async function getInitialMatches() {
     if (!res.ok) return { categories: [] };
     return res.json();
   } catch (error) {
-    console.error('Failed to fetch initial matches:', error);
     return { categories: [] };
   }
 }

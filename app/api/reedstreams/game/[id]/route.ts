@@ -9,7 +9,6 @@ export async function GET(request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
 
-    console.log(`[REED GAME] Fetching game ${id}`);
 
     // Fetch all games and find the one with matching ID
     const res = await fetch(`${REED_API_V1}/streams`, {
@@ -21,7 +20,6 @@ export async function GET(request: Request, { params }: RouteParams) {
     });
 
     if (!res.ok) {
-      console.error(`[REED GAME] Error fetching games: ${res.status}`);
       throw new Error(`HTTP ${res.status}`);
     }
 
@@ -48,14 +46,11 @@ export async function GET(request: Request, { params }: RouteParams) {
     }
 
     if (!foundGame) {
-      console.error(`[REED GAME] Game ${id} not found`);
       return NextResponse.json({ error: 'Game not found' }, { status: 404 });
     }
 
-    console.log(`[REED GAME] Found game:`, foundGame.name);
     return NextResponse.json(foundGame);
   } catch (error) {
-    console.error("[REED GAME] Error:", error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

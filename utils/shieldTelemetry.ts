@@ -115,21 +115,19 @@ async function flushEvents(): Promise<void> {
 
     try {
         if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-            navigator.sendBeacon('https://api.reedstreams.live/analytics/shield-telemetry', JSON.stringify({
+            navigator.sendBeacon('https://api-reedstreams-production-12c6.up.railway.app/analytics/shield-telemetry', JSON.stringify({
                 events,
                 timestamp: Date.now()
             }));
         } else {
-            await fetch('https://api.reedstreams.live/analytics/shield-telemetry', {
+            await fetch('https://api-reedstreams-production-12c6.up.railway.app/analytics/shield-telemetry', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ events, timestamp: Date.now() }),
                 keepalive: true
             });
         }
-        console.log(`📊 [Telemetry] Flushed ${events.length} events`);
     } catch (e) {
-        console.warn('📊 [Telemetry] Failed to send events');
     }
 }
 
@@ -182,7 +180,6 @@ export function trackStreamLoad(
 
     // Log in development
     if (process.env.NODE_ENV === 'development') {
-        console.log('📊 [Telemetry]', event.type.toUpperCase(), {
             provider,
             device,
             sandboxEnabled,
@@ -211,7 +208,6 @@ export function trackAdBlocked(provider: string, method: string): void {
 
     scheduleFlush();
 
-    console.log('🛡️ [Telemetry] Ad blocked via', method, 'on', provider);
 }
 
 /**
@@ -234,7 +230,6 @@ export function trackFallback(provider: string, reason: string): void {
 
     scheduleFlush();
 
-    console.log('⚠️ [Telemetry] Fallback used for', provider, '-', reason);
 }
 
 /**
@@ -262,7 +257,6 @@ export function trackUserReport(
     // Immediately flush user reports
     flushEvents();
 
-    console.log('📢 [Telemetry] User report:', reportType, provider);
 }
 
 // ============================================

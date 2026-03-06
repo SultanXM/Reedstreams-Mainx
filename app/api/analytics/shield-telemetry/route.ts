@@ -40,7 +40,6 @@ export async function POST(request: NextRequest) {
 
         summary.successRate = totalCount > 0 ? (successCount / totalCount) * 100 : 100;
 
-        console.log('📊 [Telemetry API] Received events:', summary);
 
         // TODO: Store in database for long-term analysis
         // await db.telemetryEvents.createMany({ data: events });
@@ -51,7 +50,6 @@ export async function POST(request: NextRequest) {
             summary
         });
     } catch (error) {
-        console.error('📊 [Telemetry API] Error:', error);
         return NextResponse.json(
             { success: false, error: 'Failed to process telemetry' },
             { status: 500 }

@@ -16,7 +16,7 @@ export default function AdminPanel() {
 
   const fetchMatches = async () => {
     setLoading(true);
-    const res = await fetch("https://api.reedstreams.live/matches");
+    const res = await fetch("https://api-reedstreams-production-12c6.up.railway.app/matches");
     if (res.ok) setMatches(await res.json());
     setLoading(false);
   }
@@ -25,7 +25,7 @@ export default function AdminPanel() {
 
   const handleOverride = async (matchId: string, source: string) => {
     setLoading(true);
-    const res = await fetch('https://api.reedstreams.live/stream-control', {
+    const res = await fetch('https://api-reedstreams-production-12c6.up.railway.app/stream-control', {
       method: 'POST',
       body: JSON.stringify({ matchId, source, secret: password })
     });

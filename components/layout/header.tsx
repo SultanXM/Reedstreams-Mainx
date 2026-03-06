@@ -102,39 +102,30 @@ export default function Header() {
 
     const fetchLiveCount = useCallback(async () => {
         try {
-            console.log('[Header] Fetching from:', API_BASE)
             const response = await fetch(API_BASE, { 
                 cache: 'no-store',
                 headers: { 'Accept': 'application/json' }
             })
-            console.log('[Header] Response status:', response.status)
             if (!response.ok) throw new Error(`HTTP ${response.status}`)
             const data = await response.json()
-            console.log('[Header] API Response:', data)
             
             if (!data.categories || !Array.isArray(data.categories)) {
-                console.error('[Header] Invalid response - no categories:', data)
                 return
             }
             
             const now = Math.floor(Date.now() / 1000)
-            console.log('[Header] Current time:', now)
             
             let liveCount = 0
             data.categories.forEach((cat: Category) => {
-                console.log('[Header] Checking category:', cat.category, 'Games:', cat.games?.length)
                 if (cat.games && Array.isArray(cat.games)) {
                     cat.games.forEach((g: Game) => {
                         const isLive = now >= g.start_time && now <= g.end_time
-                        console.log('[Header] Game:', g.name, 'Start:', g.start_time, 'End:', g.end_time, 'Live:', isLive)
                         if (isLive) liveCount++
                     })
                 }
             })
-            console.log('[Header] Total live count:', liveCount)
             setLiveMatchesCount(liveCount)
         } catch (error) { 
-            console.error('[Header] Live count error:', error) 
         }
     }, [])
 
@@ -166,7 +157,7 @@ export default function Header() {
                 return idxA !== -1 ? -1 : idxB !== -1 ? 1 : a.name.localeCompare(b.name)
             })
             setSports(sorted.slice(0, 14))
-        } catch (error) { console.error('Sports fetch error:', error) }
+        } catch (error) { /* error handled */ }
     }, [])
 
     const fetchSearchMatches = useCallback(async () => {
@@ -191,7 +182,7 @@ export default function Header() {
                 }
             })
             setMatches(allMatches)
-        } catch (error) { console.error('Search matches error:', error) }
+        } catch (error) { /* error handled */ }
     }, [])
 
     useEffect(() => {

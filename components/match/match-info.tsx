@@ -75,7 +75,6 @@ export default function MatchInfo({ matchId }: { matchId: string }) {
         }
       } catch (e) {
         // shit happened, log and move on
-        console.error("Info Load Error", e);
       } finally {
         setLoading(false);
       }

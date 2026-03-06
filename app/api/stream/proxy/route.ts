@@ -30,7 +30,6 @@ export async function GET(request: NextRequest) {
       decodedUrl = targetUrl;
     }
 
-    console.log('[STREAM PROXY] Fetching:', decodedUrl.substring(0, 80) + '...');
 
     const response = await fetch(decodedUrl, {
       headers: {
@@ -42,7 +41,6 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
-      console.error(`[STREAM PROXY] Upstream error: ${response.status}`);
       return NextResponse.json(
         { error: `Upstream error: ${response.status}` },
         { status: response.status, headers: corsHeaders }
@@ -52,7 +50,6 @@ export async function GET(request: NextRequest) {
     const body = await response.arrayBuffer();
     const contentType = response.headers.get('Content-Type') || 'application/vnd.apple.mpegurl';
 
-    console.log(`[STREAM PROXY] Success: ${contentType}, ${body.byteLength} bytes`);
 
     return new NextResponse(body, {
       headers: {
@@ -64,7 +61,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[STREAM PROXY] Error:', error);
     return NextResponse.json(
       { error: 'Proxy error' },
       { status: 500, headers: corsHeaders }

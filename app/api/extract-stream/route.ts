@@ -26,7 +26,6 @@ export async function GET(request: Request) {
     }
 
     try {
-        console.log(`[Extractor] Fetching: ${embedUrl}`);
 
         const response = await fetch(embedUrl, {
             headers: {
@@ -74,7 +73,6 @@ export async function GET(request: Request) {
         return NextResponse.json({ success: false, error: 'No m3u8 found' }, { headers: corsHeaders });
 
     } catch (error) {
-        console.error('[Extractor Error]', error);
         return NextResponse.json({ success: false, error: 'Internal Error' }, { status: 500, headers: corsHeaders });
     }
 }
