@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
 
         // Log in development
         if (process.env.NODE_ENV === 'development') {
+            console.log({
                 sessionId,
                 eventCount: events?.length || 0,
                 timestamp: new Date(timestamp).toISOString()

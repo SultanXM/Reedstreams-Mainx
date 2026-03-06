@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
         const { type, layer, action, target, url, timestamp, userAgent, platform } = event;
 
         // Always log breakthroughs
+        console.log({
             layer,
             action,
             target,

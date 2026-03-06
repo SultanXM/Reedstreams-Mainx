@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
         const { error, stack, componentStack, timestamp, userAgent, url } = errorData;
 
         // Log error (always, even in production)
+        console.log({
             error,
             url,
             userAgent: userAgent?.substring(0, 50),
