@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Load balancer URL
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-reedstreams-lb.fly.dev';
@@ -8,18 +8,20 @@ interface RouteParams {
 }
 
 /**
- * GET /api/views/{matchId}/count
- * Get current view count for a match
+ * POST /api/views/{matchId}/ping
+ * Keep viewer session alive (extends TTL by 5 minutes)
  */
-export async function GET(_request: Request, { params }: RouteParams) {
+export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const { matchId } = await params;
     
     // Forward to backend
-    const res = await fetch(`${API_BASE_URL}/api/v1/views/${matchId}/count`, {
-      method: 'GET',
+    const res = await fetch(`${API_BASE_URL}/api/v1/views/${matchId}/ping`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'User-Agent': request.headers.get('user-agent') || 'unknown',
+        'X-Forwarded-For': request.headers.get('x-forwarded-for') || 'unknown',
       },
     });
     
@@ -34,6 +36,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
     const { matchId } = await params;
     return NextResponse.json({ 
       views: 0,
+      isNewViewer: false,
       matchId
     });
   }

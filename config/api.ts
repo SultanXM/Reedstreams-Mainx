@@ -1,5 +1,5 @@
 // Centralized API Configuration
-export const API_BASE_URL = 'https://api-reedstreams-production-12c6.up.railway.app'
+export const API_BASE_URL = 'https://api-reedstreams-lb.fly.dev'
 export const API_V1_URL = `${API_BASE_URL}/api/v1`
 
 // PPVSU Streams (custom player)

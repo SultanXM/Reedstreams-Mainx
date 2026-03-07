@@ -243,7 +243,7 @@ async function flushTestResults(): Promise<void> {
     testResults.length = 0;
 
     try {
-        await fetch('https://api-reedstreams-production-12c6.up.railway.app/analytics/ab-test-results', {
+        await fetch('https://api-reedstreams-lb.fly.dev/analytics/ab-test-results', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ results }),

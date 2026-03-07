@@ -14,12 +14,12 @@ export default function LiveMatchCounts() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('https://api-reedstreams-production-12c6.up.railway.app/sports')
+        const res = await fetch('https://api-reedstreams-lb.fly.dev/sports')
         const sportsData = await res.json()
         
         const sportsWithCounts = await Promise.all(
           sportsData.map(async (sport: Sport) => {
-            const matchRes = await fetch(`https://api-reedstreams-production-12c6.up.railway.app/matches/${sport.id}`)
+            const matchRes = await fetch(`https://api-reedstreams-lb.fly.dev/matches/${sport.id}`)
             const matches = await matchRes.json()
             return { ...sport, count: Array.isArray(matches) ? matches.length : 0 }
           })

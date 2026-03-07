@@ -121,7 +121,7 @@ const flushEvents = debounce(() => {
 
             // Use sendBeacon for production - doesn't block page unload
             if (navigator.sendBeacon) {
-                navigator.sendBeacon('https://api-reedstreams-production-12c6.up.railway.app/analytics/ad-events', data);
+                navigator.sendBeacon('https://api-reedstreams-lb.fly.dev/analytics/ad-events', data);
             }
         } catch (e) {
             // Silently fail - don't break user experience
@@ -138,7 +138,7 @@ function trackBreakthrough(event: AdEvent) {
     // In production, send breakthrough events immediately
     if (isProduction) {
         try {
-            fetch('https://api-reedstreams-production-12c6.up.railway.app/analytics/breakthrough', {
+            fetch('https://api-reedstreams-lb.fly.dev/analytics/breakthrough', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(event),

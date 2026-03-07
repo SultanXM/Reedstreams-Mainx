@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Rust backend URL
-const RUST_BACKEND_URL = process.env.RUST_BACKEND_URL || 'https://reedstreams-edge-v2.fly.dev';
+// Load balancer URL - uses round-robin across 3 API servers
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-reedstreams-lb.fly.dev';
 
 interface RouteParams {
   params: Promise<{ matchId: string }>
@@ -9,14 +9,14 @@ interface RouteParams {
 
 /**
  * POST /api/views/{matchId}
- * Proxy to Rust backend view counter
+ * Add a viewer to a match
  */
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const { matchId } = await params;
     
-    // Forward to Rust backend
-    const res = await fetch(`${RUST_BACKEND_URL}/api/v1/views/${matchId}`, {
+    // Forward to backend
+    const res = await fetch(`${API_BASE_URL}/api/v1/views/${matchId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,7 +33,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json(data);
     
   } catch (error) {
-    // Return 0 views on error so UI doesn't break
     const { matchId } = await params;
     return NextResponse.json({ 
       views: 0,

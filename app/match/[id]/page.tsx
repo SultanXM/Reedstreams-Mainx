@@ -28,7 +28,7 @@ import Header from "@/components/layout/header"
 
 // 🔥 IMPORT LANGUAGE HOOK
 import { useLanguage } from "@/context/language-context"
-import { incrementView, getViewCount, formatViewCount } from "@/lib/views"
+import { incrementView, getViewCount, formatViewCount, startViewPing } from "@/lib/views"
 import { Eye } from "lucide-react"
 
 // 🔥 RESPONSIVE CSS ENGINE
@@ -357,14 +357,23 @@ function MatchPageContent() {
   
   useEffect(() => {
     // 🔥 TRACK VIEW - increment when page loads (only for ppvsu streams)
+    let stopPing: (() => void) | undefined;
+    
     if (!isSportsurge) {
+      // Initial view increment
       const trackView = async () => {
         const views = await incrementView(matchId)
         setViewCount(views)
       }
       trackView()
       
-      // Refresh view count every 30 seconds to see updates from other users
+      // Start ping every 4 minutes to keep session alive
+      // Also updates view count from server
+      stopPing = startViewPing(matchId, (count) => {
+        setViewCount(count)
+      })
+      
+      // Also refresh view count every 30 seconds to see updates from other users
       var viewInterval = setInterval(async () => {
         const views = await getViewCount(matchId)
         setViewCount(views)
@@ -396,7 +405,7 @@ function MatchPageContent() {
       try {
         // If sportsurge source, try sportsurge API first
         if (isSportsurge) {
-          const srRes = await fetch('https://api-reedstreams-production-12c6.up.railway.app/api/v1/streams/sportsurge')
+          const srRes = await fetch('https://api-reedstreams-lb.fly.dev/api/v1/streams/sportsurge')
           if (srRes.ok) {
             const srData = await srRes.json()
             if (srData.events) {
@@ -412,7 +421,7 @@ function MatchPageContent() {
         }
         
         // Try ppvsu API
-        const res = await fetch('https://api-reedstreams-production-12c6.up.railway.app/api/v1/streams')
+        const res = await fetch('https://api-reedstreams-lb.fly.dev/api/v1/streams')
         if (res.ok) {
           const data = await res.json()
           if (data.categories) {
@@ -459,10 +468,14 @@ function MatchPageContent() {
       return () => {
         clearInterval(countdown);
         if (typeof viewInterval !== 'undefined') clearInterval(viewInterval);
+        if (stopPing) stopPing();
       };
     }
     
-    return () => { if (typeof viewInterval !== 'undefined') clearInterval(viewInterval); }
+    return () => { 
+      if (typeof viewInterval !== 'undefined') clearInterval(viewInterval);
+      if (stopPing) stopPing();
+    }
   }, [])
 
   // SHARING LOGIC
