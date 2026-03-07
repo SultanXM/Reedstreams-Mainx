@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 
-const API_URL = 'https://api-reedstreams-1.fly.dev/api/v1/streams'
+const API_URL = 'https://api-reedstreams-clean.fly.dev/api/v1/streams'
 
 interface Game {
   id: number

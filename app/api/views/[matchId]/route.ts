@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Load balancer URL - uses round-robin across 3 API servers
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-reedstreams-1.fly.dev';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-reedstreams-clean.fly.dev';
 
 interface RouteParams {
   params: Promise<{ matchId: string }>
