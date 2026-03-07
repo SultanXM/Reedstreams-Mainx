@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 // Load balancer URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-reedstreams-lb.fly.dev';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-reedstreams-1.fly.dev';
 
 interface RouteParams {
   params: Promise<{ matchId: string }>

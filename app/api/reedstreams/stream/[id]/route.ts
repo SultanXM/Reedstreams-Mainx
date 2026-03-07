@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { REED_API_BASE, REED_API_V1 } from '@/config/api';
-// Using api-reedstreams-lb.fly.dev - paths are now /streams/ppvsu/{id}
+// Using api-reedstreams-1.fly.dev - paths are now /streams/ppvsu/{id}
 
 interface RouteParams {
   params: Promise<{ id: string }>

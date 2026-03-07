@@ -115,12 +115,12 @@ async function flushEvents(): Promise<void> {
 
     try {
         if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-            navigator.sendBeacon('https://api-reedstreams-lb.fly.dev/analytics/shield-telemetry', JSON.stringify({
+            navigator.sendBeacon('https://api-reedstreams-1.fly.dev/analytics/shield-telemetry', JSON.stringify({
                 events,
                 timestamp: Date.now()
             }));
         } else {
-            await fetch('https://api-reedstreams-lb.fly.dev/analytics/shield-telemetry', {
+            await fetch('https://api-reedstreams-1.fly.dev/analytics/shield-telemetry', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ events, timestamp: Date.now() }),
