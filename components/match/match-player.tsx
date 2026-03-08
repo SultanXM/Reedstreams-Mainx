@@ -168,6 +168,12 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
   // Fetch iframe from PPV.to API when JW Player is selected
   const [ppvIframeUrl, setPpvIframeUrl] = useState<string | null>(null)
   const [ppvLoading, setPpvLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  
+  // Ensure client-side only rendering for iframe
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     if (currentPlayer === 'jw' && !ppvIframeUrl && !ppvLoading) {
@@ -385,12 +391,22 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     return (
       <div>
         <div style={wrapperStyle}>
-          <iframe
-            src={iframeSrc}
-            style={{ width: '100%', height: '100%', border: 'none' }}
-            allowFullScreen
-            referrerPolicy="no-referrer"
-          />
+          {mounted ? (
+            <iframe
+              src={iframeSrc}
+              className="video-iframe"
+              style={{ width: '100%', height: '100%', border: 'none' }}
+              allowFullScreen
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div style={stateContainerStyle}>
+              <Loader2 size={32} color="#666" style={{ animation: 'spin 1s linear infinite' }} />
+              <span style={{ marginTop: 12, fontWeight: 500, fontSize: 12, color: '#666' }}>
+                Initializing player...
+              </span>
+            </div>
+          )}
         </div>
         <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
           <div style={{ fontSize: 11, color: '#555' }}>

@@ -174,8 +174,8 @@
         });
     };
 
-    removeAdIframes();
-    setInterval(removeAdIframes, 1000);
+    // DISABLED: removeAdIframes();
+    // DISABLED: setInterval(removeAdIframes, 1000);
 
     // ============================================
     // MUTATION OBSERVER - CATCH INJECTIONS
@@ -195,10 +195,10 @@
                         }
                     }
 
-                    // Remove suspicious iframes
-                    if (el.tagName === 'IFRAME' && !el.classList.contains('video-iframe')) {
-                        el.remove();
-                    }
+                    // Remove suspicious iframes (DISABLED for JW Player compatibility)
+                    // if (el.tagName === 'IFRAME' && !el.classList.contains('video-iframe')) {
+                    //     el.remove();
+                    // }
 
                     // Remove overlay divs
                     if (el.tagName === 'DIV') {
