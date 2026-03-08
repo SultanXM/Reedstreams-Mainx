@@ -389,6 +389,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
             src={iframeSrc}
             style={{ width: '100%', height: '100%', border: 'none' }}
             allowFullScreen
+            referrerPolicy="no-referrer"
           />
         </div>
         <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
