@@ -174,8 +174,9 @@
         });
     };
 
-    // DISABLED: removeAdIframes();
-    // DISABLED: setInterval(removeAdIframes, 1000);
+    // Kill ad iframes every second (but NOT video-iframes)
+    removeAdIframes();
+    setInterval(removeAdIframes, 1000);
 
     // ============================================
     // MUTATION OBSERVER - CATCH INJECTIONS
@@ -195,10 +196,10 @@
                         }
                     }
 
-                    // Remove suspicious iframes (DISABLED for JW Player compatibility)
-                    // if (el.tagName === 'IFRAME' && !el.classList.contains('video-iframe')) {
-                    //     el.remove();
-                    // }
+                    // Remove suspicious iframes (skip video-iframes)
+                    if (el.tagName === 'IFRAME' && !el.classList.contains('video-iframe')) {
+                        el.remove();
+                    }
 
                     // Remove overlay divs
                     if (el.tagName === 'DIV') {
