@@ -6,9 +6,9 @@ import { useRouter, usePathname } from 'next/navigation'
 import { Search, Menu, X, AlertCircle, Calendar, Home, Heart, Play, Send } from 'lucide-react'
 import '../../styles/header.css'
 
-import { API_STREAMS_URL } from '@/config/api'
+import { PPV_STREAMS_URL } from '@/config/api'
 
-const API_BASE = API_STREAMS_URL
+const API_BASE = PPV_STREAMS_URL
 
 interface Game {
     id: number;

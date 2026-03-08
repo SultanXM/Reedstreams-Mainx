@@ -4,6 +4,9 @@ export const API_V1_URL = `${API_BASE_URL}/api/v1`
 
 // PPVSU Streams (custom player)
 export const API_STREAMS_URL = `${API_V1_URL}/streams`
+
+// PPV.to Official API - guaranteed uptime, used as primary source
+export const PPV_STREAMS_URL = '/api/ppv-streams'
 export const getStreamSignedUrl = (id: string) => `${API_V1_URL}/streams/ppvsu/${id}/signed-url`
 export const getStreamProxyUrl = (signedUrlPath: string) => 
   signedUrlPath.startsWith('http') ? signedUrlPath : `${API_BASE_URL}${signedUrlPath}`
