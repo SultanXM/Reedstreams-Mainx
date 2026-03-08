@@ -27,22 +27,18 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
   const [startTime, setStartTime] = useState<number | null>(null)
   const [timeRemaining, setTimeRemaining] = useState<number>(0)
   
-  // For seamless player switching
   const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("shaka")
   const [resumeTime, setResumeTime] = useState<number | undefined>(undefined)
   const [isPlaying, setIsPlaying] = useState(false)
   const playerContainerRef = useRef<HTMLDivElement>(null)
   const { preferredPlayer, setPreferredPlayer } = usePlayerPreference()
 
-  // Sync preferred player with current player on initial load
   useEffect(() => {
     setCurrentPlayer(preferredPlayer)
   }, [preferredPlayer])
 
   const hasFetched = useRef(false)
-  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // load match start time from cache
   useEffect(() => {
     try {
       const cached = sessionStorage.getItem("currentMatch")
@@ -58,12 +54,9 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
           }
         }
       }
-    } catch (e) {
-      // cache busted
-    }
+    } catch (e) {}
   }, [matchId])
 
-  // countdown timer
   useEffect(() => {
     if (!startTime) return
     const timer = setInterval(() => {
@@ -83,7 +76,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     return () => clearInterval(timer)
   }, [startTime, playerState])
 
-  // fetch stream with auto-retry logic
   const fetchStream = useCallback(async () => {
     if (playerState === 'countdown') return
     
@@ -95,7 +87,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
-        // Step 1: Get signed URL from ppvsu endpoint
         const res = await fetch(`https://api-reedstreams-clean.fly.dev/api/v1/streams/ppvsu/${matchId}/signed-url`, {
           cache: 'no-store',
         })
@@ -104,12 +95,10 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
         const data = await res.json()
         
-        // Step 2: Get the signed_url from response
         if (!data.signed_url) {
           throw new Error("No signed URL in response")
         }
         
-        // Step 3: Build full URL (signed_url is relative like /api/v1/proxy?url=...)
         const fullStreamUrl = data.signed_url.startsWith('http') 
           ? data.signed_url 
           : `https://api-reedstreams-clean.fly.dev${data.signed_url}`
@@ -132,35 +121,11 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     }
   }, [matchId, playerState])
 
-  // trigger fetch when needed
   useEffect(() => {
     if (playerState === 'countdown' || hasFetched.current) return
     hasFetched.current = true
     fetchStream()
   }, [playerState, fetchStream])
-
-  // cleanup retry timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (retryTimeoutRef.current) {
-        clearTimeout(retryTimeoutRef.current)
-      }
-    }
-  }, [])
-
-  // force mute when hidden
-  useEffect(() => {
-    if (playerState !== 'initial' || !playerContainerRef.current) return
-
-    const forceMute = setInterval(() => {
-      const video = playerContainerRef.current?.querySelector('video') as HTMLVideoElement | null
-      if (video && !video.muted) {
-        video.muted = true
-      }
-    }, 100)
-
-    return () => clearInterval(forceMute)
-  }, [playerState])
 
   const handlePlayClick = () => {
     setPlayerState('ready')
@@ -179,11 +144,9 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     fetchStream()
   }
 
-  // SEAMLESS PLAYER SWITCHING
   const handlePlayerSwitch = useCallback((newPlayer: PlayerType) => {
     if (newPlayer === currentPlayer) return;
 
-    // Capture current playback state before switching
     const video = playerContainerRef.current?.querySelector('video') as HTMLVideoElement | null;
     if (video && video.currentTime > 0) {
       setResumeTime(video.currentTime);
@@ -192,7 +155,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
       setResumeTime(undefined);
     }
 
-    // Update both local state and preference
     setCurrentPlayer(newPlayer);
     setPreferredPlayer(newPlayer);
   }, [currentPlayer, setPreferredPlayer]);
@@ -203,7 +165,40 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
   const countdownDisplay = useMemo(() => formatTime(timeRemaining), [timeRemaining])
 
-  // Common styles
+  // Fetch iframe from PPV.to API when JW Player is selected
+  const [ppvIframeUrl, setPpvIframeUrl] = useState<string | null>(null)
+  const [ppvLoading, setPpvLoading] = useState(false)
+
+  useEffect(() => {
+    if (currentPlayer === 'jw' && !ppvIframeUrl && !ppvLoading) {
+      setPpvLoading(true)
+      fetch('https://api.ppv.to/api/streams')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.streams) {
+            for (const category of data.streams) {
+              for (const stream of category.streams) {
+                if (String(stream.id) === String(matchId)) {
+                  if (stream.iframe) {
+                    setPpvIframeUrl(stream.iframe)
+                  } else if (stream.uri_name) {
+                    // Construct embed URL from uri_name
+                    setPpvIframeUrl(`https://pooembed.eu/embed/${stream.uri_name.split('/').pop()}`)
+                  }
+                  setPpvLoading(false)
+                  return
+                }
+              }
+            }
+          }
+          setPpvLoading(false)
+        })
+        .catch(() => setPpvLoading(false))
+    }
+  }, [currentPlayer, matchId, ppvIframeUrl, ppvLoading])
+
+  const iframeSrc = ppvIframeUrl
+
   const wrapperStyle: React.CSSProperties = {
     width: '100%',
     aspectRatio: '16/9',
@@ -283,7 +278,130 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     fontSize: 12,
   }
 
-  // Render the current player
+  // Countdown state - WITH player selector
+  if (playerState === 'countdown') {
+    return (
+      <div>
+        <div style={wrapperStyle}>
+          <div style={stateContainerStyle}>
+            <Clock size={40} color="#888" />
+            <h2 style={{ marginTop: 16, fontSize: 14, letterSpacing: 1, fontWeight: 600, color: '#888' }}>
+              STARTING SOON
+            </h2>
+            <div style={{ fontSize: 36, fontWeight: 700, color: '#fff', fontFamily: 'monospace', marginTop: 12 }}>
+              {countdownDisplay}
+            </div>
+          </div>
+        </div>
+        <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
+          <div style={{ fontSize: 11, color: '#555' }}>
+            Player: <span style={{ color: '#888' }}>
+              {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : "Shaka"}
+            </span>
+          </div>
+          <PlayerSelector compact selected={currentPlayer} onSelect={handlePlayerSwitch} />
+        </div>
+      </div>
+    )
+  }
+
+  // Loading state - WITH player selector
+  if (loading && !streamUrl && currentPlayer !== 'jw') {
+    return (
+      <div>
+        <div style={wrapperStyle}>
+          <div style={stateContainerStyle}>
+            <Loader2 size={32} color="#666" style={{ animation: 'spin 1s linear infinite' }} />
+            <span style={{ marginTop: 12, fontWeight: 500, fontSize: 12, letterSpacing: 0.5, color: '#666' }}>
+              LOADING STREAM
+            </span>
+          </div>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+        <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
+          <div style={{ fontSize: 11, color: '#555' }}>
+            Player: <span style={{ color: '#888' }}>
+              {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : "Shaka"}
+            </span>
+          </div>
+          <PlayerSelector compact selected={currentPlayer} onSelect={handlePlayerSwitch} />
+        </div>
+      </div>
+    )
+  }
+
+  // Error state - WITH player selector
+  if (error && !streamUrl && currentPlayer !== 'jw') {
+    return (
+      <div>
+        <div style={wrapperStyle}>
+          <div style={stateContainerStyle}>
+            <AlertCircle color="#c44" size={40} />
+            <span style={{ marginTop: 12, fontWeight: 500, color: '#aaa', textAlign: 'center', padding: '0 20px', fontSize: 13 }}>
+              {error}
+            </span>
+            <button onClick={handleRetry} style={retryBtnStyle}>
+              <RefreshCw size={12} style={{ marginRight: 6, display: 'inline', verticalAlign: 'middle' }} />
+              RETRY
+            </button>
+          </div>
+        </div>
+        <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
+          <div style={{ fontSize: 11, color: '#555' }}>
+            Player: <span style={{ color: '#888' }}>
+              {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : "Shaka"}
+            </span>
+          </div>
+          <PlayerSelector compact selected={currentPlayer} onSelect={handlePlayerSwitch} />
+        </div>
+      </div>
+    )
+  }
+
+  // JW Player (iframe) - fetches from PPV.to API directly
+  if (currentPlayer === 'jw') {
+    if (ppvLoading || !iframeSrc) {
+      return (
+        <div>
+          <div style={wrapperStyle}>
+            <div style={stateContainerStyle}>
+              <Loader2 size={32} color="#666" style={{ animation: 'spin 1s linear infinite' }} />
+              <span style={{ marginTop: 12, fontWeight: 500, fontSize: 12, color: '#666' }}>
+                {ppvLoading ? 'Loading from PPV.to...' : 'Stream not available on PPV.to'}
+              </span>
+            </div>
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          </div>
+          <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
+            <div style={{ fontSize: 11, color: '#555' }}>
+              Player: <span style={{ color: '#888' }}>JW Player</span>
+            </div>
+            <PlayerSelector compact selected={currentPlayer} onSelect={handlePlayerSwitch} />
+          </div>
+        </div>
+      )
+    }
+    
+    return (
+      <div>
+        <div style={wrapperStyle}>
+          <iframe
+            src={iframeSrc}
+            style={{ width: '100%', height: '100%', border: 'none' }}
+            allowFullScreen
+          />
+        </div>
+        <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
+          <div style={{ fontSize: 11, color: '#555' }}>
+            Player: <span style={{ color: '#888' }}>JW Player</span>
+          </div>
+          <PlayerSelector compact selected={currentPlayer} onSelect={handlePlayerSwitch} />
+        </div>
+      </div>
+    )
+  }
+
+  // Regular players
   const renderPlayer = () => {
     if (!streamUrl) return null;
 
@@ -295,7 +413,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
       onError: handlePlayerError,
     };
 
-    // Add key to force remount when switching players for clean state
     switch (currentPlayer) {
       case "videojs":
         return <ReedVideoJS key={`videojs-${matchId}`} {...commonProps} />;
@@ -307,62 +424,9 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     }
   };
 
-  // Countdown state
-  if (playerState === 'countdown') {
-    return (
-      <div style={wrapperStyle}>
-        <div style={stateContainerStyle}>
-          <Clock size={40} color="#888" />
-          <h2 style={{ marginTop: 16, fontSize: 14, letterSpacing: 1, fontWeight: 600, color: '#888' }}>
-            STARTING SOON
-          </h2>
-          <div style={{ fontSize: 36, fontWeight: 700, color: '#fff', fontFamily: 'monospace', marginTop: 12 }}>
-            {countdownDisplay}
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  // Loading state
-  if (loading && !streamUrl) {
-    return (
-      <div style={wrapperStyle}>
-        <div style={stateContainerStyle}>
-          <Loader2 size={32} color="#666" style={{ animation: 'spin 1s linear infinite' }} />
-          <span style={{ marginTop: 12, fontWeight: 500, fontSize: 12, letterSpacing: 0.5, color: '#666' }}>
-            LOADING STREAM
-          </span>
-        </div>
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      </div>
-    )
-  }
-
-  // Error state
-  if (error && !streamUrl) {
-    return (
-      <div style={wrapperStyle}>
-        <div style={stateContainerStyle}>
-          <AlertCircle color="#c44" size={40} />
-          <span style={{ marginTop: 12, fontWeight: 500, color: '#aaa', textAlign: 'center', padding: '0 20px', fontSize: 13 }}>
-            {error}
-          </span>
-          <button onClick={handleRetry} style={retryBtnStyle}>
-            <RefreshCw size={12} style={{ marginRight: 6, display: 'inline', verticalAlign: 'middle' }} />
-            RETRY
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  // Main player UI
   return (
     <div>
-      {/* Player Container */}
       <div style={wrapperStyle} ref={playerContainerRef}>
-        {/* Play Button Overlay */}
         {playerState === 'initial' && (
           <div
             onClick={handlePlayClick}
@@ -373,7 +437,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                 circle.style.borderColor = '#fff'
                 circle.style.transform = 'scale(1.1)'
                 circle.style.background = 'rgba(0,0,0,0.9)'
-                circle.style.borderRadius = '50%'
               }
             }}
             onMouseLeave={(e) => {
@@ -382,7 +445,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
                 circle.style.borderColor = 'rgba(255,255,255,0.8)'
                 circle.style.transform = 'scale(1)'
                 circle.style.background = 'rgba(0,0,0,0.7)'
-                circle.style.borderRadius = '50%'
               }
             }}
           >
@@ -392,7 +454,6 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
           </div>
         )}
 
-        {/* Video Player - Always rendered when stream is ready */}
         {streamUrl && (
           <div
             style={{
@@ -405,26 +466,13 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         )}
       </div>
 
-      {/* Player Selector Bar - Always visible for instant switching */}
-      <div style={{ 
-        marginTop: 10, 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between',
-        background: '#0a0a0a',
-        padding: '8px 12px',
-        borderRadius: 0,
-      }}>
+      <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
         <div style={{ fontSize: 11, color: '#555' }}>
           Player: <span style={{ color: '#888' }}>
             {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : "Shaka"}
           </span>
         </div>
-        <PlayerSelector 
-          compact 
-          selected={currentPlayer} 
-          onSelect={handlePlayerSwitch} 
-        />
+        <PlayerSelector compact selected={currentPlayer} onSelect={handlePlayerSwitch} />
       </div>
     </div>
   )

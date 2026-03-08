@@ -12,6 +12,7 @@ const playerOptions: { value: PlayerType; label: string }[] = [
   { value: "hls", label: "HLS.js" },
   { value: "videojs", label: "Video.js" },
   { value: "shaka", label: "Shaka" },
+  { value: "jw", label: "JW Player" },
 ];
 
 export default function PlayerSelector({ 

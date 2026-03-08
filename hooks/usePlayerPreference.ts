@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 
-export type PlayerType = "hls" | "videojs" | "shaka";
+export type PlayerType = "hls" | "videojs" | "shaka" | "jw";
 
 const STORAGE_KEY = "reedstreams_preferred_player";
 
@@ -14,7 +14,7 @@ export function usePlayerPreference() {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved && ["hls", "videojs", "shaka"].includes(saved)) {
+      if (saved && ["hls", "videojs", "shaka", "jw"].includes(saved)) {
         setPreferredPlayerState(saved as PlayerType);
       }
     } catch (e) {
