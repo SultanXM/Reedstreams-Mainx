@@ -399,8 +399,11 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </div>
           <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
-            <div style={{ fontSize: 11, color: '#555' }}>
-              Player: <span style={{ color: '#888' }}>JW Player</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ fontSize: 11, color: '#555' }}>
+                Player: <span style={{ color: '#888' }}>JW Player</span>
+              </div>
+              <ViewsCounter matchId={matchId} compact />
             </div>
             <PlayerSelector compact selected={currentPlayer} onSelect={handlePlayerSwitch} />
           </div>
@@ -427,8 +430,11 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
           )}
         </div>
         <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
-          <div style={{ fontSize: 11, color: '#555' }}>
-            Player: <span style={{ color: '#888' }}>JW Player</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ fontSize: 11, color: '#555' }}>
+              Player: <span style={{ color: '#888' }}>JW Player</span>
+            </div>
+            <ViewsCounter matchId={matchId} compact />
           </div>
           <PlayerSelector compact selected={currentPlayer} onSelect={handlePlayerSwitch} />
         </div>

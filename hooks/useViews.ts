@@ -10,65 +10,77 @@ interface ViewsState {
   error: string | null;
 }
 
+// Global cache for views to avoid refetching
+const globalViewsCache = new Map<string, number>();
+
 export function useViews(matchId: string | null) {
   const [state, setState] = useState<ViewsState>({
-    views: 0,
-    loading: true,
+    views: matchId ? globalViewsCache.get(matchId) ?? 0 : 0,
+    loading: !matchId || !globalViewsCache.has(matchId),
     error: null,
   });
 
   const hasPinged = useRef(false);
+  const abortRef = useRef<AbortController | null>(null);
 
-  // Fetch view count
+  // Fetch view count - priority load
   const fetchViews = useCallback(async () => {
     if (!matchId) return;
+    
+    // Use cached value immediately
+    if (globalViewsCache.has(matchId)) {
+      setState(s => ({ ...s, views: globalViewsCache.get(matchId)!, loading: false }));
+      return;
+    }
+
+    // Cancel previous request
+    if (abortRef.current) abortRef.current.abort();
+    abortRef.current = new AbortController();
 
     try {
       const res = await fetch(`${API_BASE}/views/count/${matchId}`, {
         cache: "no-store",
+        signal: abortRef.current.signal,
       });
       if (!res.ok) throw new Error("Failed to fetch views");
       const data = await res.json();
-      setState((s) => ({ ...s, views: data.views, loading: false }));
-    } catch (err) {
-      setState((s) => ({ ...s, error: "Failed to load views", loading: false }));
+      globalViewsCache.set(matchId, data.views);
+      setState({ views: data.views, loading: false, error: null });
+    } catch (err: any) {
+      if (err.name !== 'AbortError') {
+        setState(s => ({ ...s, error: "Failed to load views", loading: false }));
+      }
     }
   }, [matchId]);
 
-  // Record a view (only once per session per match)
-  const recordView = useCallback(async () => {
+  // Record a view - fire and forget, don't wait for response
+  const recordView = useCallback(() => {
     if (!matchId || hasPinged.current) return;
 
     hasPinged.current = true;
+    
+    // Optimistic update
+    const currentViews = globalViewsCache.get(matchId) ?? state.views;
+    const newViews = currentViews + 1;
+    globalViewsCache.set(matchId, newViews);
+    setState(s => ({ ...s, views: newViews }));
 
-    try {
-      const res = await fetch(`${API_BASE}/views/ping`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ match_id: matchId }),
-      });
-      if (!res.ok) throw new Error("Failed to record view");
-      const data = await res.json();
-      if (data.total_views !== undefined) {
-        setState((s) => ({ ...s, views: data.total_views }));
-      }
-    } catch (err) {
-      // Silent fail - views are not critical
-      console.error("View ping failed:", err);
-    }
-  }, [matchId]);
+    // Fire and forget - don't block UI
+    fetch(`${API_BASE}/views/ping`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ match_id: matchId }),
+      keepalive: true,
+    }).catch(() => {});
+  }, [matchId, state.views]);
 
-  // Initial fetch
+  // Initial fetch - priority
   useEffect(() => {
     fetchViews();
+    return () => {
+      if (abortRef.current) abortRef.current.abort();
+    };
   }, [fetchViews]);
-
-  // Poll for updates every 30 seconds (but don't ping - just get count)
-  useEffect(() => {
-    if (!matchId) return;
-    const interval = setInterval(fetchViews, 30000);
-    return () => clearInterval(interval);
-  }, [fetchViews, matchId]);
 
   return {
     ...state,
@@ -77,39 +89,61 @@ export function useViews(matchId: string | null) {
   };
 }
 
-// Hook for batch fetching views for multiple matches
+// Hook for batch fetching views - returns map for instant access
 export function useBatchViews(matchIds: string[]) {
-  const [views, setViews] = useState<Record<string, number>>({});
-  const [loading, setLoading] = useState(true);
+  const [views, setViews] = useState<Record<string, number>>(() => {
+    // Initialize from cache
+    const initial: Record<string, number> = {};
+    matchIds.forEach(id => {
+      if (globalViewsCache.has(id)) initial[id] = globalViewsCache.get(id)!;
+    });
+    return initial;
+  });
+  const [loading, setLoading] = useState(() => 
+    matchIds.some(id => !globalViewsCache.has(id))
+  );
 
   useEffect(() => {
-    if (matchIds.length === 0) {
+    // Check if we already have all
+    const missing = matchIds.filter(id => !globalViewsCache.has(id));
+    if (missing.length === 0) {
+      setViews(Object.fromEntries(matchIds.map(id => [id, globalViewsCache.get(id)!])));
       setLoading(false);
       return;
     }
 
-    const fetchBatch = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/views/batch/count`, {
+    // Chunk into batches
+    const chunks: string[][] = [];
+    for (let i = 0; i < missing.length; i += 50) {
+      chunks.push(missing.slice(i, i + 50));
+    }
+
+    let cancelled = false;
+
+    Promise.all(
+      chunks.map(chunk =>
+        fetch(`${API_BASE}/views/batch/count`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ match_ids: matchIds }),
-        });
-        if (!res.ok) throw new Error("Failed to fetch views");
-        const data = await res.json();
-        const viewsMap: Record<string, number> = {};
-        data.views.forEach(([id, count]: [string, number]) => {
-          viewsMap[id] = count;
-        });
-        setViews(viewsMap);
-      } catch (err) {
-        console.error("Batch views fetch failed:", err);
-      } finally {
+          body: JSON.stringify({ match_ids: chunk }),
+        })
+          .then(r => r.json())
+          .then(data => {
+            if (cancelled) return;
+            data.views.forEach(([id, count]: [string, number]) => {
+              globalViewsCache.set(id, count);
+            });
+          })
+          .catch(() => {})
+      )
+    ).then(() => {
+      if (!cancelled) {
+        setViews(Object.fromEntries(matchIds.map(id => [id, globalViewsCache.get(id) ?? 0])));
         setLoading(false);
       }
-    };
+    });
 
-    fetchBatch();
+    return () => { cancelled = true; };
   }, [matchIds.join(",")]);
 
   return { views, loading };

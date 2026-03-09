@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Clock, ChevronRight, Search, X, Calendar, ChevronDown, RefreshCw } from 'lucide-react'
+import { ArrowLeft, Clock, ChevronRight, Search, X, Calendar, ChevronDown, RefreshCw, Eye } from 'lucide-react'
 import '../../styles/live-matches.css'
 
 import { API_STREAMS_URL } from '@/config/api'
@@ -62,13 +62,24 @@ const SkeletonRow = () => (
   </div>
 )
 
+// 👁️ Views context for batch loading
+const ViewsContext = React.createContext<Map<string, number>>(new Map())
+
 const MatchRow = React.memo(({ game, onImageError, currentTime }: { 
   game: Game
   onImageError: (id: number | string) => void
   currentTime: number 
 }) => {
   const [imageError, setImageError] = useState(false)
+  const viewsMap = React.useContext(ViewsContext)
+  const views = viewsMap.get(String(game.id)) ?? 0
   const live = isLive(game.start_time, game.end_time, currentTime, game.is_live)
+
+  const formatViews = (n: number) => {
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M'
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'K'
+    return n.toString()
+  }
 
   return (
     <Link href={`/match/${game.id}?source=${game.source}`} className="match-row-link">
@@ -96,6 +107,13 @@ const MatchRow = React.memo(({ game, onImageError, currentTime }: {
           <div className="row-info">
             <div className="row-category">
               {game.category}
+              {/* 👁️ Views badge inline with category */}
+              {views > 0 && (
+                <span className="row-views-badge">
+                  <Eye size={10} className="views-icon-glow" />
+                  {formatViews(views)}
+                </span>
+              )}
             </div>
             <div className="row-title">{game.name}</div>
           </div>
@@ -107,6 +125,47 @@ const MatchRow = React.memo(({ game, onImageError, currentTime }: {
           </div>
         </div>
       </article>
+      <style jsx>{`
+        .row-views-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 3px;
+          margin-left: 8px;
+          background: linear-gradient(135deg, rgba(255, 59, 59, 0.9) 0%, rgba(200, 0, 0, 0.9) 100%);
+          color: #fff;
+          font-size: 9px;
+          font-weight: 700;
+          padding: 2px 6px;
+          border-radius: 10px;
+          box-shadow: 
+            0 0 8px rgba(255, 0, 0, 0.4),
+            0 0 16px rgba(255, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          animation: row-glow-pulse 2s ease-in-out infinite;
+          vertical-align: middle;
+        }
+        .views-icon-glow {
+          filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
+          animation: icon-glow 1.5s ease-in-out infinite;
+        }
+        @keyframes row-glow-pulse {
+          0%, 100% { 
+            box-shadow: 
+              0 0 8px rgba(255, 0, 0, 0.4),
+              0 0 16px rgba(255, 0, 0, 0.2);
+          }
+          50% { 
+            box-shadow: 
+              0 0 12px rgba(255, 0, 0, 0.6),
+              0 0 24px rgba(255, 0, 0, 0.3),
+              0 0 32px rgba(255, 50, 50, 0.2);
+          }
+        }
+        @keyframes icon-glow {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.85; transform: scale(1.15); }
+        }
+      `}</style>
     </Link>
   )
 })
@@ -309,6 +368,43 @@ export default function LiveMatches() {
     return groups
   }, [filteredGames, visibleCount])
 
+  // 🚀 Batch fetch all views for visible games
+  const [viewsMap, setViewsMap] = React.useState<Map<string, number>>(new Map())
+  
+  React.useEffect(() => {
+    const visibleIds = filteredGames.slice(0, visibleCount).map(g => String(g.id))
+    if (visibleIds.length === 0) return
+    
+    // Only fetch ids we don't have yet
+    const newIds = visibleIds.filter(id => !viewsMap.has(id))
+    if (newIds.length === 0) return
+    
+    // Chunk into batches of 50
+    const chunks = []
+    for (let i = 0; i < newIds.length; i += 50) {
+      chunks.push(newIds.slice(i, i + 50))
+    }
+    
+    chunks.forEach(chunk => {
+      fetch('https://reedstreams-wx-78.fly.dev/api/v1/views/batch/count', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ match_ids: chunk }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          setViewsMap(prev => {
+            const next = new Map(prev)
+            data.views.forEach(([id, count]: [string, number]) => {
+              next.set(id, count)
+            })
+            return next
+          })
+        })
+        .catch(() => {})
+    })
+  }, [filteredGames.map(g => g.id).join(','), visibleCount])
+
   return (
     <div className="page-wrapper">
       <div className="page-container">
@@ -347,69 +443,71 @@ export default function LiveMatches() {
         </div>
 
         <div className="matches-list-wrapper">
-          {loading ? (
-            <div className="matches-list-container">
-              {Array(6).fill(0).map((_, i) => <SkeletonRow key={i} />)}
-            </div>
-          ) : error ? (
-            <div className="empty-state" style={{ textAlign: 'center', padding: '60px 20px' }}>
-              <div style={{ fontSize: '48px', marginBottom: '20px' }}>⚠️</div>
-              <h3 style={{ color: '#ef4444', marginBottom: '10px' }}>Failed to load matches</h3>
-              <p style={{ color: '#666', marginBottom: '20px' }}>{error}</p>
-              <button 
-                onClick={fetchData}
-                style={{
-                  background: '#8db902', color: '#000', border: 'none',
-                  padding: '12px 30px', borderRadius: '6px', fontWeight: 'bold',
-                  cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px'
-                }}
-              >
-                <RefreshCw size={16} /> Try Again
-              </button>
-            </div>
-          ) : (
-            Object.keys(groupedGames).length > 0 ? (
-              <>
-                {Object.entries(groupedGames).map(([dateLabel, dateGames]) => (
-                  <div key={dateLabel} className="date-group">
-                    <div className="date-stamp">
-                      <span className="stamp-line"></span>
-                      <span className="stamp-text">{dateLabel}</span>
-                      <span className="stamp-line"></span>
-                    </div>
-                    <div className="matches-list-container">
-                      {dateGames.map(g => (
-                        <MatchRow 
-                          key={`${g.source}-${g.id}`} 
-                          game={g} 
-                          onImageError={handleImageError} 
-                          currentTime={now} 
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-                {filteredGames.length > visibleCount && (
-                  <div className="load-more-container">
-                    <button className="load-more-btn" onClick={() => setVisibleCount(prev => prev + 20)}>
-                      Load More <ChevronDown size={16} />
-                    </button>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="empty-state">
-                <Calendar size={60} style={{ opacity: 0.1, marginBottom: '20px' }} />
-                <h3>No {urlSportName} matches found.</h3>
-                <p>Check back later or try another category.</p>
-                {urlSportId !== 'all' && (
-                  <Link href="/live-matches" style={{ display: 'inline-block', marginTop: '15px', color: '#8db902' }}>
-                    View All Sports →
-                  </Link>
-                )}
+          <ViewsContext.Provider value={viewsMap}>
+            {loading ? (
+              <div className="matches-list-container">
+                {Array(6).fill(0).map((_, i) => <SkeletonRow key={i} />)}
               </div>
-            )
-          )}
+            ) : error ? (
+              <div className="empty-state" style={{ textAlign: 'center', padding: '60px 20px' }}>
+                <div style={{ fontSize: '48px', marginBottom: '20px' }}>⚠️</div>
+                <h3 style={{ color: '#ef4444', marginBottom: '10px' }}>Failed to load matches</h3>
+                <p style={{ color: '#666', marginBottom: '20px' }}>{error}</p>
+                <button 
+                  onClick={fetchData}
+                  style={{
+                    background: '#8db902', color: '#000', border: 'none',
+                    padding: '12px 30px', borderRadius: '6px', fontWeight: 'bold',
+                    cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px'
+                  }}
+                >
+                  <RefreshCw size={16} /> Try Again
+                </button>
+              </div>
+            ) : (
+              Object.keys(groupedGames).length > 0 ? (
+                <>
+                  {Object.entries(groupedGames).map(([dateLabel, dateGames]) => (
+                    <div key={dateLabel} className="date-group">
+                      <div className="date-stamp">
+                        <span className="stamp-line"></span>
+                        <span className="stamp-text">{dateLabel}</span>
+                        <span className="stamp-line"></span>
+                      </div>
+                      <div className="matches-list-container">
+                        {dateGames.map(g => (
+                          <MatchRow 
+                            key={`${g.source}-${g.id}`} 
+                            game={g} 
+                            onImageError={handleImageError} 
+                            currentTime={now} 
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  {filteredGames.length > visibleCount && (
+                    <div className="load-more-container">
+                      <button className="load-more-btn" onClick={() => setVisibleCount(prev => prev + 20)}>
+                        Load More <ChevronDown size={16} />
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="empty-state">
+                  <Calendar size={60} style={{ opacity: 0.1, marginBottom: '20px' }} />
+                  <h3>No {urlSportName} matches found.</h3>
+                  <p>Check back later or try another category.</p>
+                  {urlSportId !== 'all' && (
+                    <Link href="/live-matches" style={{ display: 'inline-block', marginTop: '15px', color: '#8db902' }}>
+                      View All Sports →
+                    </Link>
+                  )}
+                </div>
+              )
+            )}
+          </ViewsContext.Provider>
         </div>
       </div>
     </div>

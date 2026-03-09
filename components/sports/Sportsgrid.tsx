@@ -141,18 +141,12 @@ const MatchCard = React.memo(({ game, onImageError, showViews = false }: {
 })
 MatchCard.displayName = 'MatchCard'
 
-// 👁️ Inline views badge for cards
+// 👁️ Inline views badge using context - instant load
 function ViewsBadgeInline({ matchId }: { matchId: string }) {
-  const [views, setViews] = useState<number | null>(null)
+  const viewsMap = React.useContext(ViewsContext)
+  const views = viewsMap.get(matchId) ?? 0
   
-  useEffect(() => {
-    fetch(`https://reedstreams-wx-78.fly.dev/api/v1/views/count/${matchId}`)
-      .then(r => r.json())
-      .then(data => setViews(data.views))
-      .catch(() => {})
-  }, [matchId])
-  
-  if (views === null || views === 0) return null
+  if (views === 0) return null
   
   const formatViews = (n: number) => {
     if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M'
@@ -161,14 +155,14 @@ function ViewsBadgeInline({ matchId }: { matchId: string }) {
   }
   
   return (
-    <span className="views-badge-inline">
-      <Eye size={10} />
+    <span className="views-badge-inline has-views">
+      <Eye size={10} className="glow-icon" />
       {formatViews(views)}
       <style jsx>{`
         .views-badge-inline {
           background: rgba(0, 0, 0, 0.7);
           backdrop-filter: blur(4px);
-          color: #aaa;
+          color: #666;
           font-size: 10px;
           font-weight: 600;
           padding: 2px 6px;
@@ -176,7 +170,39 @@ function ViewsBadgeInline({ matchId }: { matchId: string }) {
           display: flex;
           align-items: center;
           gap: 3px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          transition: all 0.2s ease;
+        }
+        .views-badge-inline.has-views {
+          background: linear-gradient(135deg, rgba(255, 59, 59, 0.9) 0%, rgba(200, 0, 0, 0.9) 100%);
+          color: #fff;
+          border: 1px solid rgba(255, 100, 100, 0.5);
+          box-shadow: 
+            0 0 10px rgba(255, 0, 0, 0.4),
+            0 0 20px rgba(255, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          animation: glow-pulse 2s ease-in-out infinite;
+        }
+        .glow-icon {
+          filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+          animation: icon-pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes glow-pulse {
+          0%, 100% { 
+            box-shadow: 
+              0 0 10px rgba(255, 0, 0, 0.4),
+              0 0 20px rgba(255, 0, 0, 0.2);
+          }
+          50% { 
+            box-shadow: 
+              0 0 15px rgba(255, 0, 0, 0.6),
+              0 0 30px rgba(255, 0, 0, 0.3),
+              0 0 40px rgba(255, 50, 50, 0.2);
+          }
+        }
+        @keyframes icon-pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(1.1); }
         }
       `}</style>
     </span>
@@ -286,6 +312,9 @@ const SportsCategorySelector = ({ loading, liveMatches }: { loading: boolean, li
   )
 }
 
+// Context for batch views to avoid multiple API calls
+const ViewsContext = React.createContext<Map<string, number>>(new Map())
+
 const MatchCarousel = ({ 
   category, 
   games, 
@@ -298,28 +327,61 @@ const MatchCarousel = ({
   icon?: React.ComponentType<{size: number, color: string}>
 }) => {
   const liveCount = games.filter(g => g.is_live || isLive(g.start_time, g.end_time) || isAlwaysLive(g.category)).length
-  const isPopular = category === 'Popular'
+  const [viewsMap, setViewsMap] = React.useState<Map<string, number>>(new Map())
+  
+  // 🚀 Batch fetch all views at once on mount
+  React.useEffect(() => {
+    const ids = games.map(g => String(g.id)).filter(id => !viewsMap.has(id))
+    if (ids.length === 0) return
+    
+    // Chunk into batches of 50
+    const chunks = []
+    for (let i = 0; i < ids.length; i += 50) {
+      chunks.push(ids.slice(i, i + 50))
+    }
+    
+    chunks.forEach(chunk => {
+      fetch('https://reedstreams-wx-78.fly.dev/api/v1/views/batch/count', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ match_ids: chunk }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          setViewsMap(prev => {
+            const next = new Map(prev)
+            data.views.forEach(([id, count]: [string, number]) => {
+              next.set(id, count)
+            })
+            return next
+          })
+        })
+        .catch(() => {})
+    })
+  }, [games.map(g => g.id).join(',')])
 
   return (
-    <section className="matches-section">
-      <div className="section-row-header">
-        <div className="title-block">
-          {Icon && <Icon size={20} color="var(--accent-color)" />}
-          <h2 className="section-title">{category}</h2>
-          {liveCount > 0 && <span className="live-count-tag">{liveCount} Live</span>}
+    <ViewsContext.Provider value={viewsMap}>
+      <section className="matches-section">
+        <div className="section-row-header">
+          <div className="title-block">
+            {Icon && <Icon size={20} color="var(--accent-color)" />}
+            <h2 className="section-title">{category}</h2>
+            {liveCount > 0 && <span className="live-count-tag">{liveCount} Live</span>}
+          </div>
         </div>
-      </div>
-      <div className="carousel-track">
-        {games.map(game => (
-          <MatchCard 
-            key={`${game.source}-${game.id}`} 
-            game={game} 
-            onImageError={onImageError}
-            showViews={isPopular}
-          />
-        ))}
-      </div>
-    </section>
+        <div className="carousel-track">
+          {games.map(game => (
+            <MatchCard 
+              key={`${game.source}-${game.id}`} 
+              game={game} 
+              onImageError={onImageError}
+              showViews={true}
+            />
+          ))}
+        </div>
+      </section>
+    </ViewsContext.Provider>
   )
 }
 
