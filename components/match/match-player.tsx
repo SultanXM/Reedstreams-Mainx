@@ -2,7 +2,9 @@
 
 import { useEffect, useState, useMemo, useRef, useCallback } from "react"
 import { useUniversalAdBlocker } from "@/hooks/useUniversalAdBlocker"
+import { useViews } from "@/hooks/useViews"
 import { Clock, AlertCircle, Loader2, RefreshCw } from "lucide-react"
+import ViewsCounter from "./ViewsCounter"
 import HLSPlayer from "./HLSPlayer"
 import ReedVideoJS from "./ReedVideoJS"
 import ShakaPlayer from "./ShakaPlayer"
@@ -19,6 +21,7 @@ const formatTime = (ms: number) => {
 
 export default function MatchPlayer({ matchId }: { matchId: string }) {
   useUniversalAdBlocker()
+  const { recordView } = useViews(matchId)
 
   const [streamUrl, setStreamUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -87,7 +90,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
-        const res = await fetch(`https://api-reedstreams-clean.fly.dev/api/v1/streams/ppvsu/${matchId}/signed-url`, {
+        const res = await fetch(`https://reedstreams-wx-78.fly.dev/api/v1/streams/ppvsu/${matchId}/signed-url`, {
           cache: 'no-store',
         })
 
@@ -101,7 +104,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         
         const fullStreamUrl = data.signed_url.startsWith('http') 
           ? data.signed_url 
-          : `https://api-reedstreams-clean.fly.dev${data.signed_url}`
+          : `https://reedstreams-wx-78.fly.dev${data.signed_url}`
         
         setStreamUrl(fullStreamUrl)
         setLoading(false)
@@ -130,6 +133,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
   const handlePlayClick = () => {
     setPlayerState('ready')
     setIsPlaying(true)
+    recordView() // Record view when user clicks play
     const video = playerContainerRef.current?.querySelector('video') as HTMLVideoElement | null
     if (video) {
       video.muted = false
@@ -155,6 +159,12 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
       setResumeTime(undefined);
     }
 
+    // 🧹 Cleanup when switching FROM JW Player
+    if (currentPlayer === 'jw' && newPlayer !== 'jw') {
+      setPpvIframeUrl(null);
+      setPpvLoading(false);
+    }
+
     setCurrentPlayer(newPlayer);
     setPreferredPlayer(newPlayer);
   }, [currentPlayer, setPreferredPlayer]);
@@ -174,6 +184,14 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // Cleanup when leaving JW Player
+  useEffect(() => {
+    if (currentPlayer !== 'jw') {
+      setPpvIframeUrl(null);
+      setPpvLoading(false);
+    }
+  }, [currentPlayer]);
 
   useEffect(() => {
     if (currentPlayer === 'jw' && !ppvIframeUrl && !ppvLoading) {
@@ -302,7 +320,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
           <div style={{ fontSize: 11, color: '#555' }}>
             Player: <span style={{ color: '#888' }}>
-              {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : "Shaka"}
+              {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : currentPlayer === "shaka" ? "Shaka" : "JW Player"}
             </span>
           </div>
           <PlayerSelector compact selected={currentPlayer} onSelect={handlePlayerSwitch} />
@@ -327,7 +345,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
           <div style={{ fontSize: 11, color: '#555' }}>
             Player: <span style={{ color: '#888' }}>
-              {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : "Shaka"}
+              {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : currentPlayer === "shaka" ? "Shaka" : "JW Player"}
             </span>
           </div>
           <PlayerSelector compact selected={currentPlayer} onSelect={handlePlayerSwitch} />
@@ -355,7 +373,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
         <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
           <div style={{ fontSize: 11, color: '#555' }}>
             Player: <span style={{ color: '#888' }}>
-              {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : "Shaka"}
+              {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : currentPlayer === "shaka" ? "Shaka" : "JW Player"}
             </span>
           </div>
           <PlayerSelector compact selected={currentPlayer} onSelect={handlePlayerSwitch} />
@@ -364,16 +382,18 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     )
   }
 
-  // JW Player (iframe) - fetches from PPV.to API directly
+  // 🛡️ JW Player (iframe) with NUCLEAR AD SHIELD protection
   if (currentPlayer === 'jw') {
+    // Force remount when switching to JW Player
+    const jwKey = `jw-${matchId}-${Date.now()}`;
     if (ppvLoading || !iframeSrc) {
       return (
-        <div>
+        <div key={`jw-loading-${matchId}-${Date.now()}`}>
           <div style={wrapperStyle}>
             <div style={stateContainerStyle}>
               <Loader2 size={32} color="#666" style={{ animation: 'spin 1s linear infinite' }} />
               <span style={{ marginTop: 12, fontWeight: 500, fontSize: 12, color: '#666' }}>
-                {ppvLoading ? 'Loading from PPV.to...' : 'Stream not available on PPV.to'}
+                {ppvLoading ? 'Loading from backend...' : 'Stream not available on backend'}
               </span>
             </div>
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -389,16 +409,14 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     }
     
     return (
-      <div>
-        <div style={wrapperStyle}>
+      <div key={jwKey}>
+        <div style={{...wrapperStyle, position: 'relative'}}>
           {mounted ? (
-            <iframe
-              src={iframeSrc}
-              className="video-iframe"
-              style={{ width: '100%', height: '100%', border: 'none' }}
-              allowFullScreen
-              referrerPolicy="no-referrer"
-            />
+            <>
+              <JWPlayerIframe embedUrl={iframeSrc} />
+              {/* 🛡️ CLICK-THROUGH SHIELD - Absorbs first tap (ad trigger) */}
+              <JWClickShield />
+            </>
           ) : (
             <div style={stateContainerStyle}>
               <Loader2 size={32} color="#666" style={{ animation: 'spin 1s linear infinite' }} />
@@ -432,12 +450,12 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
 
     switch (currentPlayer) {
       case "videojs":
-        return <ReedVideoJS key={`videojs-${matchId}`} {...commonProps} />;
+        return <ReedVideoJS key={`videojs-${matchId}-${Date.now()}`} {...commonProps} />;
       case "shaka":
-        return <ShakaPlayer key={`shaka-${matchId}`} {...commonProps} />;
+        return <ShakaPlayer key={`shaka-${matchId}-${Date.now()}`} {...commonProps} />;
       case "hls":
       default:
-        return <HLSPlayer key={`hls-${matchId}`} {...commonProps} />;
+        return <HLSPlayer key={`hls-${matchId}-${Date.now()}`} {...commonProps} />;
     }
   };
 
@@ -484,13 +502,108 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
       </div>
 
       <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0a0a0a', padding: '8px 12px' }}>
-        <div style={{ fontSize: 11, color: '#555' }}>
-          Player: <span style={{ color: '#888' }}>
-            {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : "Shaka"}
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ fontSize: 11, color: '#555' }}>
+            Player: <span style={{ color: '#888' }}>
+              {currentPlayer === "hls" ? "HLS.js" : currentPlayer === "videojs" ? "Video.js" : currentPlayer === "shaka" ? "Shaka" : "JW Player"}
+            </span>
+          </div>
+          <ViewsCounter matchId={matchId} compact />
         </div>
         <PlayerSelector compact selected={currentPlayer} onSelect={handlePlayerSwitch} />
       </div>
     </div>
+  )
+}
+
+// 🛡️ JW PLAYER IFRAME - Device-aware sandbox protection
+function JWPlayerIframe({ embedUrl }: { embedUrl: string }) {
+  // Detect device BEFORE render (SSR-safe)
+  const [deviceInfo] = useState(() => {
+    if (typeof navigator === 'undefined') {
+      return { isMobile: true, isSafari: false, isChrome: false }
+    }
+    const ua = navigator.userAgent
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua)
+    const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua)
+    const isChrome = /Chrome/.test(ua) && !/Edge/.test(ua) && !isMobile
+    return { isMobile, isSafari, isChrome }
+  })
+
+  // Sandbox blocks window.open on mobile/Safari where JS shield might not reach
+  const useSandbox = deviceInfo.isMobile || deviceInfo.isSafari
+
+  const baseProps = {
+    src: embedUrl,
+    className: "video-iframe",
+    style: { width: '100%', height: '100%', border: 'none' } as React.CSSProperties,
+    allowFullScreen: true,
+    referrerPolicy: "no-referrer" as const,
+  }
+
+  if (useSandbox) {
+    return (
+      <iframe
+        {...baseProps}
+        // 🛡️ SANDBOX: Blocks popups, allows scripts/playback
+        sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
+      />
+    )
+  }
+
+  // Chrome desktop - rely on JS shield
+  return <iframe {...baseProps} />
+}
+
+// 🛡️ CLICK-THROUGH SHIELD - Absorbs first tap (ads trigger on first interaction)
+function JWClickShield() {
+  const [isBlocking, setIsBlocking] = useState(true)
+  const [tapCount, setTapCount] = useState(0)
+
+  // Re-enable shield after 4 seconds of no interaction
+  useEffect(() => {
+    if (!isBlocking) {
+      const timer = setTimeout(() => {
+        setIsBlocking(true)
+        setTapCount(0)
+      }, 4000)
+      return () => clearTimeout(timer)
+    }
+  }, [isBlocking, tapCount])
+
+  const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const newCount = tapCount + 1
+    setTapCount(newCount)
+
+    // First tap: absorb it (block potential ad)
+    // Second+ tap: allow through for 4 seconds
+    if (newCount >= 1) {
+      setIsBlocking(false)
+    }
+  }
+
+  if (!isBlocking) return null
+
+  return (
+    <div
+      onClick={handleInteraction}
+      onTouchStart={handleInteraction}
+      onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation() }}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 100,
+        background: 'transparent',
+        cursor: 'pointer',
+        touchAction: 'none',
+        WebkitTapHighlightColor: 'transparent',
+      }}
+    />
   )
 }

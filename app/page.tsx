@@ -30,19 +30,28 @@ function transformPPVData(data: any) {
 // This function runs on the Server
 async function getInitialMatches() {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+    
     const res = await fetch(PPV_DIRECT_API, {
       // Vercel will refresh this data every 60 seconds in the background
       next: { revalidate: 60 },
-      // Add timeout to prevent build hanging
-      signal: AbortSignal.timeout(10000), // 10 second timeout
+      signal: controller.signal,
     });
+    
+    clearTimeout(timeoutId);
+    
     if (!res.ok) return { categories: [] };
     
     const data = await res.json();
     return transformPPVData(data);
   } catch (error) {
     // Return empty data during build or if API is unavailable
-    console.log('PPV API fetch failed, returning empty:', error);
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.log('PPV API fetch timeout, returning empty');
+    } else {
+      console.log('PPV API fetch failed, returning empty:', error);
+    }
     return { categories: [] };
   }
 }

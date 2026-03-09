@@ -59,6 +59,9 @@ function transformPPVData(data: PPVResponse) {
 
 export async function GET() {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+    
     const res = await fetch(PPV_API_URL, {
       headers: {
         'Accept': 'application/json',
@@ -66,7 +69,10 @@ export async function GET() {
       },
       // Cache for 30 seconds to avoid hammering their API
       next: { revalidate: 30 },
+      signal: controller.signal,
     });
+    
+    clearTimeout(timeoutId);
 
     if (!res.ok) {
       throw new Error(`PPV.to API error: ${res.status}`);
@@ -77,7 +83,11 @@ export async function GET() {
     
     return NextResponse.json(transformed);
   } catch (error) {
-    console.error('PPV.to fetch error:', error);
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.error('PPV.to fetch timeout');
+    } else {
+      console.error('PPV.to fetch error:', error);
+    }
     // Return empty but don't break the UI
     return NextResponse.json({ categories: [] });
   }

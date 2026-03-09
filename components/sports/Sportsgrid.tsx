@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
-import { Trophy, Clock, RefreshCw } from 'lucide-react'
+import { Trophy, Clock, RefreshCw, Eye } from 'lucide-react'
 import '../../styles/Sportsgrid.css'
 
 import { API_STREAMS_URL } from '@/config/api'
+import { useBatchViews } from '@/hooks/useViews'
 
 const PPVSU_URL = API_STREAMS_URL
 
@@ -89,9 +90,10 @@ const SkeletonMatchCard = () => (
   </div>
 )
 
-const MatchCard = React.memo(({ game, onImageError }: { 
+const MatchCard = React.memo(({ game, onImageError, showViews = false }: { 
   game: UnifiedGame
   onImageError: (id: number | string) => void 
+  showViews?: boolean
 }) => {
   const [imageError, setImageError] = useState(false)
   
@@ -110,6 +112,8 @@ const MatchCard = React.memo(({ game, onImageError }: {
             <span className={`status-badge ${live || alwaysLive ? 'live' : 'upcoming'}`}>
               {live || alwaysLive ? 'LIVE' : formatTime(game.start_time)}
             </span>
+            {/* 👁️ Views count for Popular row */}
+            {showViews && <ViewsBadgeInline matchId={String(game.id)} />}
           </div>
           {!imageError ? (
             <img 
@@ -137,23 +141,82 @@ const MatchCard = React.memo(({ game, onImageError }: {
 })
 MatchCard.displayName = 'MatchCard'
 
-const SportsCategorySelector = ({ loading }: { loading: boolean }) => {
+// 👁️ Inline views badge for cards
+function ViewsBadgeInline({ matchId }: { matchId: string }) {
+  const [views, setViews] = useState<number | null>(null)
+  
+  useEffect(() => {
+    fetch(`https://reedstreams-wx-78.fly.dev/api/v1/views/count/${matchId}`)
+      .then(r => r.json())
+      .then(data => setViews(data.views))
+      .catch(() => {})
+  }, [matchId])
+  
+  if (views === null || views === 0) return null
+  
+  const formatViews = (n: number) => {
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M'
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'K'
+    return n.toString()
+  }
+  
+  return (
+    <span className="views-badge-inline">
+      <Eye size={10} />
+      {formatViews(views)}
+      <style jsx>{`
+        .views-badge-inline {
+          background: rgba(0, 0, 0, 0.7);
+          backdrop-filter: blur(4px);
+          color: #aaa;
+          font-size: 10px;
+          font-weight: 600;
+          padding: 2px 6px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          gap: 3px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+      `}</style>
+    </span>
+  )
+}
+
+const SportsCategorySelector = ({ loading, liveMatches }: { loading: boolean, liveMatches?: UnifiedGame[] }) => {
   const sports = [
     { id: 'soccer', name: 'Soccer', icon: '⚽' },
     { id: 'basketball', name: 'Basketball', icon: '🏀' },
+    { id: 'baseball', name: 'Baseball', icon: '⚾' },
     { id: 'football', name: 'Football', icon: '🏈' },
     { id: 'hockey', name: 'Ice Hockey', icon: '🏒' },
-    { id: 'baseball', name: 'Baseball', icon: '⚾' },
     { id: 'mma', name: 'MMA / UFC', icon: '🥊' },
     { id: 'tennis', name: 'Tennis', icon: '🎾' },
     { id: 'golf', name: 'Golf', icon: '⛳' },
     { id: 'motorsports', name: 'Motorsports', icon: '🏎️' },
     { id: 'cricket', name: 'Cricket', icon: '🏏' },
-    { id: '2026 winter olympics', name: 'Olympics', icon: '🎿' },
     { id: 'combat sports', name: 'Combat Sports', icon: '🥋' },
     { id: 'darts', name: 'Darts', icon: '🎯' },
     { id: '24/7 Streams', name: '24/7 Streams', icon: '📺' },
   ]
+
+  // Count live matches per sport category
+  const getLiveCount = (sportId: string): number => {
+    if (!liveMatches || liveMatches.length === 0) return 0
+    return liveMatches.filter(m => {
+      const cat = m.category?.toLowerCase() || ''
+      if (sportId === 'football') {
+        return (cat.includes('football') && !cat.includes('soccer')) || cat.includes('nfl')
+      }
+      if (sportId === 'combat sports') {
+        return cat.includes('combat') || cat.includes('mma') || cat.includes('boxing')
+      }
+      if (sportId === '24/7 Streams') {
+        return cat.includes('24/7')
+      }
+      return cat.includes(sportId.toLowerCase())
+    }).length
+  }
 
   return (
     <section className="top-selector-area">
@@ -167,14 +230,58 @@ const SportsCategorySelector = ({ loading }: { loading: boolean }) => {
         {loading ? (
           Array(8).fill(0).map((_, i) => <SkeletonPill key={i} />)
         ) : (
-          sports.map(sport => (
-            <Link key={sport.id} href={`/live-matches?sportId=${sport.id}`} className="selector-pill">
-              <span className="pill-icon">{sport.icon}</span>
-              <span className="pill-label">{sport.name}</span>
-            </Link>
-          ))
+          sports.map(sport => {
+            const liveCount = getLiveCount(sport.id)
+            return (
+              <Link key={sport.id} href={`/live-matches?sportId=${sport.id}`} className="selector-pill" style={{ position: 'relative' }}>
+                {/* 🔴 Premium Live Badge */}
+                {liveCount > 0 && (
+                  <span className="sport-live-badge">
+                    <span className="live-pulse-dot" />
+                    {liveCount}
+                  </span>
+                )}
+                <span className="pill-icon">{sport.icon}</span>
+                <span className="pill-label">{sport.name}</span>
+              </Link>
+            )
+          })
         )}
       </div>
+      <style jsx>{`
+        .sport-live-badge {
+          position: absolute;
+          top: -6px;
+          right: -6px;
+          background: linear-gradient(135deg, #ff3b3b 0%, #ff0000 50%, #d90000 100%);
+          color: #fff;
+          font-size: 10px;
+          font-weight: 700;
+          padding: 3px 8px;
+          border-radius: 12px;
+          box-shadow: 
+            0 2px 8px rgba(255, 0, 0, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          letter-spacing: 0.3px;
+          backdrop-filter: blur(4px);
+        }
+        .live-pulse-dot {
+          width: 5px;
+          height: 5px;
+          background: #fff;
+          border-radius: 50%;
+          animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+          0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+          50% { opacity: 0.8; transform: scale(0.9); box-shadow: 0 0 0 4px rgba(255, 255, 255, 0); }
+        }
+      `}</style>
     </section>
   )
 }
@@ -191,6 +298,7 @@ const MatchCarousel = ({
   icon?: React.ComponentType<{size: number, color: string}>
 }) => {
   const liveCount = games.filter(g => g.is_live || isLive(g.start_time, g.end_time) || isAlwaysLive(g.category)).length
+  const isPopular = category === 'Popular'
 
   return (
     <section className="matches-section">
@@ -206,7 +314,8 @@ const MatchCarousel = ({
           <MatchCard 
             key={`${game.source}-${game.id}`} 
             game={game} 
-            onImageError={onImageError} 
+            onImageError={onImageError}
+            showViews={isPopular}
           />
         ))}
       </div>
@@ -288,14 +397,36 @@ function useRetryFetch<T>(
   return { data, loading, error, retry }
 }
 
-export default function SportsGrid() {
+interface SportsGridProps {
+  initialData?: { categories?: PpvsuCategory[] }
+}
+
+export default function SportsGrid({ initialData }: SportsGridProps) {
   const [hiddenGameIds, setHiddenGameIds] = useState<Set<number | string>>(new Set())
 
-  const { data: categories, loading, error, retry } = useRetryFetch(
+  const { data: fetchedCategories, loading, error, retry } = useRetryFetch(
     fetchAllStreams,
     3,
     2000
   )
+  
+  // Use initialData if available, otherwise use fetched data
+  const categories = initialData?.categories && initialData.categories.length > 0
+    ? initialData.categories.map(cat => ({
+        category: cat.category,
+        games: cat.games.map(g => ({
+          id: g.id,
+          name: g.name,
+          poster: g.poster,
+          start_time: g.start_time,
+          end_time: g.end_time,
+          category: g.category,
+          source: 'ppvsu' as const,
+          is_live: isLive(g.start_time, g.end_time)
+        })),
+        source: 'ppvsu' as const
+      }))
+    : fetchedCategories
 
   const handleImageError = useCallback((id: number | string) => {
     setHiddenGameIds(prev => new Set(prev).add(id))
@@ -447,13 +578,19 @@ export default function SportsGrid() {
     return result
   }, [categories, hiddenGameIds])
 
+  // Get all live matches for the sports badges
+  const allLiveMatches = useMemo(() => {
+    if (!organizedCategories) return []
+    return organizedCategories.flatMap(cat => cat.games.filter(g => g.is_live))
+  }, [organizedCategories])
+
   return (
     <div className="dashboard-wrapper">
       <div className="content-container">
-        <SportsCategorySelector loading={loading} />
+        <SportsCategorySelector loading={loading} liveMatches={allLiveMatches} />
 
         <div className="matches-grid-container">
-          {loading ? (
+          {loading && !initialData?.categories?.length ? (
             Array(3).fill(0).map((_, rowIndex) => (
               <React.Fragment key={rowIndex}>
                 <div className="skeleton-header skeleton-pulse" />
@@ -492,7 +629,7 @@ export default function SportsGrid() {
                 <RefreshCw size={16} /> Try Again
               </button>
             </div>
-          ) : organizedCategories.length === 0 ? (
+          ) : organizedCategories.length === 0 && !loading ? (
             <div style={{ 
               textAlign: 'center', 
               padding: '60px 20px', 

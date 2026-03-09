@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server'
 // Blocked countries (ISO 3166-1 alpha-2 codes)
 const BLOCKED_COUNTRIES = ['IL'] // Israel
 
-export function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const country = request.geo?.country
   
   if (country && BLOCKED_COUNTRIES.includes(country)) {

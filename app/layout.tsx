@@ -37,12 +37,20 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* 🛡️ NUCLEAR AD SHIELD v5.0 - Runs BEFORE React loads */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
                 'use strict';
-                var blocked = function() { return null; };
+                console.log('🛡️ EARLY SHIELD: Activating...');
+                
+                var blocked = function() { 
+                  console.log('🛡️ BLOCKED: window.open');
+                  return null; 
+                };
+                
+                // Block window.open on all levels
                 try {
                   Object.defineProperty(window, 'open', {
                     get: function() { return blocked; },
@@ -52,8 +60,42 @@ export default function RootLayout({
                 } catch(e) {
                   window.open = blocked;
                 }
-                try { if (window.parent !== window) window.parent.open = blocked; } catch(e) {}
-                try { if (window.top !== window) window.top.open = blocked; } catch(e) {}
+                
+                // Block parent/top
+                try { 
+                  if (window.parent !== window) {
+                    Object.defineProperty(window.parent, 'open', {
+                      get: function() { return blocked; },
+                      set: function() {},
+                      configurable: false
+                    });
+                  }
+                } catch(e) {}
+                
+                try { 
+                  if (window.top !== window) {
+                    Object.defineProperty(window.top, 'open', {
+                      get: function() { return blocked; },
+                      set: function() {},
+                      configurable: false
+                    });
+                  }
+                } catch(e) {}
+                
+                // Block location hijacking
+                try {
+                  var originalAssign = window.location.assign;
+                  window.location.assign = function(url) {
+                    if (url && typeof url === 'string' && 
+                        (url.includes('ad') || url.includes('pop') || url.includes('click'))) {
+                      console.log('🛡️ BLOCKED: location.assign to', url);
+                      return;
+                    }
+                    return originalAssign.apply(window.location, arguments);
+                  };
+                } catch(e) {}
+                
+                console.log('🛡️ EARLY SHIELD: ACTIVE');
               })();
             `
           }}

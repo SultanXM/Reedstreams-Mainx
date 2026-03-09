@@ -8,7 +8,7 @@
     border: 1px solid #222; /* Outer border for the whole unit */
     background: #000;
     max-width: 1400px; /* Constrain width so it's not massive */
-    margin: 0 auto;
+    margin-top: 10vh;
 }
 
 /* Mobile: Stack them */
