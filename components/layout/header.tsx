@@ -262,7 +262,7 @@ export default function Header() {
                             </button>
                             <div className="live-status desktop-only">
                                 <div className="pulsing-dot"></div>
-                                <span>{mounted ? (liveMatchesCount > 0 ? `${liveMatchesCount} LIVE` : 'OFFLINE') : '...'}</span>
+                                <span>{mounted ? (liveMatchesCount > 0 ? `${liveMatchesCount} LIVE` : 'Live') : '...'}</span>
                             </div>
                             <a href="/" onClick={(e) => hardNavigate(e, '/')} className="main-logo desktop-only">
                                 <span className="accent-text">REED</span>STREAMS
