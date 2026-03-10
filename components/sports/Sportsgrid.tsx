@@ -155,54 +155,22 @@ function ViewsBadgeInline({ matchId }: { matchId: string }) {
   }
   
   return (
-    <span className="views-badge-inline has-views">
-      <Eye size={10} className="glow-icon" />
+    <span className="views-badge-inline">
+      <Eye size={10} />
       {formatViews(views)}
       <style jsx>{`
         .views-badge-inline {
-          background: rgba(0, 0, 0, 0.7);
+          background: rgba(0, 0, 0, 0.6);
           backdrop-filter: blur(4px);
-          color: #666;
+          color: #aaa;
           font-size: 10px;
-          font-weight: 600;
-          padding: 2px 6px;
-          border-radius: 10px;
+          font-weight: 500;
+          padding: 3px 7px;
+          border-radius: 4px;
           display: flex;
           align-items: center;
-          gap: 3px;
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          transition: all 0.2s ease;
-        }
-        .views-badge-inline.has-views {
-          background: linear-gradient(135deg, rgba(255, 59, 59, 0.9) 0%, rgba(200, 0, 0, 0.9) 100%);
-          color: #fff;
-          border: 1px solid rgba(255, 100, 100, 0.5);
-          box-shadow: 
-            0 0 10px rgba(255, 0, 0, 0.4),
-            0 0 20px rgba(255, 0, 0, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-          animation: glow-pulse 2s ease-in-out infinite;
-        }
-        .glow-icon {
-          filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
-          animation: icon-pulse 1.5s ease-in-out infinite;
-        }
-        @keyframes glow-pulse {
-          0%, 100% { 
-            box-shadow: 
-              0 0 10px rgba(255, 0, 0, 0.4),
-              0 0 20px rgba(255, 0, 0, 0.2);
-          }
-          50% { 
-            box-shadow: 
-              0 0 15px rgba(255, 0, 0, 0.6),
-              0 0 30px rgba(255, 0, 0, 0.3),
-              0 0 40px rgba(255, 50, 50, 0.2);
-          }
-        }
-        @keyframes icon-pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.1); }
+          gap: 4px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }
       `}</style>
     </span>

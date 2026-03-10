@@ -20,7 +20,6 @@ export function useViews(matchId: string | null) {
     error: null,
   });
 
-  const hasPinged = useRef(false);
   const abortRef = useRef<AbortController | null>(null);
 
   // Fetch view count - priority load
@@ -53,19 +52,17 @@ export function useViews(matchId: string | null) {
     }
   }, [matchId]);
 
-  // Record a view - fire and forget, don't wait for response
+  // Record a view - every call counts (no dedup)
   const recordView = useCallback(() => {
-    if (!matchId || hasPinged.current) return;
+    if (!matchId) return;
 
-    hasPinged.current = true;
-    
     // Optimistic update
     const currentViews = globalViewsCache.get(matchId) ?? state.views;
     const newViews = currentViews + 1;
     globalViewsCache.set(matchId, newViews);
     setState(s => ({ ...s, views: newViews }));
 
-    // Fire and forget - don't block UI
+    // Send to server
     fetch(`${API_BASE}/views/ping`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

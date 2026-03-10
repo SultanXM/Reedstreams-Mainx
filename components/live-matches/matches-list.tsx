@@ -129,41 +129,16 @@ const MatchRow = React.memo(({ game, onImageError, currentTime }: {
         .row-views-badge {
           display: inline-flex;
           align-items: center;
-          gap: 3px;
+          gap: 4px;
           margin-left: 8px;
-          background: linear-gradient(135deg, rgba(255, 59, 59, 0.9) 0%, rgba(200, 0, 0, 0.9) 100%);
-          color: #fff;
-          font-size: 9px;
-          font-weight: 700;
+          background: rgba(255, 255, 255, 0.08);
+          color: #888;
+          font-size: 10px;
+          font-weight: 500;
           padding: 2px 6px;
-          border-radius: 10px;
-          box-shadow: 
-            0 0 8px rgba(255, 0, 0, 0.4),
-            0 0 16px rgba(255, 0, 0, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-          animation: row-glow-pulse 2s ease-in-out infinite;
+          border-radius: 3px;
+          border: 1px solid rgba(255, 255, 255, 0.06);
           vertical-align: middle;
-        }
-        .views-icon-glow {
-          filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
-          animation: icon-glow 1.5s ease-in-out infinite;
-        }
-        @keyframes row-glow-pulse {
-          0%, 100% { 
-            box-shadow: 
-              0 0 8px rgba(255, 0, 0, 0.4),
-              0 0 16px rgba(255, 0, 0, 0.2);
-          }
-          50% { 
-            box-shadow: 
-              0 0 12px rgba(255, 0, 0, 0.6),
-              0 0 24px rgba(255, 0, 0, 0.3),
-              0 0 32px rgba(255, 50, 50, 0.2);
-          }
-        }
-        @keyframes icon-glow {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.85; transform: scale(1.15); }
         }
       `}</style>
     </Link>
