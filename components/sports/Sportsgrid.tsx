@@ -247,7 +247,7 @@ const SportsCategorySelector = ({ loading, liveMatches }: { loading: boolean, li
           position: absolute;
           top: -6px;
           right: -6px;
-          background: #22c55e;
+          background: #8db902;
           color: #fff;
           font-size: 10px;
           font-weight: 600;
