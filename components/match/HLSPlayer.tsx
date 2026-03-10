@@ -98,7 +98,7 @@ export default function HLSPlayer({
         maxMaxBufferLength: 60,
         liveSyncDurationCount: 3,
         liveMaxLatencyDurationCount: 10,
-        // 🚀 Custom loader to route segments through worker cache
+        // Custom loader to route segments through worker cache
         loader: class ProxiedLoader extends Hls.DefaultConfig.loader {
           load(context: any, config: any, callbacks: any) {
             // Rewrite segment URLs to go through worker

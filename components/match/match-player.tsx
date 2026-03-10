@@ -107,7 +107,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
           ? data.signed_url 
           : `https://reedstreams-wx-78.fly.dev${data.signed_url}`
         
-        // 🚀 Wrap stream URL through worker for edge caching
+        // Wrap stream URL through worker for edge caching
         const proxiedStreamUrl = getProxiedStreamUrl(fullStreamUrl);
         setStreamUrl(proxiedStreamUrl)
         setLoading(false)

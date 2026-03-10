@@ -51,7 +51,7 @@ export default function ReedVideoJS({
                         overrideNative: true,
                         enableLowInitialPlaylist: true,
                         smoothQualityChange: true,
-                        // 🚀 Custom xhr hook to route segments through worker cache
+                        // Custom xhr hook to route segments through worker cache
                         xhr: (xhrOptions: any) => {
                             const originalUrl = xhrOptions.uri || xhrOptions.url;
                             if (originalUrl && isVideoSegment(originalUrl)) {
