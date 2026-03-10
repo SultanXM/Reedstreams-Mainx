@@ -112,7 +112,7 @@ const MatchCard = React.memo(({ game, onImageError, showViews = false }: {
             <span className={`status-badge ${live || alwaysLive ? 'live' : 'upcoming'}`}>
               {live || alwaysLive ? 'LIVE' : formatTime(game.start_time)}
             </span>
-            {/* 👁️ Views count for Popular row */}
+            {/* Views count for Popular row */}
             {showViews && <ViewsBadgeInline matchId={String(game.id)} />}
           </div>
           {!imageError ? (
@@ -141,7 +141,7 @@ const MatchCard = React.memo(({ game, onImageError, showViews = false }: {
 })
 MatchCard.displayName = 'MatchCard'
 
-// 👁️ Inline views badge using context - instant load
+// Inline views badge using context
 function ViewsBadgeInline({ matchId }: { matchId: string }) {
   const viewsMap = React.useContext(ViewsContext)
   const views = viewsMap.get(matchId) ?? 0
@@ -247,33 +247,22 @@ const SportsCategorySelector = ({ loading, liveMatches }: { loading: boolean, li
           position: absolute;
           top: -6px;
           right: -6px;
-          background: linear-gradient(135deg, #ff3b3b 0%, #ff0000 50%, #d90000 100%);
+          background: #c41e3a;
           color: #fff;
           font-size: 10px;
-          font-weight: 700;
-          padding: 3px 8px;
-          border-radius: 12px;
-          box-shadow: 
-            0 2px 8px rgba(255, 0, 0, 0.4),
-            0 0 0 1px rgba(255, 255, 255, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+          font-weight: 600;
+          padding: 2px 6px;
+          border-radius: 4px;
           z-index: 10;
           display: flex;
           align-items: center;
           gap: 4px;
-          letter-spacing: 0.3px;
-          backdrop-filter: blur(4px);
         }
         .live-pulse-dot {
-          width: 5px;
-          height: 5px;
+          width: 4px;
+          height: 4px;
           background: #fff;
           border-radius: 50%;
-          animation: pulse-dot 1.5s ease-in-out infinite;
-        }
-        @keyframes pulse-dot {
-          0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
-          50% { opacity: 0.8; transform: scale(0.9); box-shadow: 0 0 0 4px rgba(255, 255, 255, 0); }
         }
       `}</style>
     </section>
@@ -297,7 +286,7 @@ const MatchCarousel = ({
   const liveCount = games.filter(g => g.is_live || isLive(g.start_time, g.end_time) || isAlwaysLive(g.category)).length
   const [viewsMap, setViewsMap] = React.useState<Map<string, number>>(new Map())
   
-  // 🚀 Batch fetch all views at once on mount
+  // Batch fetch all views at once on mount
   React.useEffect(() => {
     const ids = games.map(g => String(g.id)).filter(id => !viewsMap.has(id))
     if (ids.length === 0) return

@@ -385,7 +385,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
     )
   }
 
-  // 🛡️ JW Player (iframe) with NUCLEAR AD SHIELD protection
+  // JW Player (iframe)
   if (currentPlayer === 'jw') {
     // Force remount when switching to JW Player
     const jwKey = `jw-${matchId}-${Date.now()}`;
@@ -420,7 +420,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
           {mounted ? (
             <>
               <JWPlayerIframe embedUrl={iframeSrc} />
-              {/* 🛡️ CLICK-THROUGH SHIELD - Absorbs first tap (ad trigger) */}
+              {/* Click-through shield */}
               <JWClickShield />
             </>
           ) : (
@@ -525,7 +525,7 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
   )
 }
 
-// 🛡️ JW PLAYER IFRAME - Device-aware sandbox protection
+// JW Player iframe component
 function JWPlayerIframe({ embedUrl }: { embedUrl: string }) {
   // Detect device BEFORE render (SSR-safe)
   const [deviceInfo] = useState(() => {
@@ -554,7 +554,7 @@ function JWPlayerIframe({ embedUrl }: { embedUrl: string }) {
     return (
       <iframe
         {...baseProps}
-        // 🛡️ SANDBOX: Blocks popups, allows scripts/playback
+        // Sandbox blocks popups
         sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
       />
     )
@@ -564,7 +564,7 @@ function JWPlayerIframe({ embedUrl }: { embedUrl: string }) {
   return <iframe {...baseProps} />
 }
 
-// 🛡️ CLICK-THROUGH SHIELD - Absorbs first tap (ads trigger on first interaction)
+// Click-through shield component
 function JWClickShield() {
   const [isBlocking, setIsBlocking] = useState(true)
   const [tapCount, setTapCount] = useState(0)

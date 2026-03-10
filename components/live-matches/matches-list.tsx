@@ -62,7 +62,7 @@ const SkeletonRow = () => (
   </div>
 )
 
-// 👁️ Views context for batch loading
+// Views context for batch loading
 const ViewsContext = React.createContext<Map<string, number>>(new Map())
 
 const MatchRow = React.memo(({ game, onImageError, currentTime }: { 
@@ -107,7 +107,7 @@ const MatchRow = React.memo(({ game, onImageError, currentTime }: {
           <div className="row-info">
             <div className="row-category">
               {game.category}
-              {/* 👁️ Views badge inline with category */}
+              {/* Views badge inline with category */}
               {views > 0 && (
                 <span className="row-views-badge">
                   <Eye size={10} className="views-icon-glow" />
@@ -343,7 +343,7 @@ export default function LiveMatches() {
     return groups
   }, [filteredGames, visibleCount])
 
-  // 🚀 Batch fetch all views for visible games
+  // Batch fetch all views for visible games
   const [viewsMap, setViewsMap] = React.useState<Map<string, number>>(new Map())
   
   React.useEffect(() => {
