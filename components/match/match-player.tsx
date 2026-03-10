@@ -11,6 +11,7 @@ import ShakaPlayer from "./ShakaPlayer"
 import PlayerSelector from "./player-selector"
 import { usePlayerPreference } from "@/hooks/usePlayerPreference"
 import { PlayerType } from "@/hooks/usePlayerPreference"
+import { getProxiedStreamUrl } from "@/lib/proxy-cache"
 
 const formatTime = (ms: number) => {
   const h = Math.floor(ms / 3600000)
@@ -106,7 +107,9 @@ export default function MatchPlayer({ matchId }: { matchId: string }) {
           ? data.signed_url 
           : `https://reedstreams-wx-78.fly.dev${data.signed_url}`
         
-        setStreamUrl(fullStreamUrl)
+        // 🚀 Wrap stream URL through worker for edge caching
+        const proxiedStreamUrl = getProxiedStreamUrl(fullStreamUrl);
+        setStreamUrl(proxiedStreamUrl)
         setLoading(false)
         return
       } catch (e) {

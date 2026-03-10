@@ -14,6 +14,19 @@ interface ShakaPlayerProps {
   onSuccess?: () => void;
 }
 
+// Worker URL for proxying video segments
+const WORKER_BASE_URL = "https://edge-proxy-cache-worker.reedstreams000.workers.dev/api/v1/proxy";
+
+// Check if URL is a video segment
+function isVideoSegment(url: string): boolean {
+  return url.endsWith(".ts") || url.endsWith(".mp4");
+}
+
+// Get proxied URL through worker
+function getProxiedSegmentUrl(originalUrl: string): string {
+  return `${WORKER_BASE_URL}?schema=sports&url=${encodeURIComponent(originalUrl)}`;
+}
+
 export default function ShakaPlayer({ 
   src, 
   matchId, 
@@ -145,18 +158,19 @@ export default function ShakaPlayer({
           },
         });
 
-        // Add request filter to set headers and credentials for all requests
+        // Route segment requests through Cloudflare worker cache
         player.getNetworkingEngine()?.registerRequestFilter((type, request) => {
           // Allow credentials to be sent with cross-origin requests
           request.allowCrossSiteCredentials = true;
           
           // Set headers that match what the edge API expects
-          request.headers['Accept'] = '*/*';
-          request.headers['Accept-Language'] = 'en-US,en;q=0.9';
+          request.headers["Accept"] = "*/*";
+          request.headers["Accept-Language"] = "en-US,en;q=0.9";
           
-          // If the request is going to the edge API, log it for debugging
-          const url = request.uris[0];
-          if (url && url.includes('api-reedstreams-clean.fly.dev')) {
+          // Rewrite segment URLs to go through worker cache
+          const originalUri = request.uris[0];
+          if (originalUri && isVideoSegment(originalUri)) {
+            request.uris[0] = getProxiedSegmentUrl(originalUri);
           }
         });
 
@@ -167,7 +181,7 @@ export default function ShakaPlayer({
           if (response.status === 500 || response.status === 401 || response.status === 403) {
             const url = response.uri;
             // Check if this is an image/ad request that's not critical for playback
-            if (url && (url.includes('.jpg') || url.includes('.jpeg') || url.includes('.png') || url.includes('.webp') || url.includes('.gif'))) {
+            if (url && (url.includes(".jpg") || url.includes(".jpeg") || url.includes(".png") || url.includes(".webp") || url.includes(".gif"))) {
               // Don't throw - let playback continue
               return;
             }
@@ -271,10 +285,10 @@ export default function ShakaPlayer({
 
   if (error) {
     return (
-      <div style={{ width: '100%', height: '100%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ color: '#c44', fontWeight: 600, marginBottom: 8 }}>Playback Error</div>
-          <p style={{ color: '#666', fontSize: 12 }}>{error}</p>
+      <div style={{ width: "100%", height: "100%", background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ color: "#c44", fontWeight: 600, marginBottom: 8 }}>Playback Error</div>
+          <p style={{ color: "#666", fontSize: 12 }}>{error}</p>
         </div>
       </div>
     );
@@ -283,20 +297,20 @@ export default function ShakaPlayer({
   return (
     <div 
       ref={containerRef}
-      style={{ width: '100%', height: '100%', background: '#000', position: 'relative', borderRadius: 0 }}
+      style={{ width: "100%", height: "100%", background: "#000", position: "relative", borderRadius: 0 }}
       data-shaka-player-container
     >
       {isLoading && (
         <div style={{
-          position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 50, background: 'rgba(0,0,0,0.8)'
+          position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 50, background: "rgba(0,0,0,0.8)"
         }}>
-          <div style={{ width: 40, height: 40, border: '3px solid rgba(255,255,255,0.1)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+          <div style={{ width: 40, height: 40, border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
         </div>
       )}
       <video
         ref={videoRef}
-        style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 0 }}
+        style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: 0 }}
         playsInline
         autoPlay={autoPlay}
         muted={isLoading}

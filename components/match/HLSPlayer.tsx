@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
+import { getProxiedSegmentUrl, isVideoSegment } from "@/lib/proxy-cache";
 
 interface HLSPlayerProps {
   src: string;
@@ -97,6 +98,16 @@ export default function HLSPlayer({
         maxMaxBufferLength: 60,
         liveSyncDurationCount: 3,
         liveMaxLatencyDurationCount: 10,
+        // 🚀 Custom loader to route segments through worker cache
+        loader: class ProxiedLoader extends Hls.DefaultConfig.loader {
+          load(context: any, config: any, callbacks: any) {
+            // Rewrite segment URLs to go through worker
+            if (context.url && isVideoSegment(context.url)) {
+              context.url = getProxiedSegmentUrl(context.url);
+            }
+            super.load(context, config, callbacks);
+          }
+        },
       });
 
       hlsRef.current = hls;

@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
+import { getProxiedSegmentUrl, isVideoSegment } from "@/lib/proxy-cache";
 
 interface ReedVideoJSProps {
   src: string;
@@ -50,6 +51,15 @@ export default function ReedVideoJS({
                         overrideNative: true,
                         enableLowInitialPlaylist: true,
                         smoothQualityChange: true,
+                        // 🚀 Custom xhr hook to route segments through worker cache
+                        xhr: (xhrOptions: any) => {
+                            const originalUrl = xhrOptions.uri || xhrOptions.url;
+                            if (originalUrl && isVideoSegment(originalUrl)) {
+                                xhrOptions.uri = getProxiedSegmentUrl(originalUrl);
+                                xhrOptions.url = xhrOptions.uri;
+                            }
+                            return videojs.xhr(xhrOptions);
+                        },
                     },
                     nativeAudioTracks: false,
                     nativeVideoTracks: false,
