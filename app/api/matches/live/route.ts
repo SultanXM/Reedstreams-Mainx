@@ -5,9 +5,9 @@ const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'http
 export async function GET() {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
     
-    const res = await fetch(`${STREAMED_API_BASE}/matches`, {
+    const res = await fetch(`${STREAMED_API_BASE}/matches/live`, {
       next: { revalidate: 60 },
       signal: controller.signal,
     });
@@ -27,7 +27,7 @@ export async function GET() {
     // SANITIZE: Force all IDs to be Strings
     const sanitizedMatches = validMatches.map((m: any) => ({
       ...m,
-      id: String(m.id), // FORCE STRING ID
+      id: String(m.id),
       date: m.date || new Date().toISOString()
     }));
 

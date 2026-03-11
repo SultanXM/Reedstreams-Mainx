@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useState, useEffect } from "react"
+import { Suspense, useState, useEffect, useRef } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import MatchPlayer from "@/components/match/match-player"
 import SportsurgePlayer from "@/components/match/SportsurgePlayer"
@@ -340,7 +340,8 @@ function MatchPageContent() {
   const params = useParams()
   const searchParams = useSearchParams()
   const matchId = String(params.id)
-  const source = searchParams.get('source') || 'ppvsu' // Default to ppvsu if no source
+  const source = searchParams.get('source') || ''
+  const sourceId = searchParams.get('sourceId') || ''
   const isSportsurge = source === 'sportsurge'
   const { t } = useLanguage()
 
@@ -362,21 +363,34 @@ function MatchPageContent() {
   
   // VIEWS COUNTER
   const [viewCount, setViewCount] = useState<number>(0)
+  const viewTrackedRef = useRef(false)
   
   useEffect(() => {
-    // 🔥 TRACK VIEW - increment when page loads (only for ppvsu streams)
+    // 🔥 TRACK VIEW - increment when page loads (only for non-sportsurge streams)
     let stopPing: (() => void) | undefined;
     
-    if (!isSportsurge) {
-      // Initial view increment
-      const trackView = async () => {
-        const views = await incrementView(matchId)
-        setViewCount(views)
+    if (!isSportsurge && !viewTrackedRef.current) {
+      viewTrackedRef.current = true
+      
+      // Check if we already recorded a view for this match in this session
+      const viewKey = `viewed_${matchId}`;
+      const alreadyViewed = sessionStorage.getItem(viewKey);
+      
+      if (!alreadyViewed) {
+        // Initial view increment
+        const trackView = async () => {
+          const views = await incrementView(matchId)
+          setViewCount(views)
+          // Mark as viewed in this session
+          sessionStorage.setItem(viewKey, 'true')
+        }
+        trackView()
+      } else {
+        // Just get the count without incrementing
+        getViewCount(matchId).then(setViewCount)
       }
-      trackView()
       
       // Start ping every 4 minutes to keep session alive
-      // Also updates view count from server
       stopPing = startViewPing(matchId, (count) => {
         setViewCount(count)
       })
@@ -408,7 +422,7 @@ function MatchPageContent() {
       }
     }
     
-    // 2. Fallback: Fetch from API (check both ppvsu and sportsurge)
+    // 2. Fallback: Fetch from Streamed API
     async function fetchMatchDetails() {
       try {
         // If sportsurge source, try sportsurge API first
@@ -428,22 +442,19 @@ function MatchPageContent() {
           }
         }
         
-        // Try ppvsu API
-        const res = await fetch('https://api-reedstreams-clean.fly.dev/api/v1/streams')
+        // Try Streamed API
+        const res = await fetch('https://streamed.pk/api/matches/live')
         if (res.ok) {
           const data = await res.json()
-          if (data.categories) {
-            // Find match in all categories
-            for (const cat of data.categories) {
-              if (cat.games) {
-                const match = cat.games.find((g: any) => String(g.id) === matchId)
-                if (match) {
-                  setMatchTitle(match.name)
-                  const dateObj = new Date(match.start_time * 1000)
-                  setStartTime(dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}))
-                  return
-                }
-              }
+          if (Array.isArray(data)) {
+            const match = data.find((m: any) => String(m.id) === matchId)
+            if (match) {
+              setMatchTitle(match.title)
+              const dateObj = new Date(match.date)
+              setStartTime(dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}))
+              // Store in sessionStorage
+              sessionStorage.setItem("currentMatch", JSON.stringify(match))
+              return
             }
           }
         }
@@ -541,7 +552,11 @@ function MatchPageContent() {
                 {isSportsurge ? (
                   <SportsurgePlayer matchId={matchId} />
                 ) : (
-                  <MatchPlayer matchId={matchId} />
+                  <MatchPlayer 
+                    matchId={matchId} 
+                    initialSource={source}
+                    initialSourceId={sourceId}
+                  />
                 )}
               </div>
               <div className="info-bar">

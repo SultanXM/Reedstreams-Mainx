@@ -299,34 +299,37 @@ export default function Header() {
             {mounted && showSidebar && (
                 <>
                     <div className="sidebar-overlay visible" onClick={() => setShowSidebar(false)} />
-                    <div className="sidebar-drawer open">
-                        <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px', borderBottom: '1px solid #222' }}>
-                            <span onClick={(e) => hardNavigate(e, '/')} className="sidebar-logo" style={{cursor:'pointer', fontSize: '22px', fontWeight: '900', letterSpacing: '-1px', display: 'flex', alignItems: 'center', color: '#fff'}}>
-                                <span className="accent-text" style={{ color: '#8db902' }}>REED</span>
-                                <span>STREAMS</span>
-                            </span>
-                            <button onClick={() => setShowSidebar(false)} className="close-btn" style={{ background: 'transparent', border: 'none', color: '#a1a1aa', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={24} /></button>
+                    <aside className="sidebar-drawer open">
+                        <div className="sidebar-header">
+                            <span className="sidebar-logo"><span className="accent">REED</span><span>STREAMS</span></span>
+                            <button onClick={() => setShowSidebar(false)} className="sidebar-close"><X size={20} /></button>
                         </div>
+
                         <div className="sidebar-content">
-                            <div className="live-banner"><div className="pulsing-dot" /> {liveMatchesCount} Matches Live</div>
-                            <nav className="sidebar-nav">
-                                <a href="/" className="sidebar-item" onClick={(e) => hardNavigate(e, '/')}><Home size={18} /> Home</a>
-                                <Link href="/schedule" className="sidebar-item" onClick={() => setShowSidebar(false)}><Calendar size={18} /> Schedule</Link>
-                                {/* Mobile Report Button */}
-                                <button className="sidebar-item" onClick={() => { setShowSidebar(false); setShowReport(true); }} style={{width:'100%', background:'none', border:'none', color:'inherit', cursor:'pointer'}}>
-                                    <AlertCircle size={18} /> Report Issue
+                            <div className="live-badge"><span className="dot" /> {liveMatchesCount} LIVE</div>
+
+                            <nav className="sidebar-links">
+                                <a href="/" onClick={(e) => hardNavigate(e, '/')} className="sidebar-link">
+                                    <Home size={18} /> Home
+                                </a>
+                                <a href="/schedule" onClick={(e) => { e.preventDefault(); setShowSidebar(false); router.push('/schedule'); }} className="sidebar-link">
+                                    <Calendar size={18} /> Schedule
+                                </a>
+                                <button onClick={() => { setShowSidebar(false); setShowReport(true); }} className="sidebar-link">
+                                    <AlertCircle size={18} /> Report
                                 </button>
                             </nav>
-                            <div className="sidebar-divider">SPORTS</div>
-                            <div className="sidebar-grid">
+
+                            <div className="sidebar-title">SPORTS</div>
+                            <div className="sidebar-sports">
                                 {sports.map(s => (
-                                    <Link key={s.id} href={getSportUrl(s)} className="sidebar-chip" onClick={() => setShowSidebar(false)}>
+                                    <Link key={s.id} href={getSportUrl(s)} className="sport-pill" onClick={() => setShowSidebar(false)}>
                                         {getDisplayName(s.id)}
                                     </Link>
                                 ))}
                             </div>
                         </div>
-                    </div>
+                    </aside>
                 </>
             )}
 

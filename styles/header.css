@@ -114,18 +114,23 @@
 
 /* --- SIDEBAR (Mobile) --- */
 .sidebar-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-  backdrop-filter: blur(5px); z-index: 2000;
-  opacity: 0; pointer-events: none; transition: 0.3s;
+  position: fixed; inset: 0; 
+  background: rgba(0,0,0,0.8);
+  z-index: 2000;
+  opacity: 0; 
+  pointer-events: none; 
+  transition: 0.2s;
 }
 .sidebar-overlay.visible { opacity: 1; pointer-events: all; }
 
 .sidebar-drawer {
   position: fixed; top: 0; left: 0; bottom: 0; width: 280px;
-  background: var(--bg-black); border-right: 1px solid #222;
-  z-index: 2001; transform: translateX(-100%); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #0a0a0a;
+  border-right: 1px solid #1a1a1a;
+  z-index: 2001; 
+  transform: translateX(-100%); 
+  transition: 0.25s ease;
   display: flex; flex-direction: column;
-  overflow: hidden;
 }
 .sidebar-drawer.open { transform: translateX(0); }
 
@@ -133,57 +138,61 @@
   height: 60px; padding: 0 20px;
   display: flex; align-items: center; justify-content: space-between;
   border-bottom: 1px solid #1a1a1a;
-  flex-shrink: 0;
-}
-.sidebar-logo { font-weight: 900; color: #fff; font-style: italic; }
-.close-btn { background: none; border: none; color: #666; cursor: pointer; }
-
-.sidebar-content { 
-  padding: 20px; 
-  overflow-y: auto; 
-  flex: 1;
-  min-height: 0;
 }
 
-.live-banner {
-  background: rgba(141, 185, 2, 0.1); border: 1px solid var(--accent);
-  color: var(--accent); padding: 12px; border-radius: 8px;
-  font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 10px;
-  margin-bottom: 24px;
-  white-space: nowrap;
+.sidebar-logo { 
+  font-size: 18px; font-weight: 900; color: #fff; letter-spacing: 0;
+  display: flex;
+}
+.sidebar-logo .accent { color: var(--accent); }
+
+.sidebar-close { 
+  background: none; border: none; color: #666; cursor: pointer;
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+}
+.sidebar-close:hover { color: #fff; }
+
+.sidebar-content { padding: 20px; flex: 1; overflow-y: auto; }
+
+.live-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(141, 185, 2, 0.1);
+  border: 1px solid rgba(141, 185, 2, 0.2);
+  padding: 6px 12px; border-radius: 4px;
+  font-size: 11px; font-weight: 800; color: var(--accent);
+  margin-bottom: 20px;
+}
+.live-badge .dot {
+  width: 6px; height: 6px; background: var(--accent);
+  border-radius: 50%; animation: pulse 2s infinite;
 }
 
-.sidebar-nav { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
-.sidebar-item {
+.sidebar-links { display: flex; flex-direction: column; gap: 4px; margin-bottom: 24px; }
+.sidebar-link {
   display: flex; align-items: center; gap: 12px;
   padding: 12px; border-radius: 8px;
-  color: #ccc; text-decoration: none; font-weight: 600; font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
+  color: #888; font-size: 14px; font-weight: 600;
+  text-decoration: none; text-align: left; background: none; border: none; cursor: pointer;
 }
-.sidebar-item:hover { background: #111; color: #fff; }
+.sidebar-link:hover { background: #111; color: #fff; }
+.sidebar-link svg { opacity: 0.7; }
+.sidebar-link:hover svg { opacity: 1; color: var(--accent); }
 
-.sidebar-divider {
-  font-size: 10px; font-weight: 800; color: #555;
-  margin-bottom: 12px; letter-spacing: 1px;
-  white-space: nowrap;
+.sidebar-title {
+  font-size: 10px; font-weight: 800; color: #444;
+  letter-spacing: 1px; margin-bottom: 12px;
 }
 
-.sidebar-grid { 
-  display: grid; 
-  grid-template-columns: 1fr 1fr; 
-  gap: 8px; 
+.sidebar-sports { 
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; 
 }
-.sidebar-chip {
-  background: #111; padding: 10px 6px; border-radius: 6px;
-  color: #888; text-align: center; font-size: 11px; font-weight: 700;
+.sport-pill {
+  background: #111; padding: 10px 8px; border-radius: 8px;
+  color: #666; text-align: center; font-size: 11px; font-weight: 700;
   text-decoration: none; border: 1px solid transparent;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
+  text-transform: uppercase; letter-spacing: 0.5px;
 }
-.sidebar-chip:hover { border-color: var(--accent); color: #fff; }
+.sport-pill:hover { border-color: var(--accent); color: #fff; }
 
 /* --- SEARCH MODAL (Z-Index Fixed) --- */
 .modal-backdrop {

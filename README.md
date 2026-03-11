@@ -1,116 +1,76 @@
-# ReedStreams Live Sports
+# ReedStreams Frontend
 
-A modern, high-performance sports streaming platform built with Next.js 16, featuring live match streaming, upcoming schedules, and comprehensive sports coverage.
+Next.js frontend for StreamD sports streaming platform.
 
 ## Features
 
-- **Live Sports Streaming** - Watch live matches from multiple sports
-- **Multi-Sport Support** - Coverage for Football, Basketball, Baseball, Hockey, MMA, and more
-- **Upcoming Matches** - Browse and track upcoming games
-- **Responsive Design** - Optimized for all devices
-- **Server-Side Rendering** - Fast page loads and SEO optimization
-- **API Architecture** - Clean separation of frontend and backend logic
+- **StreamD API Integration** - Live matches, sports categories, streams
+- **Real-time Views Counter** - Shows active viewers per match
+- **Image Proxy** - Bypasses CORS for StreamD images
+- **Source Switching** - Multiple stream sources (admin, alpha, bravo, etc.)
+- **Responsive Design** - Works on desktop and mobile
 
-## Tech Stack
+## Views System
 
-- **Framework:** Next.js 16 (App Router)
-- **Language:** TypeScript
-- **Styling:** CSS Modules + Tailwind CSS
-- **UI Components:** Radix UI + shadcn/ui
-- **Analytics:** Vercel Analytics
+Views are tracked using a Rust backend deployed on Fly.io:
+- **Backend URL**: `https://streamd-views.fly.dev`
+- **Session Timeout**: 4 minutes
+- **Auto-cleanup**: Expired sessions removed every 5 minutes
 
-## Getting Started
+### Views API Endpoints
 
-### Prerequisites
+```
+POST   /api/v1/views/:match_id              - Increment view
+GET    /api/v1/views/:match_id/count        - Get view count
+POST   /api/v1/views/:match_id/ping         - Keep session alive
+POST   /api/v1/views/batch/count            - Batch get counts
+```
 
-- Node.js 18+ installed
-- npm or yarn package manager
+### Views Display
 
-### Installation
+- **Match Cards** - Shows eye icon with viewer count on sports grid
+- **Live Matches** - Shows viewer count per match row
+- **Match Page** - Shows viewer count below player
 
-1. Clone the repository:
-\`\`\`bash
-git clone <your-repo-url>
-cd reed-streams-live-sports
-\`\`\`
+## Local Development
 
-2. Install dependencies:
-\`\`\`bash
+```bash
+# Install dependencies
 npm install
-\`\`\`
 
-3. Run the development server:
-\`\`\`bash
+# Run dev server
 npm run dev
-\`\`\`
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-### Build for Production
-
-\`\`\`bash
+# Build for production
 npm run build
-npm start
-\`\`\`
+```
 
-## Project Structure
+## API Routes (Internal)
 
-\`\`\`
-reed-streams-live-sports/
-├── app/                    # Next.js app directory
-│   ├── api/               # API routes (backend)
-│   │   ├── sports/        # Sports data endpoints
-│   │   ├── matches/       # Match data endpoints
-│   │   └── stream/        # Stream URL endpoints
-│   ├── sports/            # Sports listing page
-│   ├── live-matches/      # Live matches page
-│   ├── match/[id]/        # Individual match page
-│   ├── faq/               # FAQ page
-│   └── page.tsx           # Home page
-├── components/            # Reusable React components
-│   ├── layout/           # Header, Footer, etc.
-│   ├── home/             # Home page components
-│   ├── sports/           # Sports page components
-│   ├── match/            # Match page components
-│   └── ui/               # UI component library
-├── lib/                   # Utility functions and types
-├── styles/                # CSS files
-├── public/                # Static assets
-│   ├── images/           # Image files
-│   └── scripts/          # Client-side scripts
-└── types/                 # TypeScript type definitions
-\`\`\`
+| Route | Description |
+|-------|-------------|
+| `/api/matches` | All matches (with poster filter) |
+| `/api/matches/live` | Live matches (with poster filter) |
+| `/api/matches/[sport]` | Sport-specific matches |
+| `/api/sports` | Available sports |
+| `/api/stream/[source]/[id]` | Stream sources |
+| `/api/image-proxy` | CORS proxy for images |
 
-## API Routes
+## Environment Variables
 
-- `GET /api/sports` - Get all available sports
-- `GET /api/matches` - Get all live matches
-- `GET /api/matches/[sportId]` - Get matches by sport
-- `GET /api/stream/[source]/[id]` - Get stream URL for match
+```env
+# Optional - defaults to https://streamed.pk/api
+NEXT_PUBLIC_STREAMED_API_BASE_URL=https://streamed.pk/api
+```
 
-## Pages
+## Deployment
 
-- `/` - Home page with featured matches
-- `/sports` - Browse all sports categories
-- `/live-matches` - View all live matches
-- `/match/[id]` - Watch individual match stream
-- `/faq` - Frequently asked questions
+```bash
+# Build and deploy
+npm run build
+# Deploy to your hosting platform (Vercel, etc.)
+```
 
-## Performance Optimizations
+## Backend Repository
 
-- Server-side rendering for faster initial loads
-- API route caching with revalidation
-- Optimized image loading
-- Code splitting and lazy loading
-- Static asset optimization
-
-## License
-
-This project is private & proprietary.
-
-## Support
-
-
-For support, please contact the development team.
-
-
+Views counter backend: `/streamd/backend/`

@@ -1,14 +1,19 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 const STREAMED_API_BASE = process.env.NEXT_PUBLIC_STREAMED_API_BASE_URL || 'https://streamed.pk/api';
 
-export async function GET() {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ sport: string }> }
+) {
+  const { sport } = await params;
+  
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
     
-    const res = await fetch(`${STREAMED_API_BASE}/matches`, {
-      next: { revalidate: 60 },
+    const res = await fetch(`${STREAMED_API_BASE}/matches/${sport}`, {
+      next: { revalidate: 120 },
       signal: controller.signal,
     });
     
@@ -27,7 +32,7 @@ export async function GET() {
     // SANITIZE: Force all IDs to be Strings
     const sanitizedMatches = validMatches.map((m: any) => ({
       ...m,
-      id: String(m.id), // FORCE STRING ID
+      id: String(m.id),
       date: m.date || new Date().toISOString()
     }));
 

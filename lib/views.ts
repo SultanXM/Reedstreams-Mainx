@@ -1,7 +1,7 @@
-// View Counter Utility
+// View Counter Utility - Uses StreamD Views Rust Backend
 // Tracks active viewers for matches with ping mechanism
 
-const API_BASE = typeof window !== 'undefined' ? '' : process.env.NEXT_PUBLIC_APP_URL || '';
+const VIEWS_API_URL = 'https://streamd-views.fly.dev';
 
 /**
  * Increment view count for a match
@@ -9,7 +9,7 @@ const API_BASE = typeof window !== 'undefined' ? '' : process.env.NEXT_PUBLIC_AP
  */
 export async function incrementView(matchId: string): Promise<number> {
   try {
-    const res = await fetch(`${API_BASE}/api/views/${matchId}`, {
+    const res = await fetch(`${VIEWS_API_URL}/api/v1/views/${matchId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
@@ -17,8 +17,9 @@ export async function incrementView(matchId: string): Promise<number> {
     if (!res.ok) throw new Error('Failed to increment view');
     
     const data = await res.json();
-    return data.views;
+    return data.count;
   } catch (error) {
+    console.error('Views API error:', error);
     return 0;
   }
 }
@@ -28,7 +29,7 @@ export async function incrementView(matchId: string): Promise<number> {
  */
 export async function getViewCount(matchId: string): Promise<number> {
   try {
-    const res = await fetch(`${API_BASE}/api/views/${matchId}/count`, {
+    const res = await fetch(`${VIEWS_API_URL}/api/v1/views/${matchId}/count`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     });
@@ -36,20 +37,21 @@ export async function getViewCount(matchId: string): Promise<number> {
     if (!res.ok) throw new Error('Failed to get view count');
     
     const data = await res.json();
-    return data.views;
+    return data.count;
   } catch (error) {
+    console.error('Views API error:', error);
     return 0;
   }
 }
 
 /**
  * Ping to keep viewer session alive
- * Extends TTL by 5 minutes
+ * Extends TTL by 4 minutes
  * Call this every 4 minutes while user is watching
  */
 export async function pingView(matchId: string): Promise<number> {
   try {
-    const res = await fetch(`${API_BASE}/api/views/${matchId}/ping`, {
+    const res = await fetch(`${VIEWS_API_URL}/api/v1/views/${matchId}/ping`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
@@ -57,8 +59,9 @@ export async function pingView(matchId: string): Promise<number> {
     if (!res.ok) throw new Error('Failed to ping view');
     
     const data = await res.json();
-    return data.views;
+    return data.count;
   } catch (error) {
+    console.error('Views API error:', error);
     return 0;
   }
 }
@@ -74,7 +77,7 @@ export async function pingView(matchId: string): Promise<number> {
  */
 export function startViewPing(matchId: string, onCountUpdate?: (count: number) => void): () => void {
   // Ping every 4 minutes (240 seconds)
-  // TTL is 5 minutes, so this gives 1 minute buffer
+  // TTL is 4 minutes, so this keeps session alive
   const PING_INTERVAL = 4 * 60 * 1000; // 4 minutes in ms
   
   // Initial ping

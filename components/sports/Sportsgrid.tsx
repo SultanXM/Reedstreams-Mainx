@@ -5,49 +5,36 @@ import Link from 'next/link'
 import { Trophy, Clock, RefreshCw, Eye } from 'lucide-react'
 import '../../styles/Sportsgrid.css'
 
-import { API_STREAMS_URL } from '@/config/api'
+import { 
+  fetchLiveMatches,
+  fetchMatchesBySport,
+  fetchSports,
+  StreamedMatch, 
+  transformToUnifiedGame,
+  getBestSource,
+  isMatchLive
+} from '@/lib/streamed-api'
 import { useBatchViews } from '@/hooks/useViews'
-
-const PPVSU_URL = API_STREAMS_URL
-
-// PPVSU Types
-interface PpvsuGame {
-  id: number
-  name: string
-  poster: string
-  start_time: number
-  end_time: number
-  video_link: string
-  category: string
-}
-
-interface PpvsuCategory {
-  category: string
-  games: PpvsuGame[]
-}
-
-interface PpvsuData {
-  categories?: PpvsuCategory[]
-}
 
 // Unified Game Type for UI
 interface UnifiedGame {
-  id: number | string
+  id: string
   name: string
   poster: string
   start_time: number
   end_time: number
   category: string
-  source: 'ppvsu'
+  source: 'streamed'
   is_live: boolean
   league?: string
+  streamedMatch: StreamedMatch
 }
 
 interface UnifiedCategory {
   category: string
   games: UnifiedGame[]
   icon?: React.ComponentType<{size: number, color: string}>
-  source: 'ppvsu'
+  source: 'streamed'
 }
 
 const isLive = (startTime: number, endTime: number): boolean => {
@@ -58,11 +45,6 @@ const isLive = (startTime: number, endTime: number): boolean => {
 const isAlwaysLive = (category: string): boolean => {
   const alwaysLiveCategories = ['24/7', '24/7 channels', '24/7 Streams', 'always live', 'tv channels']
   return alwaysLiveCategories.some(cat => category.toLowerCase().includes(cat.toLowerCase()))
-}
-
-const isAmericanFootball = (category: string): boolean => {
-  const cat = category.toLowerCase()
-  return (cat.includes('football') && !cat.includes('soccer')) || cat.includes('nfl')
 }
 
 const formatTime = (timestamp: number): string => {
@@ -90,46 +72,52 @@ const SkeletonMatchCard = () => (
   </div>
 )
 
-const MatchCard = React.memo(({ game, onImageError, showViews = false }: { 
+const MatchCard = React.memo(({ game, onImageError, views }: { 
   game: UnifiedGame
-  onImageError: (id: number | string) => void 
-  showViews?: boolean
+  onImageError: (id: string) => void 
+  views?: number
 }) => {
   const [imageError, setImageError] = useState(false)
   
-  // Live tag logic: use is_live from API or calculate from time
   const live = game.is_live || isLive(game.start_time, game.end_time)
   const alwaysLive = isAlwaysLive(game.category)
+  
+  // Get best source for the match link
+  const bestSource = getBestSource(game.streamedMatch)
+  const sourceParam = bestSource ? `source=${bestSource.source}&sourceId=${bestSource.id}` : ''
+  
+  // Construct full image URL - use proxy to avoid CORS
+  const getImageUrl = (poster: string): string => {
+    if (!poster) return ''
+    if (poster.startsWith('http')) return `/api/image-proxy?url=${encodeURIComponent(poster)}`
+    return `/api/image-proxy?url=${encodeURIComponent(`https://streamed.pk${poster}`)}`
+  }
+  
+  const imageUrl = getImageUrl(game.poster)
 
   return (
     <Link
-      href={`/match/${game.id}?source=${game.source}`}
+      href={`/match/${game.id}?${sourceParam}`}
       className="match-card-link"
     >
       <article className="match-card">
-        <div className="match-visual" style={{ padding: 0 }}>
+        <div className="match-visual" style={{ padding: 0, position: 'relative' }}>
           <div className="card-top-row">
             <span className={`status-badge ${live || alwaysLive ? 'live' : 'upcoming'}`}>
               {live || alwaysLive ? 'LIVE' : formatTime(game.start_time)}
             </span>
-            {/* Views count for Popular row */}
-            {showViews && <ViewsBadgeInline matchId={String(game.id)} />}
+            <ViewsBadgeInline matchId={String(game.id)} views={views} />
           </div>
-          {!imageError ? (
-            <img 
-              src={game.poster} 
-              alt={game.name}
-              style={{objectFit: "cover", width: "100%", height: "100%", display: "block"}} 
-              onError={() => {
-                setImageError(true)
-                onImageError(game.id)
-              }} 
-            />
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', background: '#1a1a1a' }}>
-              <span style={{ color: '#444', fontSize: '14px' }}>No Image</span>
-            </div>
-          )}
+          <img 
+            src={imageUrl} 
+            alt={game.name}
+            style={{objectFit: "cover", width: "100%", height: "100%", display: "block"}} 
+            referrerPolicy="no-referrer"
+            onError={() => {
+              setImageError(true)
+              onImageError(game.id)
+            }} 
+          />
         </div>
         <div className="match-info">
           <p className="match-main-title">{game.name}</p>
@@ -141,12 +129,9 @@ const MatchCard = React.memo(({ game, onImageError, showViews = false }: {
 })
 MatchCard.displayName = 'MatchCard'
 
-// Inline views badge using context
-function ViewsBadgeInline({ matchId }: { matchId: string }) {
-  const viewsMap = React.useContext(ViewsContext)
-  const views = viewsMap.get(matchId) ?? 0
-  
-  if (views === 0) return null
+// Views badge component - shows count from context
+function ViewsBadgeInline({ matchId, views }: { matchId: string; views?: number }) {
+  if (!views || views === 0) return null
   
   const formatViews = (n: number) => {
     if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M'
@@ -160,17 +145,17 @@ function ViewsBadgeInline({ matchId }: { matchId: string }) {
       {formatViews(views)}
       <style jsx>{`
         .views-badge-inline {
-          background: rgba(0, 0, 0, 0.6);
+          background: rgba(0, 0, 0, 0.7);
           backdrop-filter: blur(4px);
-          color: #aaa;
+          color: #fff;
           font-size: 10px;
-          font-weight: 500;
+          font-weight: 600;
           padding: 3px 7px;
           border-radius: 4px;
           display: flex;
           align-items: center;
           gap: 4px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.15);
         }
       `}</style>
     </span>
@@ -179,36 +164,26 @@ function ViewsBadgeInline({ matchId }: { matchId: string }) {
 
 const SportsCategorySelector = ({ loading, liveMatches }: { loading: boolean, liveMatches?: UnifiedGame[] }) => {
   const sports = [
-    { id: 'soccer', name: 'Soccer', icon: '⚽' },
+    { id: 'football', name: 'Soccer', icon: '⚽' },
     { id: 'basketball', name: 'Basketball', icon: '🏀' },
     { id: 'baseball', name: 'Baseball', icon: '⚾' },
-    { id: 'football', name: 'Football', icon: '🏈' },
+    { id: 'american-football', name: 'Football', icon: '🏈' },
     { id: 'hockey', name: 'Ice Hockey', icon: '🏒' },
-    { id: 'mma', name: 'MMA / UFC', icon: '🥊' },
+    { id: 'fight', name: 'MMA / UFC', icon: '🥊' },
     { id: 'tennis', name: 'Tennis', icon: '🎾' },
     { id: 'golf', name: 'Golf', icon: '⛳' },
-    { id: 'motorsports', name: 'Motorsports', icon: '🏎️' },
+    { id: 'motor-sports', name: 'Motorsports', icon: '🏎️' },
     { id: 'cricket', name: 'Cricket', icon: '🏏' },
-    { id: 'combat sports', name: 'Combat Sports', icon: '🥋' },
+    { id: 'rugby', name: 'Rugby', icon: '🏉' },
     { id: 'darts', name: 'Darts', icon: '🎯' },
-    { id: '24/7 Streams', name: '24/7 Streams', icon: '📺' },
+    { id: 'billiards', name: 'Billiards', icon: '🎱' },
   ]
 
-  // Count live matches per sport category
   const getLiveCount = (sportId: string): number => {
     if (!liveMatches || liveMatches.length === 0) return 0
     return liveMatches.filter(m => {
       const cat = m.category?.toLowerCase() || ''
-      if (sportId === 'football') {
-        return (cat.includes('football') && !cat.includes('soccer')) || cat.includes('nfl')
-      }
-      if (sportId === 'combat sports') {
-        return cat.includes('combat') || cat.includes('mma') || cat.includes('boxing')
-      }
-      if (sportId === '24/7 Streams') {
-        return cat.includes('24/7')
-      }
-      return cat.includes(sportId.toLowerCase())
+      return cat === sportId || cat.includes(sportId.toLowerCase())
     }).length
   }
 
@@ -227,8 +202,7 @@ const SportsCategorySelector = ({ loading, liveMatches }: { loading: boolean, li
           sports.map(sport => {
             const liveCount = getLiveCount(sport.id)
             return (
-              <Link key={sport.id} href={`/live-matches?sportId=${sport.id}`} className="selector-pill" style={{ position: 'relative' }}>
-                {/* 🔴 Premium Live Badge */}
+              <Link key={sport.id} href={`/live-matches?sportId=${sport.id}`} className="selector-pill enhanced" style={{ position: 'relative' }}>
                 {liveCount > 0 && (
                   <span className="sport-live-badge">
                     <span className="live-pulse-dot" />
@@ -236,13 +210,28 @@ const SportsCategorySelector = ({ loading, liveMatches }: { loading: boolean, li
                   </span>
                 )}
                 <span className="pill-icon">{sport.icon}</span>
-                <span className="pill-label">{sport.name}</span>
+                <span className="pill-label" style={{ color: '#fff' }}>{sport.name}</span>
               </Link>
             )
           })
         )}
       </div>
       <style jsx>{`
+        .selector-pill.enhanced {
+          background: linear-gradient(145deg, #1c1c1c 0%, #1a1a1a 50%, #162014 100%);
+          border: 1px solid rgba(141, 185, 2, 0.15);
+          box-shadow: 
+            0 4px 6px rgba(0,0,0,0.4),
+            inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+        .selector-pill.enhanced:hover {
+          background: linear-gradient(145deg, #242424 0%, #1f1f1f 50%, #1a2618 100%);
+          border-color: rgba(141, 185, 2, 0.4);
+          box-shadow: 
+            0 8px 24px rgba(0,0,0,0.5),
+            0 0 0 1px rgba(141, 185, 2, 0.1),
+            inset 0 1px 0 rgba(255,255,255,0.05);
+        }
         .sport-live-badge {
           position: absolute;
           top: -6px;
@@ -264,13 +253,11 @@ const SportsCategorySelector = ({ loading, liveMatches }: { loading: boolean, li
           background: #fff;
           border-radius: 50%;
         }
+
       `}</style>
     </section>
   )
 }
-
-// Context for batch views to avoid multiple API calls
-const ViewsContext = React.createContext<Map<string, number>>(new Map())
 
 const MatchCarousel = ({ 
   category, 
@@ -280,98 +267,105 @@ const MatchCarousel = ({
 }: { 
   category: string
   games: UnifiedGame[]
-  onImageError: (id: number | string) => void
+  onImageError: (id: string) => void
   icon?: React.ComponentType<{size: number, color: string}>
 }) => {
   const liveCount = games.filter(g => g.is_live || isLive(g.start_time, g.end_time) || isAlwaysLive(g.category)).length
   const [viewsMap, setViewsMap] = React.useState<Map<string, number>>(new Map())
-  
-  // Batch fetch all views at once on mount
+
+  // Fetch batch views for all games in this carousel
   React.useEffect(() => {
-    const ids = games.map(g => String(g.id)).filter(id => !viewsMap.has(id))
-    if (ids.length === 0) return
+    if (games.length === 0) return
     
-    // Chunk into batches of 50
-    const chunks = []
-    for (let i = 0; i < ids.length; i += 50) {
-      chunks.push(ids.slice(i, i + 50))
+    const fetchViews = async () => {
+      const { getBatchViewCounts } = await import('@/lib/views-api')
+      const ids = games.map(g => g.id)
+      const counts = await getBatchViewCounts(ids)
+      setViewsMap(counts)
     }
     
-    chunks.forEach(chunk => {
-      fetch('https://reedstreams-wx-78.fly.dev/api/v1/views/batch/count', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ match_ids: chunk }),
-      })
-        .then(r => r.json())
-        .then(data => {
-          setViewsMap(prev => {
-            const next = new Map(prev)
-            data.views.forEach(([id, count]: [string, number]) => {
-              next.set(id, count)
-            })
-            return next
-          })
-        })
-        .catch(() => {})
-    })
+    fetchViews()
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchViews, 30000)
+    return () => clearInterval(interval)
   }, [games.map(g => g.id).join(',')])
 
   return (
-    <ViewsContext.Provider value={viewsMap}>
-      <section className="matches-section">
-        <div className="section-row-header">
-          <div className="title-block">
-            {Icon && <Icon size={20} color="var(--accent-color)" />}
-            <h2 className="section-title">{category}</h2>
-            {liveCount > 0 && <span className="live-count-tag">{liveCount} Live</span>}
-          </div>
+    <section className="matches-section">
+      <div className="section-row-header">
+        <div className="title-block">
+          {Icon && <Icon size={20} color="var(--accent-color)" />}
+          <h2 className="section-title">{category}</h2>
+          {liveCount > 0 && <span className="live-count-tag">{liveCount} Live</span>}
         </div>
-        <div className="carousel-track">
-          {games.map(game => (
-            <MatchCard 
-              key={`${game.source}-${game.id}`} 
-              game={game} 
-              onImageError={onImageError}
-              showViews={true}
-            />
-          ))}
-        </div>
-      </section>
-    </ViewsContext.Provider>
+      </div>
+      <div className="carousel-track">
+        {games.map(game => (
+          <MatchCard 
+            key={`${game.source}-${game.id}`} 
+            game={game} 
+            onImageError={onImageError}
+            views={viewsMap.get(game.id)}
+          />
+        ))}
+      </div>
+    </section>
   )
 }
 
-// Fetch both PPVSU and Sportsurge data
+// Fetch from Streamed API - get all sports and their matches
 async function fetchAllStreams(): Promise<UnifiedCategory[]> {
-  const ppvsuRes = await fetch(PPVSU_URL)
-
-  const result: UnifiedCategory[] = []
-
-  // Process PPVSU data
-  if (ppvsuRes.ok) {
-    const ppvsuData: PpvsuData = await ppvsuRes.json()
-    if (ppvsuData.categories) {
-      ppvsuData.categories.forEach(cat => {
-        result.push({
-          category: cat.category,
-          games: cat.games.map(g => ({
-            id: g.id,
-            name: g.name,
-            poster: g.poster,
-            start_time: g.start_time,
-            end_time: g.end_time,
-            category: g.category,
-            source: 'ppvsu' as const,
-            is_live: isLive(g.start_time, g.end_time)
-          })),
-          source: 'ppvsu'
-        })
-      })
+  // Fetch all sports first
+  const sports = await fetchSports()
+  
+  // Fetch matches for each sport in parallel
+  const allMatches: StreamedMatch[] = []
+  
+  const results = await Promise.allSettled(
+    sports.map(sport => fetchMatchesBySport(sport.id))
+  )
+  
+  results.forEach(result => {
+    if (result.status === 'fulfilled') {
+      allMatches.push(...result.value)
     }
+  })
+  
+  // Also fetch live matches as backup
+  try {
+    const liveMatches = await fetchLiveMatches()
+    allMatches.push(...liveMatches)
+  } catch (e) {
+    // Ignore error
   }
-
-  return result
+  
+  // Remove duplicates by id (API already filters out matches without posters)
+  const seen = new Set<string>()
+  const uniqueMatches = allMatches.filter(match => {
+    if (seen.has(match.id)) return false
+    seen.add(match.id)
+    return true
+  })
+  
+  // Group by category
+  const categories = new Map<string, StreamedMatch[]>()
+  
+  uniqueMatches.forEach(match => {
+    const categoryName = match.category.charAt(0).toUpperCase() + match.category.slice(1)
+    if (!categories.has(categoryName)) {
+      categories.set(categoryName, [])
+    }
+    categories.get(categoryName)!.push(match)
+  })
+  
+  return Array.from(categories.entries()).map(([category, matches]) => ({
+    category,
+    games: matches.map(m => ({
+      ...transformToUnifiedGame(m),
+      streamedMatch: m
+    })),
+    source: 'streamed' as const,
+  }))
 }
 
 function useRetryFetch<T>(
@@ -416,46 +410,22 @@ function useRetryFetch<T>(
   return { data, loading, error, retry }
 }
 
-interface SportsGridProps {
-  initialData?: { categories?: PpvsuCategory[] }
-}
+export default function SportsGrid() {
+  const [hiddenGameIds, setHiddenGameIds] = useState<Set<string>>(new Set())
 
-export default function SportsGrid({ initialData }: SportsGridProps) {
-  const [hiddenGameIds, setHiddenGameIds] = useState<Set<number | string>>(new Set())
-
-  const { data: fetchedCategories, loading, error, retry } = useRetryFetch(
+  const { data: categories, loading, error, retry } = useRetryFetch(
     fetchAllStreams,
     3,
     2000
   )
-  
-  // Use initialData if available, otherwise use fetched data
-  const categories = initialData?.categories && initialData.categories.length > 0
-    ? initialData.categories.map(cat => ({
-        category: cat.category,
-        games: cat.games.map(g => ({
-          id: g.id,
-          name: g.name,
-          poster: g.poster,
-          start_time: g.start_time,
-          end_time: g.end_time,
-          category: g.category,
-          source: 'ppvsu' as const,
-          is_live: isLive(g.start_time, g.end_time)
-        })),
-        source: 'ppvsu' as const
-      }))
-    : fetchedCategories
 
-  const handleImageError = useCallback((id: number | string) => {
+  const handleImageError = useCallback((id: string) => {
     setHiddenGameIds(prev => new Set(prev).add(id))
   }, [])
 
-  // organize games
   const organizedCategories = useMemo(() => {
     if (!categories) return []
     
-    // filter out broken image games
     const filtered = categories
       .map(cat => ({
         ...cat,
@@ -465,7 +435,6 @@ export default function SportsGrid({ initialData }: SportsGridProps) {
 
     const result: UnifiedCategory[] = []
 
-    // split categories
     const regularCategories: UnifiedCategory[] = []
     const alwaysLiveCategories: UnifiedCategory[] = []
     
@@ -477,14 +446,13 @@ export default function SportsGrid({ initialData }: SportsGridProps) {
       }
     })
 
-    // build "Popular" section
+    // Build Popular section
     const popularGames: UnifiedGame[] = []
     const gamesPerCategory = new Map<string, number>()
     const minGamesFromEach = 1
     const maxGamesFromEach = 3
     const targetPopularCount = 12
 
-    // grab at least 1 from each category first
     regularCategories.forEach(cat => {
       const sortedGames = [...cat.games].sort((a, b) => {
         const aLive = a.is_live || isLive(a.start_time, a.end_time)
@@ -499,7 +467,6 @@ export default function SportsGrid({ initialData }: SportsGridProps) {
       gamesPerCategory.set(cat.category, toAdd.length)
     })
 
-    // fill up to target
     if (popularGames.length < targetPopularCount) {
       regularCategories.forEach(cat => {
         const currentCount = gamesPerCategory.get(cat.category) || 0
@@ -520,7 +487,6 @@ export default function SportsGrid({ initialData }: SportsGridProps) {
       })
     }
 
-    // sort popular - live first
     popularGames.sort((a, b) => {
       const aLive = a.is_live || isLive(a.start_time, a.end_time)
       const bLive = b.is_live || isLive(b.start_time, b.end_time)
@@ -529,28 +495,25 @@ export default function SportsGrid({ initialData }: SportsGridProps) {
       return a.start_time - b.start_time
     })
 
-    // add popular section
     if (popularGames.length > 0) {
       result.push({
         category: 'Popular',
         games: popularGames,
         icon: undefined,
-        source: 'ppvsu'
+        source: 'streamed'
       })
     }
 
-    // sort regular categories - basketball first, then football
+    // Sort regular categories
     const sortedCategories = [...regularCategories].sort((a, b) => {
       const aIsBasketball = a.category.toLowerCase().includes('basketball')
       const bIsBasketball = b.category.toLowerCase().includes('basketball')
-      const aIsFootball = isAmericanFootball(a.category)
-      const bIsFootball = isAmericanFootball(b.category)
+      const aIsFootball = a.category.toLowerCase().includes('football') && !a.category.toLowerCase().includes('american')
+      const bIsFootball = b.category.toLowerCase().includes('football') && !b.category.toLowerCase().includes('american')
       
-      // Basketball first
       if (aIsBasketball && !bIsBasketball) return -1
       if (!aIsBasketball && bIsBasketball) return 1
       
-      // Then Football
       if (aIsFootball && !bIsFootball) return -1
       if (!aIsFootball && bIsFootball) return 1
       
@@ -564,7 +527,6 @@ export default function SportsGrid({ initialData }: SportsGridProps) {
       return 0
     })
 
-    // add regular categories
     sortedCategories.forEach(cat => {
       const sortedGames = [...cat.games].sort((a, b) => {
         const aLive = a.is_live || isLive(a.start_time, a.end_time)
@@ -584,7 +546,6 @@ export default function SportsGrid({ initialData }: SportsGridProps) {
       })
     })
 
-    // 24/7 channels at bottom
     alwaysLiveCategories.forEach(cat => {
       result.push({
         category: cat.category,
@@ -597,10 +558,11 @@ export default function SportsGrid({ initialData }: SportsGridProps) {
     return result
   }, [categories, hiddenGameIds])
 
-  // Get all live matches for the sports badges
   const allLiveMatches = useMemo(() => {
     if (!organizedCategories) return []
-    return organizedCategories.flatMap(cat => cat.games.filter(g => g.is_live))
+    return organizedCategories.flatMap(cat => 
+      cat.games.filter(g => g.is_live || isLive(g.start_time, g.end_time) || isAlwaysLive(g.category))
+    )
   }, [organizedCategories])
 
   return (
@@ -609,7 +571,7 @@ export default function SportsGrid({ initialData }: SportsGridProps) {
         <SportsCategorySelector loading={loading} liveMatches={allLiveMatches} />
 
         <div className="matches-grid-container">
-          {loading && !initialData?.categories?.length ? (
+          {loading ? (
             Array(3).fill(0).map((_, rowIndex) => (
               <React.Fragment key={rowIndex}>
                 <div className="skeleton-header skeleton-pulse" />

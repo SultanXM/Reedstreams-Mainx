@@ -10,7 +10,8 @@ interface ViewsCounterProps {
   recordOnMount?: boolean;
 }
 
-function formatViews(count: number): string {
+function formatViews(count: number | undefined | null): string {
+  if (count == null || isNaN(count)) return "0";
   if (count >= 1000000) {
     return (count / 1000000).toFixed(1) + "M";
   }
