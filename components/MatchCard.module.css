@@ -1,0 +1,224 @@
+.matchLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  height: 100%;
+}
+
+.matchCard {
+  background: #0a0a0f;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #1a1a2e;
+  transition: all 0.2s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.matchCard:hover {
+  border-color: #2a2a4e;
+  transform: translateY(-2px);
+}
+
+/* Blurred Background */
+.blurredBg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.blurImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(20px) brightness(0.3);
+  transform: scale(1.1);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.blurImageLoaded {
+  opacity: 0.5;
+}
+
+/* Desktop: Portrait Card */
+.bannerContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #0f0f13;
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.matchBanner {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease, opacity 0.5s ease;
+  opacity: 0;
+}
+
+.matchBannerLoaded {
+  opacity: 1;
+}
+
+.matchCard:hover .matchBannerLoaded {
+  transform: scale(1.05);
+}
+
+/* Skeleton Shimmer */
+.skeletonShimmer {
+  position: absolute;
+  inset: 0;
+  background: #1a1a2e;
+  background-image: linear-gradient(
+    90deg, 
+    #1a1a2e 25%, 
+    #252538 50%, 
+    #1a1a2e 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Badges */
+.liveBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #e91916;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 10px rgba(233, 25, 22, 0.5);
+}
+
+.viewsBadge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.viewsDot {
+  width: 5px;
+  height: 5px;
+  background: #e91916;
+  border-radius: 50%;
+}
+
+.viewsCount {
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Info Section */
+.matchInfo {
+  padding: 14px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(to bottom, transparent, rgba(10, 10, 15, 0.8));
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.matchCategory {
+  font-size: 12px;
+  color: #888;
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.matchTime {
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.matchTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Mobile: Landscape Card */
+@media (max-width: 768px) {
+  .matchCard {
+    flex-direction: row;
+    height: 100px;
+    border: 1px solid #1a1a2e;
+    background: #0a0a0f;
+    width: 100%;
+  }
+  .bannerContainer {
+    width: 160px;
+    height: 100%;
+    aspect-ratio: auto;
+    flex-shrink: 0;
+  }
+  .matchInfo {
+    padding: 8px 12px;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+    gap: 6px;
+  }
+  .matchTitle {
+    font-size: 14px;
+    line-height: 1.25;
+    -webkit-line-clamp: 3;
+  }
+  .matchCategory {
+    font-size: 10px;
+  }
+  .matchTime {
+    font-size: 9px;
+  }
+  .liveBadge {
+    font-size: 8px;
+    padding: 2px 5px;
+  }
+  .viewsBadge {
+    padding: 2px 5px;
+  }
+  .viewsCount {
+    font-size: 9px;
+  }
+}
