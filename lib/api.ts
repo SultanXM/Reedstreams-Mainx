@@ -2,9 +2,19 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
 function getToken() {
   if (typeof window === 'undefined') return null
-  const user = localStorage.getItem('user')
-  if (!user) return null
-  return JSON.parse(user).token
+  try {
+    const user = localStorage.getItem('user')
+    if (!user) return null
+    try {
+      return JSON.parse(user).token
+    } catch (e) {
+      console.error('Failed to parse user data in getToken:', e)
+      return null
+    }
+  } catch (e) {
+    console.error('Failed to access localStorage in getToken:', e)
+    return null
+  }
 }
 
 export async function register(username: string, email: string, password: string) {

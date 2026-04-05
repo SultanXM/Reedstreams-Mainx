@@ -54,6 +54,8 @@ export default function WatchPage() {
     }, [])
 
     useEffect(() => {
+        let cancelled = false
+
         const loadMatchData = async () => {
             setLoadingMatch(true)
             try {
@@ -62,8 +64,13 @@ export default function WatchPage() {
                 if (parts.length === 2) matchId = parts[1]
 
                 const allMatchesRes = await fetch(`${API_BASE}/matches/all`)
+                if (!allMatchesRes.ok) {
+                    throw new Error(`Failed to fetch matches: ${allMatchesRes.status}`)
+                }
                 const allMatches: APIMatch[] = await allMatchesRes.json()
                 const foundMatch = allMatches.find(m => m.id === matchId || m.sources.some(s => s.id === matchId))
+
+                if (cancelled) return
 
                 if (!foundMatch) {
                     setError('Match not found')
@@ -77,11 +84,15 @@ export default function WatchPage() {
                 for (const src of foundMatch.sources) {
                     try {
                         const streamsData = await fetchStreams(src.source, src.id)
-                        allStreams.push(...streamsData)
+                        if (!cancelled) {
+                            allStreams.push(...streamsData)
+                        }
                     } catch (err) {
                         console.warn(`Failed to fetch streams from ${src.source}:`, err)
                     }
                 }
+
+                if (cancelled) return
 
                 setStreams(allStreams)
 
@@ -95,14 +106,22 @@ export default function WatchPage() {
                     setSelectedStream(streamToSelect)
                 }
             } catch (err) {
-                console.error('Failed to load match:', err)
-                setError('Failed to load match data')
+                if (!cancelled) {
+                    console.error('Failed to load match:', err)
+                    setError('Failed to load match data')
+                }
             } finally {
-                setLoadingMatch(false)
+                if (!cancelled) {
+                    setLoadingMatch(false)
+                }
             }
         }
 
         loadMatchData()
+
+        return () => {
+            cancelled = true
+        }
     }, [id, defaultSource])
 
     useEffect(() => {
@@ -121,10 +140,14 @@ export default function WatchPage() {
             try {
                 await navigator.share({ title: shareTitle, url: shareUrl })
             } catch {}
-        } else {
-            await navigator.clipboard.writeText(shareUrl)
-            setShowShareToast(true)
-            setTimeout(() => setShowShareToast(false), 2500)
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+            try {
+                await navigator.clipboard.writeText(shareUrl)
+                setShowShareToast(true)
+                setTimeout(() => setShowShareToast(false), 2500)
+            } catch (err) {
+                console.warn('Failed to copy link to clipboard:', err)
+            }
         }
     }
 

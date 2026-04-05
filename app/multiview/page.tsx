@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import Navbar from '../../components/Navbar'
 import { trackView } from '../../lib/api'
 import { APIMatch, Stream, fetchStreams, fetchAllMatches, getPosterUrl, getTeamBadgeUrl } from '../../lib/matches/service'
@@ -36,7 +36,8 @@ export default function MultiviewPage() {
   const [allMatches, setAllMatches] = useState<APIMatch[]>([])
   const [showMatchPicker, setShowMatchPicker] = useState<number | null>(null)
   const [loadingMatches, setLoadingMatches] = useState(false)
-  
+  const pendingSlotOps = useRef<Record<number, number>>({})
+
   // Modal Search & Filter
   const [modalSearch, setModalSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -69,6 +70,9 @@ export default function MultiviewPage() {
 
   // Slot Management
   const handleSelectMatch = async (slotId: number, match: APIMatch) => {
+    const opId = Date.now()
+    pendingSlotOps.current[slotId] = opId
+
     setShowMatchPicker(null)
     setSlots(prev => prev.map(s => s.id === slotId ? { ...s, match, loading: true } : s))
 
@@ -77,11 +81,14 @@ export default function MultiviewPage() {
       for (const src of match.sources) {
         try {
           const streamsData = await fetchStreams(src.source, src.id)
+          if (pendingSlotOps.current[slotId] !== opId) return
           allStreams.push(...streamsData)
         } catch (err) {
           console.warn(`Failed to fetch streams from ${src.source}:`, err)
         }
       }
+
+      if (pendingSlotOps.current[slotId] !== opId) return
 
       const hdStream = allStreams.find(s => s.hd)
       const selected = hdStream || allStreams[0] || null
@@ -96,6 +103,7 @@ export default function MultiviewPage() {
       // Track view
       trackView(match.id).catch(() => {})
     } catch (err) {
+      if (pendingSlotOps.current[slotId] !== opId) return
       console.error('Failed to load streams for slot:', slotId, err)
       setSlots(prev => prev.map(s => s.id === slotId ? { ...s, loading: false } : s))
     }

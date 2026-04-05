@@ -28,15 +28,19 @@ export default function TestPage() {
   })
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('token')
-    const savedUserId = localStorage.getItem('userId')
-    const savedUsername = localStorage.getItem('username')
-    const savedIsAdmin = localStorage.getItem('isAdmin') === 'true'
-    if (savedToken) {
-      setToken(savedToken)
-      setUserId(savedUserId || '')
-      setUsername(savedUsername || '')
-      setIsAdmin(savedIsAdmin)
+    try {
+      const savedToken = localStorage.getItem('token')
+      const savedUserId = localStorage.getItem('userId')
+      const savedUsername = localStorage.getItem('username')
+      const savedIsAdmin = localStorage.getItem('isAdmin') === 'true'
+      if (savedToken) {
+        setToken(savedToken)
+        setUserId(savedUserId || '')
+        setUsername(savedUsername || '')
+        setIsAdmin(savedIsAdmin)
+      }
+    } catch (err) {
+      console.error('Failed to access localStorage:', err)
     }
   }, [])
 

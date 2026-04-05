@@ -23,9 +23,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const stored = localStorage.getItem('user')
-    if (stored) {
-      setUser(JSON.parse(stored))
+    try {
+      const stored = localStorage.getItem('user')
+      if (stored) {
+        try {
+          setUser(JSON.parse(stored))
+        } catch (e) {
+          console.error('Failed to parse stored user data, clearing corrupted data:', e)
+          localStorage.removeItem('user')
+        }
+      }
+    } catch (e) {
+      console.error('Failed to access localStorage:', e)
     }
     setIsLoading(false)
   }, [])
