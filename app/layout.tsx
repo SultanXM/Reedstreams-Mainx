@@ -15,16 +15,27 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* 🛡️ Early Ad Shield - FULL shield runs BEFORE React loads */}
+        {/* 🔄 Auto-recover from DOM errors caused by browser extensions */}
         <script dangerouslySetInnerHTML={{
           __html: `
             (function(){
               if(typeof window==='undefined')return;
-              var n=function(){console.log('🛡️ BLOCKED: window.open');return null};
-              try{Object.defineProperty(window,'open',{get:function(){return n},set:function(){},configurable:false})}catch(e){try{window.open=n}catch(e2){}}
-              try{if(window.parent&&window.parent!==window){Object.defineProperty(window.parent,'open',{get:n,set:function(){},configurable:true})}}catch(e){}
-              try{if(window.top&&window.top!==window){Object.defineProperty(window.top,'open',{get:n,set:function(){},configurable:true})}}catch(e){}
-              setInterval(function(){try{Object.defineProperty(window,'open',{get:function(){return n},set:function(){},configurable:false})}catch(e){}},1000);
+              var recovered=false;
+              window.addEventListener('error',function(e){
+                if(e.message&&/removeChild|removeChildFrom/.test(e.message)&&!recovered){
+                  recovered=true;
+                  e.preventDefault();
+                  e.stopImmediatePropagation();
+                  setTimeout(function(){window.location.reload()},150);
+                }
+              },true);
+              window.addEventListener('unhandledrejection',function(e){
+                if(e.reason&&/removeChild|removeChildFrom/.test(e.reason)&&!recovered){
+                  recovered=true;
+                  e.preventDefault();
+                  setTimeout(function(){window.location.reload()},150);
+                }
+              },true);
             })();
           `
         }} />
@@ -35,20 +46,6 @@ export default function RootLayout({
             {children}
           </MatchesProvider>
         </AuthProvider>
-        {/* Register Service Worker for network-level ad blocking */}
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            if('serviceWorker' in navigator){
-              window.addEventListener('load',function(){
-                navigator.serviceWorker.register('/sw-adshield.js').then(function(r){
-                  console.log('🛡️ AdShield Service Worker registered');
-                }).catch(function(e){
-                  console.log('🛡️ AdShield SW registration failed:',e);
-                });
-              });
-            }
-          `
-        }} />
       </body>
     </html>
   )
