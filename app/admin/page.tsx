@@ -6,7 +6,7 @@ import Navbar from '../../components/Navbar'
 import DefaultSourceTab from './DefaultSourceTab'
 import styles from './AdminPage.module.css'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+const API_URL = '/api'
 
 interface User {
   user_id: string

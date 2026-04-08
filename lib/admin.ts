@@ -2,7 +2,7 @@
 // ADMIN API - Default Source Management
 // ============================================
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://69.62.106.219:8080'
+const API_BASE = '/api'
 
 export interface DefaultSourceSetting {
   id: number
