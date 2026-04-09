@@ -1,4 +1,12 @@
 const API_URL = '/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://187.127.106.231:8080'
+
+export function getFullImageUrl(url: string | null | undefined): string | undefined {
+  if (!url) return undefined
+  if (url.startsWith('data:')) return url
+  if (url.startsWith('http')) return url
+  return `${API_BASE_URL}${url}`
+}
 
 function getToken() {
   if (typeof window === 'undefined') return null

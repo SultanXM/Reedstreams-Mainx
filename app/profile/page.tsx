@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Navbar from '../../components/Navbar'
 import { useAuth } from '../../lib/auth'
-import { getProfile, updateProfile, uploadProfilePic, deleteProfilePic, changeUsername, Profile } from '../../lib/api'
+import { getProfile, updateProfile, uploadProfilePic, deleteProfilePic, changeUsername, Profile, getFullImageUrl } from '../../lib/api'
 import styles from './ProfilePage.module.css'
 
 const PRESET_COLORS = [
@@ -194,10 +194,10 @@ export default function ProfilePage() {
               <div className={styles.profilePicWrapper}>
                 <div className={styles.profilePic}>
                   {profile?.profile_pic_url ? (
-                    <img 
-                      src={profile.profile_pic_url} 
-                      alt="" 
-                      className={styles.profilePicImg} 
+                    <img
+                      src={getFullImageUrl(profile.profile_pic_url)}
+                      alt=""
+                      className={styles.profilePicImg}
                     />
                   ) : (
                     <div className={styles.profilePicPlaceholder}>
@@ -205,16 +205,16 @@ export default function ProfilePage() {
                     </div>
                   )}
                 </div>
-                
+
                 <div className={styles.buttonGroup}>
-                  <button 
+                  <button
                     onClick={() => fileInputRef.current?.click()}
                     className={styles.btnSecondary}
                   >
                     Change
                   </button>
                   {profile?.profile_pic_url && (
-                    <button 
+                    <button
                       onClick={handleDeletePic}
                       className={styles.btnRemove}
                     >
@@ -353,10 +353,10 @@ export default function ProfilePage() {
                 <div className={styles.previewBody}>
                   <div className={styles.previewAvatar} style={{ background: profile?.profile_pic_url ? 'transparent' : '#252530' }}>
                     {profile?.profile_pic_url ? (
-                      <img 
-                        src={profile.profile_pic_url} 
-                        alt="" 
-                        className={styles.profilePicImg} 
+                      <img
+                        src={getFullImageUrl(profile.profile_pic_url)}
+                        alt=""
+                        className={styles.profilePicImg}
                       />
                     ) : (
                       <div className={styles.previewAvatarPlaceholder}>
@@ -364,7 +364,7 @@ export default function ProfilePage() {
                       </div>
                     )}
                   </div>
-                  <span 
+                  <span
                     className={styles.previewName}
                     style={{ 
                       color: nameColor,

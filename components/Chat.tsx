@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { getMessages, sendMessage, ChatMessage } from '../lib/api'
+import { getMessages, sendMessage, ChatMessage, getFullImageUrl } from '../lib/api'
 import { useAuth } from '../lib/auth'
 import AuthModal from './AuthModal'
 import styles from './Chat.module.css'
@@ -245,7 +245,7 @@ export default function Chat({ showRules = true, width = '420px', className = ''
               <div className={styles.messageAvatarWrapper}>
                 {msg.profile_pic_url ? (
                   <img
-                    src={msg.profile_pic_url}
+                    src={getFullImageUrl(msg.profile_pic_url)}
                     alt={msg.username}
                     className={styles.messageAvatar}
                     onError={(e) => {

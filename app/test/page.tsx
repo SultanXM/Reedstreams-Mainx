@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { getFullImageUrl } from '../../lib/api'
 
 const API_URL = '/api'
 
@@ -338,9 +339,9 @@ export default function TestPage() {
     return (
       <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         {msg.profile_pic_url && (
-          <img 
-            src={msg.profile_pic_url} 
-            alt="" 
+          <img
+            src={getFullImageUrl(msg.profile_pic_url)}
+            alt=""
             style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover' }}
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
           />

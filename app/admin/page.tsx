@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Navbar from '../../components/Navbar'
 import DefaultSourceTab from './DefaultSourceTab'
+import { getFullImageUrl } from '../../lib/api'
 import styles from './AdminPage.module.css'
 
 const API_URL = '/api'
@@ -520,14 +521,14 @@ export default function AdminPage() {
                   filteredUsers.map((user) => (
                     <div key={user.user_id} className={`${styles.itemCard} ${expandedUser === user.user_id ? styles.itemCardExpanded : ''}`}>
                       {/* User Row (Always Visible) */}
-                      <div 
+                      <div
                         onClick={() => setExpandedUser(expandedUser === user.user_id ? null : user.user_id)}
                         className={styles.itemRow}
                       >
                         {/* Avatar */}
                         <div className={styles.avatar} style={{ border: `2px solid ${user.name_color || '#1a1a25'}` }}>
                           {user.profile_pic_url ? (
-                            <img src={user.profile_pic_url} alt="" className={styles.avatarImg} />
+                            <img src={getFullImageUrl(user.profile_pic_url)} alt="" className={styles.avatarImg} />
                           ) : (
                             <div className={styles.avatarPlaceholder}>
                               {user.username.charAt(0).toUpperCase()}
@@ -667,15 +668,15 @@ export default function AdminPage() {
                         <div className={styles.messageContentWrapper}>
                           <div className={styles.messageUserRow}>
                             {msg.profile_pic_url && (
-                              <img 
-                                src={msg.profile_pic_url} 
-                                alt="" 
+                              <img
+                                src={getFullImageUrl(msg.profile_pic_url)}
+                                alt=""
                                 className={styles.messageAvatar}
                               />
                             )}
-                            <span 
+                            <span
                               className={styles.messageUsername}
-                              style={{ 
+                              style={{
                                 color: msg.name_color || '#888',
                                 textShadow: (msg.name_glow || 0) > 0 ? `0 0 ${msg.name_glow}px ${msg.name_color || '#888'}` : 'none'
                               }}
