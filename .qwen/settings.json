@@ -107,7 +107,9 @@
       "Bash(git commit *)",
       "Bash(git reset *)",
       "Bash(git remote *)",
-      "Bash(git pull *)"
+      "Bash(git pull *)",
+      "Bash(ping *)",
+      "Bash(timeout *)"
     ]
   },
   "$version": 3
