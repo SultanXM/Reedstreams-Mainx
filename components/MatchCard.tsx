@@ -1,6 +1,7 @@
 'use client'
 
 import { MatchWithStatus, getTeamBadgeUrl } from '../lib/matches'
+import { useMatches } from '../lib/matches/provider'
 import { useState, useEffect } from 'react'
 import styles from './MatchCard.module.css'
 
@@ -42,9 +43,15 @@ function formatViews(count: number): string {
 }
 
 export function MatchCard({ match }: MatchCardProps) {
+  const { liveViewCounts } = useMatches()
   const { status, date, title, category, teams, views = 0 } = match
   const isLive = status === 'live'
   const [countdown, setCountdown] = useState('')
+
+  // For live matches, prefer the WebSocket live count
+  const displayViews = isLive && liveViewCounts[match.id] !== undefined
+    ? liveViewCounts[match.id]
+    : views
 
   useEffect(() => {
     if (!isLive && date) {
@@ -79,7 +86,7 @@ export function MatchCard({ match }: MatchCardProps) {
           <div className={styles.liveBadge}>
             <span className={styles.liveDot} />
             LIVE
-            <span className={styles.viewsCount}>{formatViews(views)}</span>
+            <span className={styles.viewsCount}>{formatViews(displayViews)}</span>
           </div>
         )}
 
