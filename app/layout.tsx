@@ -20,7 +20,14 @@ export default function RootLayout({
             {children}
           </MatchesProvider>
         </AuthProvider>
-      </body>
-    </html>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-1LLX3T93LK"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-1LLX3T93LK');
+        </script>
+        </body>    </html>
   )
 }
