@@ -89,8 +89,8 @@ export function MatchesProvider({ children }: MatchesProviderProps) {
       setMatches(sortedMatches)
     } catch (err) {
       console.error('Failed to load matches:', err)
-      // Don't show error to user since API is optional
-      // Site will work with empty data
+      // Set error state to inform the user
+      setError('Failed to load matches. Please try again later.')
     } finally {
       setLoading(false)
     }

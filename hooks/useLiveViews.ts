@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 
 // Direct WebSocket connection to the backend (bypasses Next.js HTTP proxy)
 // The API proxy only supports HTTP, not WebSocket upgrades.
-const WS_BACKEND_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://187.127.106.231:8080'
+const WS_BACKEND_URL = process.env.NEXT_PUBLIC_WS_URL || 'wss://reedstreams-backend-app-production.up.railway.app'
 
 interface ViewCountMessage {
   type: 'view_count'
@@ -51,7 +51,7 @@ export function useLiveViews(matchIds: string[]): Record<string, number> {
           if (matchIds.includes(matchId)) {
             connect(matchId)
           }
-        }, 2000)
+        }, 0.1000)
       }
 
       ws.onerror = () => {
