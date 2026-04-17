@@ -577,7 +577,7 @@ HTML Implementation Example
   height="50"
 />
 
-<!-- Match Poster Example -->
+<!-- Match Poster Example --
 <img 
   src="https://streamed.pk/api/images/poster/man-utd-badge/liverpool-badge.webp" 
   alt="Manchester United vs Liverpool" 
