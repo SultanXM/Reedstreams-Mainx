@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import styles from './Chat.module.css'
 
 interface ChatMessage {
@@ -22,6 +22,8 @@ export default function Chat() {
   const [adminFeedback, setAdminFeedback] = useState('')
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true)
 
   useEffect(() => {
     const savedName = localStorage.getItem('chat_username')
@@ -57,9 +59,19 @@ export default function Chat() {
     return () => clearInterval(interval)
   }, [])
 
+  // Smart scrolling: Only scroll to bottom if shouldAutoScroll is true
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    if (shouldAutoScroll) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [messages, shouldAutoScroll])
+
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current
+    const isAtBottom = scrollHeight - scrollTop - clientHeight < 50
+    setShouldAutoScroll(isAtBottom)
+  }
 
   const handleSetName = (e: React.FormEvent) => {
     e.preventDefault()
@@ -75,7 +87,7 @@ export default function Chat() {
         return
       }
 
-      // Check for secret admin key entry (e.g., "/admin obsessed_boss_2026")
+      // Check for secret admin key entry
       if (trimmedName.toLowerCase().startsWith('/admin ')) {
         const key = trimmedName.slice(7).trim().toLowerCase()
         setAdminKey(key)
@@ -105,6 +117,7 @@ export default function Chat() {
       })
       if (res.ok) {
         setInputText('')
+        setShouldAutoScroll(true) // Force scroll when user sends message
       }
     } catch (err) {
       console.warn('Failed to send message', err)
@@ -133,19 +146,11 @@ export default function Chat() {
 
   const getUsernameColor = (name: string) => {
     const firstChar = name.charAt(0).toUpperCase()
-    if (firstChar === 'H') return '#ef4444' // Red for H as requested
+    if (firstChar === 'H') return '#ef4444' // Red for H
 
     const colors = [
-      '#3b82f6', // blue
-      '#22c55e', // green
-      '#a855f7', // purple
-      '#f97316', // orange
-      '#ec4899', // pink
-      '#06b6d4', // cyan
-      '#eab308', // yellow
-      '#6366f1', // indigo
-      '#14b8a6', // teal
-      '#fbbf24'  // amber
+      '#3b82f6', '#22c55e', '#a855f7', '#f97316', '#ec4899', 
+      '#06b6d4', '#eab308', '#6366f1', '#14b8a6', '#fbbf24'
     ]
     const index = firstChar.charCodeAt(0) % colors.length
     return colors[index]
@@ -182,7 +187,7 @@ export default function Chat() {
           <span className={styles.headerTitle}>Community Chat</span>
           {connectionStatus !== 'connected' && (
             <span className={styles.statusText}>
-              {connectionStatus === 'connecting' ? 'Connecting...' : 'Reconnecting...'}
+              {connectionStatus === 'connecting' ? 'Connecting...' : 'Offline'}
             </span>
           )}
         </div>
@@ -190,13 +195,17 @@ export default function Chat() {
            className={styles.changeNameBtn}
            onClick={() => setIsNameSet(false)}
         >
-          Change Name
+          Name
         </button>
       </div>
       
-      <div className={styles.messagesList}>
+      <div 
+        className={styles.messagesList} 
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+      >
         {messages.length === 0 ? (
-          <div className={styles.emptyMsg}>No messages yet. Be the first!</div>
+          <div className={styles.emptyMsg}>No messages yet.</div>
         ) : (
           messages.map(msg => (
             <div key={msg.id} className={styles.messageItem}>
@@ -211,9 +220,8 @@ export default function Chat() {
                   <button 
                     onClick={() => handleDeleteMessage(msg.id)}
                     className={styles.deleteBtn}
-                    title="Delete Message"
                   >
-                    ✕
+                    Delete
                   </button>
                 )}
               </div>
@@ -229,12 +237,12 @@ export default function Chat() {
           type="text"
           value={inputText}
           onChange={e => setInputText(e.target.value)}
-          placeholder="Type a message..."
+          placeholder="Message..."
           maxLength={200}
           className={styles.chatInput}
         />
         <button type="submit" className={styles.sendBtn}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="22" y1="2" x2="11" y2="13"></line>
             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
           </svg>
