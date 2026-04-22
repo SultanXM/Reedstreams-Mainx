@@ -1,6 +1,7 @@
 import './globals.css'
 import { AuthProvider } from '../lib/auth'
 import { MatchesProvider } from '../lib/matches'
+import { InternetStatusBanner } from '../components/InternetStatusBanner'
 import Script from 'next/script'
 
 export const metadata = {
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <AuthProvider>
           <MatchesProvider>
+            <InternetStatusBanner />
             {children}
           </MatchesProvider>
         </AuthProvider>

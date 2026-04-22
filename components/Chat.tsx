@@ -20,6 +20,7 @@ export default function Chat() {
   const [inputText, setInputText] = useState('')
   const [adminKey, setAdminKey] = useState('')
   const [adminFeedback, setAdminFeedback] = useState('')
+  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -41,9 +42,13 @@ export default function Chat() {
         if (res.ok) {
           const data = await res.json()
           setMessages(data)
+          setConnectionStatus('connected')
+        } else {
+          setConnectionStatus('disconnected')
         }
       } catch (err) {
         console.warn('Failed to fetch messages', err)
+        setConnectionStatus('disconnected')
       }
     }
 
@@ -173,8 +178,13 @@ export default function Chat() {
     <div className={styles.chatContainer}>
       <div className={styles.chatHeader}>
         <div className={styles.headerLeft}>
-          <span className={styles.liveDot} />
-          Community Chat
+          <div className={`${styles.statusDot} ${styles[connectionStatus]}`} />
+          <span className={styles.headerTitle}>Community Chat</span>
+          {connectionStatus !== 'connected' && (
+            <span className={styles.statusText}>
+              {connectionStatus === 'connecting' ? 'Connecting...' : 'Reconnecting...'}
+            </span>
+          )}
         </div>
         <button 
            className={styles.changeNameBtn}

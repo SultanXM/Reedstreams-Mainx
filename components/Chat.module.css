@@ -7,17 +7,17 @@
 }
 
 .chatHeader {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   color: #fff;
-  padding: 14px 20px;
+  padding: 12px 16px;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  border-bottom: 1px solid #1a1a2e;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #0d0d14;
+  background: var(--bg-secondary);
 }
 
 .headerLeft {
@@ -26,27 +26,52 @@
   gap: 8px;
 }
 
-.liveDot {
-  width: 6px;
-  height: 6px;
-  background-color: #ef4444;
+.headerTitle {
+  color: var(--text-primary);
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  box-shadow: 0 0 8px #ef4444;
+  transition: all 0.3s ease;
+}
+
+.connected {
+  background-color: var(--parrot-green);
+  box-shadow: 0 0 8px var(--parrot-green-dim);
+}
+
+.connecting {
+  background-color: #fbbf24;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
   animation: pulse 1.5s infinite;
 }
 
+.disconnected {
+  background-color: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+.statusText {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: none;
+  font-weight: 500;
+}
+
 @keyframes pulse {
-  0% { transform: scale(0.95); opacity: 0.5; }
-  50% { transform: scale(1.05); opacity: 1; }
-  100% { transform: scale(0.95); opacity: 0.5; }
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
 }
 
 .changeNameBtn {
   font-size: 9px;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid #1e1e2d;
-  color: #666;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
   padding: 4px 10px;
   border-radius: 4px;
   cursor: pointer;
@@ -54,9 +79,9 @@
 }
 
 .changeNameBtn:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border-color: #ef4444;
+  background: var(--parrot-green-light);
+  color: var(--parrot-green);
+  border-color: var(--parrot-green-dim);
 }
 
 .messagesList {
