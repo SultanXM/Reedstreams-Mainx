@@ -59,16 +59,14 @@ export default function Chat() {
     return () => clearInterval(interval)
   }, [])
 
-  // Smart scrolling logic
+  // Smart scrolling logic: Scroll the container, NOT the whole page
   useEffect(() => {
     if (!scrollContainerRef.current) return
-    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current
-    
-    // Only auto-scroll if the user is already near the bottom (within 100px)
-    const isNearBottom = scrollHeight - scrollTop - clientHeight < 100
+    const container = scrollContainerRef.current
+    const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 150
     
     if (isNearBottom || shouldAutoScroll) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+      container.scrollTop = container.scrollHeight
       if (shouldAutoScroll) setShouldAutoScroll(false)
     }
   }, [messages])
