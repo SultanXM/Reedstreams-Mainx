@@ -6,7 +6,7 @@ import Navbar from '../../../components/Navbar'
 import Chat from '../../../components/Chat'
 import { AdShieldErrorBoundary } from '../../../components/AdShieldErrorBoundary'
 import { useUniversalAdBlocker } from '../../../hooks/useUniversalAdBlocker'
-import { trackView } from '../../../lib/api'
+import { useTrackMatchView } from '../../../hooks/useLiveViews'
 import { APIMatch, Stream, fetchStreams } from '../../../lib/matches/service'
 import { getDefaultSource } from '../../../lib/admin'
 import styles from './WatchPage.module.css'
@@ -40,6 +40,9 @@ export default function WatchPage() {
 
     // Activate ad blocker
     useUniversalAdBlocker()
+
+    // Track live views
+    useTrackMatchView(id as string)
 
     useEffect(() => {
         const loadDefaultSource = async () => {
@@ -123,16 +126,7 @@ export default function WatchPage() {
             cancelled = true
         }
     }, [id, defaultSource])
-
-    useEffect(() => {
-        const hasTrackedView = sessionStorage.getItem(`view_tracked_${id}`)
-        if (!hasTrackedView) {
-            trackView(id as string).then(() => {
-                sessionStorage.setItem(`view_tracked_${id}`, 'true')
-            }).catch(() => {})
-        }
-    }, [id])
-
+    
     const handleShare = async () => {
         const shareUrl = window.location.href
         const shareTitle = match?.title || 'Watch on Reedstreams'
@@ -152,22 +146,13 @@ export default function WatchPage() {
     }
 
     const handleReport = async () => {
-        const subject = encodeURIComponent(`[Report] ${match?.title || 'Stream'} - ${reportReason}`)
-        const body = encodeURIComponent(
-            `Stream Report from Reedstreams\n\n` +
-            `Match: ${match?.title || 'N/A'}\n` +
-            `Stream: ${selectedStream?.source} #${selectedStream?.streamNo}\n` +
-            `Reason: ${reportReason}\n\n` +
-            `Details:\n${reportMessage || 'No additional details'}\n\n` +
-            `Page URL: ${window.location.href}`
-        )
-        window.location.href = `mailto:Reedstreams000@gmail.com?subject=${subject}&body=${body}`
+        if (!match) return
+
+        const subject = `Report for Match ID: ${match.id} - ${reportReason}`
+        const body = `Match Title: ${match.title}\nMatch URL: ${window.location.href}\n\nReason: ${reportReason}\n\nDetails: ${reportMessage}`
+        const mailtoLink = `mailto:support@streamed.pk?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+        window.open(mailtoLink, '_blank')
         setReportSent(true)
-        setTimeout(() => {
-            setShowReportPopup(false)
-            setReportSent(false)
-            setReportMessage('')
-        }, 2000)
     }
 
     return (
@@ -175,7 +160,6 @@ export default function WatchPage() {
             <Navbar />
             <main className={styles.watchMain}>
                 <div className={styles.watchLayout}>
-
                     <div className={styles.playerSection}>
                         <div className={styles.playerContainer}>
                             {loadingMatch ? (
@@ -194,7 +178,6 @@ export default function WatchPage() {
                             )}
                         </div>
 
-                        {/* Streams Row - Horizontal Scrollable */}
                         {!loadingMatch && streams.length > 0 && (
                             <div className={styles.streamsRow} ref={streamsRowRef}>
                                 {(() => {
@@ -236,7 +219,6 @@ export default function WatchPage() {
                             </div>
                         )}
 
-                        {/* Match Info */}
                         <div className={styles.infoBar}>
                             <div className={styles.infoContent}>
                                 {loadingMatch ? (
@@ -272,12 +254,13 @@ export default function WatchPage() {
                         </div>
                     </div>
 
-                    <Chat showRules={true} />
-
+                    <section className={styles.cboxChatSection}>
+                        <Chat matchId={id as string} />
+                    </section>
                 </div>
             </main>
 
-            {/* Report Popup */}
+            {/* Report Popup (Remains as it uses mailto:, requiring no backend) */}
             {showReportPopup && (
                 <div className={styles.reportOverlay} onClick={() => setShowReportPopup(false)}>
                     <div className={styles.reportPopup} onClick={e => e.stopPropagation()}>
@@ -333,7 +316,6 @@ export default function WatchPage() {
                 </div>
             )}
 
-            {/* Share Toast */}
             {showShareToast && (
                 <div className={styles.shareToast}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

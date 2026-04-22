@@ -1,18 +1,13 @@
 'use client'
 
 import { useState, useRef, useContext, useEffect } from 'react'
-import { useAuth } from '../lib/auth'
-import AuthModal from './AuthModal'
 import { MatchesContext } from '../lib/matches'
 import styles from './Navbar.module.css'
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [authModalOpen, setAuthModalOpen] = useState(false)
   const [searchFocused, setSearchFocused] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-
-  const { user, logout } = useAuth()
 
   const matchesContext = useContext(MatchesContext)
   const setSearchQueryGlobal = matchesContext?.setSearchQuery ?? (() => {})
@@ -33,11 +28,9 @@ export default function Navbar() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node
-      // Don't close if clicking the burger button
       if (burgerBtnRef.current && burgerBtnRef.current.contains(target)) {
         return
       }
-      // Close if clicking outside the dropdown
       if (menuRef.current && !menuRef.current.contains(target)) {
         setMenuOpen(false)
       }
@@ -45,11 +38,6 @@ export default function Navbar() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
-
-  const handleLogout = () => {
-    logout()
-    setMenuOpen(false)
-  }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQueryGlobal(e.target.value)
@@ -102,7 +90,6 @@ export default function Navbar() {
 
           {/* Desktop Actions */}
           <div className={styles.desktopActions}>
-            {/* Multiview Link */}
             <a href="/multiview" className={styles.navLink}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="3" y="3" width="7" height="7"></rect>
@@ -113,7 +100,6 @@ export default function Navbar() {
               <span>Multiview</span>
             </a>
 
-            {/* Discord Link */}
             <a
               href="https://discord.gg/reedstreams"
               target="_blank"
@@ -126,7 +112,6 @@ export default function Navbar() {
               <span>Discord</span>
             </a>
 
-            {/* Movies Link */}
             <a
               href="https://bingebox.co"
               target="_blank"
@@ -141,45 +126,10 @@ export default function Navbar() {
               </svg>
               <span>Movies</span>
             </a>
-
-            {/* Auth Buttons */}
-            {user ? (
-              <a href="/profile" className={styles.profileBtn}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <span>{user.username}</span>
-              </a>
-            ) : (
-              <button
-                onClick={() => setAuthModalOpen(true)}
-                className={styles.loginBtn}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <span>Sign In</span>
-              </button>
-            )}
           </div>
 
           {/* Mobile Menu Button */}
           <div className={styles.mobileMenu}>
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                if (!user) {
-                  setAuthModalOpen(true)
-                } else {
-                  window.location.href = '/profile'
-                }
-              }}
-              className={styles.mobileUserBtn}
-            >
-              {user ? user.username : 'Guest'}
-            </button>
             <button
               ref={burgerBtnRef}
               onClick={(e) => {
@@ -259,63 +209,9 @@ export default function Navbar() {
                 <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
             </a>
-
-            <div className={styles.mobileDropdownDivider} />
-
-            {user ? (
-              <>
-                <a
-                  href="/profile"
-                  onClick={() => setMenuOpen(false)}
-                  className={styles.mobileDropdownItem}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                  <span>{user.username}</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.itemArrow}>
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </a>
-                <button
-                  onClick={handleLogout}
-                  className={`${styles.mobileDropdownItem} ${styles.mobileDropdownLogout}`}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                  </svg>
-                  <span>Logout</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.itemArrow}>
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => {
-                  setAuthModalOpen(true)
-                  setMenuOpen(false)
-                }}
-                className={`${styles.mobileDropdownItem} ${styles.mobileDropdownSignIn}`}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <span>Sign In</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.itemArrow}>
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </button>
-            )}
           </div>
         </div>
       )}
-
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </>
   )
 }

@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://reedstreams-backend-app-production.up.railway.app'
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://reedstreams-backend-app-production.up.railway.app'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api' // Use relative path for backend API calls
 const API_URL = API_BASE_URL
 
 export function getFullImageUrl(url: string | null | undefined): string | undefined {
@@ -264,7 +265,7 @@ export async function trackView(matchId: string) {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 3000)
     
-    const res = await fetch(`${API_BASE_URL}/views/all`, {
+    const res = await fetch(`${API_BASE_URL}/views/track`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ match_id: matchId }),
