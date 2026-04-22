@@ -14,7 +14,7 @@ interface ChatProps {
   matchId: string
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_VIEW_API || 'http://187.127.106.231:3001'
+const API_BASE = process.env.NEXT_PUBLIC_VIEW_API || 'https://api.reedstreams.live'
 const ADMIN_KEY_STORAGE = 'reedstreams_admin_key'
 
 export default function Chat({ matchId }: ChatProps) {

@@ -11,7 +11,7 @@ import { APIMatch, Stream, fetchStreams } from '../../../lib/matches/service'
 import { getDefaultSource } from '../../../lib/admin'
 import styles from './WatchPage.module.css'
 
-const API_BASE = 'https://streamed.pk/api'
+const API_BASE = 'https://api.reedstreams.live'
 
 const REPORT_REASONS = [
   'Stream Lag / Buffering',
