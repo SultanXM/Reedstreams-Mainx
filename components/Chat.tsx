@@ -10,14 +10,10 @@ interface ChatMessage {
   timestamp: string
 }
 
-interface ChatProps {
-  matchId: string
-}
-
 const API_BASE = process.env.NEXT_PUBLIC_VIEW_API || 'https://api.reedstreams.live'
 const ADMIN_KEY_STORAGE = 'reedstreams_admin_key'
 
-export default function Chat({ matchId }: ChatProps) {
+export default function Chat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [username, setUsername] = useState('')
   const [isNameSet, setIsNameSet] = useState(false)
@@ -41,7 +37,7 @@ export default function Chat({ matchId }: ChatProps) {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await fetch(`${API_BASE}/chat/messages?match_id=${matchId}`)
+        const res = await fetch(`${API_BASE}/chat/messages`)
         if (res.ok) {
           const data = await res.json()
           setMessages(data)
@@ -54,7 +50,7 @@ export default function Chat({ matchId }: ChatProps) {
     fetchMessages()
     const interval = setInterval(fetchMessages, 3000)
     return () => clearInterval(interval)
-  }, [matchId])
+  }, [])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -98,7 +94,6 @@ export default function Chat({ matchId }: ChatProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          match_id: matchId,
           username,
           content: inputText,
         }),

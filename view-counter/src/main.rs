@@ -1,6 +1,6 @@
 use axum::{
-    extract::{Path, State, Query, Request},
-    http::{StatusCode, HeaderMap},
+    extract::{Path, State, Request},
+    http::{StatusCode},
     routing::{get, post, delete},
     Json, Router,
 };
@@ -12,11 +12,9 @@ use std::time::{Duration, Instant};
 use tower_http::cors::{Any, CorsLayer};
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
-use hyper_util::client::legacy::connect::HttpConnector;
-use hyper_util::rt::TokioExecutor;
 
 const MAX_VIEWS_PER_IP: usize = 2;
-const MAX_MESSAGES: usize = 100;
+const MAX_MESSAGES: usize = 200; // Increased for global chat
 
 #[derive(Serialize, Deserialize, Clone)]
 struct PingRequest { match_id: String }
@@ -25,75 +23,57 @@ struct ViewResponse { match_id: String, current_views: usize }
 #[derive(Serialize)]
 struct AllViewsResponse { views: HashMap<String, usize> }
 struct Viewer { last_ping: Instant }
+
 #[derive(Serialize, Deserialize, Clone)]
-struct ChatMessage { id: Uuid, match_id: String, username: String, content: String, timestamp: DateTime<Utc> }
+struct ChatMessage { 
+    id: Uuid, 
+    username: String, 
+    content: String, 
+    timestamp: DateTime<Utc> 
+}
+
 #[derive(Deserialize)]
-struct SendMessageRequest { match_id: String, username: String, content: String }
+struct SendMessageRequest { 
+    username: String, 
+    content: String 
+}
+
 #[derive(Deserialize)]
-struct DeleteMessageRequest { admin_key: String }
-#[derive(Deserialize)]
-struct GetMessagesQuery { match_id: String }
+struct DeleteMessageRequest { 
+    admin_key: String 
+}
 
 struct AppState { 
     view_matches: RwLock<HashMap<String, MatchState>>, 
     chat_messages: RwLock<Vec<ChatMessage>>,
-    client: hyper_util::client::legacy::Client<HttpConnector, axum::body::Body>,
 }
 type MatchState = HashMap<String, Vec<Viewer>>;
 
 #[tokio::main]
 async fn main() {
-    let client = hyper_util::client::legacy::Client::builder(TokioExecutor::new())
-        .build(HttpConnector::new());
-
     let state = Arc::new(AppState { 
         view_matches: RwLock::new(HashMap::new()), 
         chat_messages: RwLock::new(Vec::new()),
-        client,
     });
 
     let app = Router::new()
+        .route("/", get(health_check))
         .route("/ping", post(handle_ping))
         .route("/views/all", get(get_all_views))
         .route("/chat/messages", get(get_messages))
         .route("/chat/send", post(send_message))
         .route("/chat/message/:id", delete(delete_message))
-        .route("/matches/*path", get(proxy_handler))
-        .route("/sports", get(proxy_handler))
-        .route("/stream/*path", get(proxy_handler))
         .layer(CorsLayer::new().allow_origin(Any).allow_methods(Any).allow_headers(Any))
         .with_state(state);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3001));
-    println!("INTEGRATED PROXY SERVER STARTING ON {}", addr);
+    println!("GLOBAL CHAT & VIEW SERVER STARTING ON {}", addr);
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await.unwrap();
 }
 
-async fn proxy_handler(
-    State(state): State<Arc<AppState>>,
-    req: Request,
-) -> Result<axum::response::Response, StatusCode> {
-    let path = req.uri().path();
-    let query = req.uri().query().map(|q| format!("?{}", q)).unwrap_or_default();
-    let url = format!("https://streamed.pk/api{}{}", path, query);
-    
-    let mut proxy_req = hyper::Request::builder()
-        .method(req.method())
-        .uri(url)
-        .body(req.into_body())
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-
-    let res = state.client.request(proxy_req).await.map_err(|_| StatusCode::BAD_GATEWAY)?;
-    
-    let mut response = axum::response::Response::builder()
-        .status(res.status());
-        
-    for (name, value) in res.headers() {
-        response = response.header(name, value);
-    }
-    
-    Ok(response.body(res.into_body()).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?)
+async fn health_check() -> &'static str {
+    "Reedstreams Global API is running!"
 }
 
 async fn handle_ping(State(state): State<Arc<AppState>>, axum::extract::ConnectInfo(addr): axum::extract::ConnectInfo<SocketAddr>, Json(payload): Json<PingRequest>) -> Json<ViewResponse> {
@@ -113,14 +93,19 @@ async fn get_all_views(State(state): State<Arc<AppState>>) -> Json<AllViewsRespo
     Json(AllViewsResponse { views })
 }
 
-async fn get_messages(State(state): State<Arc<AppState>>, Query(query): Query<GetMessagesQuery>) -> Json<Vec<ChatMessage>> {
+async fn get_messages(State(state): State<Arc<AppState>>) -> Json<Vec<ChatMessage>> {
     let messages = state.chat_messages.read().unwrap();
-    Json(messages.iter().filter(|m| m.match_id == query.match_id).cloned().collect())
+    Json(messages.clone())
 }
 
 async fn send_message(State(state): State<Arc<AppState>>, Json(payload): Json<SendMessageRequest>) -> (StatusCode, Json<ChatMessage>) {
     let mut messages = state.chat_messages.write().unwrap();
-    let new_msg = ChatMessage { id: Uuid::new_v4(), match_id: payload.match_id, username: payload.username, content: payload.content, timestamp: Utc::now() };
+    let new_msg = ChatMessage { 
+        id: Uuid::new_v4(), 
+        username: payload.username, 
+        content: payload.content, 
+        timestamp: Utc::now() 
+    };
     messages.push(new_msg.clone());
     if messages.len() > MAX_MESSAGES { messages.remove(0); }
     (StatusCode::CREATED, Json(new_msg))

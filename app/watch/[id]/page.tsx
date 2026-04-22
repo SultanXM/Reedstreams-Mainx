@@ -255,7 +255,7 @@ export default function WatchPage() {
                     </div>
 
                     <section className={styles.cboxChatSection}>
-                        <Chat matchId={id as string} />
+                        <Chat />
                     </section>
                 </div>
             </main>

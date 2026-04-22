@@ -67,14 +67,24 @@ export function MatchesProvider({ children }: MatchesProviderProps) {
     setError(null)
 
     try {
-      // Fetch sports, matches and views in parallel
-      const [sportsData, allMatches, customViews] = await Promise.all([
-        fetchSports(),
-        fetchAllMatches(),
-        getAllViews()
+      // Fetch sports and matches
+      const [sportsData, allMatches] = await Promise.all([
+        fetchSports().catch(err => {
+          console.warn('Failed to fetch sports:', err)
+          return []
+        }),
+        fetchAllMatches()
       ])
 
       setSports(sportsData)
+
+      // Fetch custom views separately to not block match loading
+      let customViews: { match_id: string, views: number }[] = []
+      try {
+        customViews = await getAllViews()
+      } catch (err) {
+        console.warn('Failed to fetch custom views:', err)
+      }
 
       // Merge custom views with API matches
       const mergedMatches = allMatches.map(match => {
@@ -89,7 +99,6 @@ export function MatchesProvider({ children }: MatchesProviderProps) {
       setMatches(sortedMatches)
     } catch (err) {
       console.error('Failed to load matches:', err)
-      // Set error state to inform the user
       setError('Failed to load matches. Please try again later.')
     } finally {
       setLoading(false)
@@ -178,6 +187,8 @@ export function MatchesProvider({ children }: MatchesProviderProps) {
       try {
         const allMatches = await fetchAllMatches()
 
+        if (!allMatches || allMatches.length === 0) return
+
         // Merge fresh data without affecting the "loading" state
         const mergedMatches = allMatches.map(match => {
           return {
@@ -189,7 +200,7 @@ export function MatchesProvider({ children }: MatchesProviderProps) {
         const sortedMatches = addMatchStatus(mergedMatches).sort((a, b) => a.date - b.date)
         setMatches(sortedMatches)
       } catch (err) {
-        console.error('Failed to poll matches:', err)
+        console.warn('Polling failed:', err)
       }
     }, 30000)
 

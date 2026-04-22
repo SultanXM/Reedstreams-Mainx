@@ -317,7 +317,15 @@ export async function getAllViews(): Promise<{ match_id: string, views: number }
       return []
     }
 
-    return res.json()
+    const data = await res.json()
+    // Convert HashMap from Rust to Array for frontend
+    if (data.views) {
+      return Object.entries(data.views).map(([match_id, views]) => ({
+        match_id,
+        views: views as number
+      }))
+    }
+    return []
   } catch (error) {
     return []
   }
