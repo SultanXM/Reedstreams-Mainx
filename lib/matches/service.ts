@@ -3,7 +3,7 @@
 // Documentation: https://streamed.pk/docs
 // ============================================
 
-const API_BASE = 'https://streamed.pk/api'
+const API_BASE = 'https://api.reedstreams.live'
 
 // Types from API documentation
 export interface APIMatch {
