@@ -2,22 +2,22 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--bg-primary);
+  background: #0a0a0f;
   position: relative;
 }
 
 .chatHeader {
   font-size: 11px;
-  font-weight: 800;
-  color: #fff;
+  font-weight: 700;
+  color: var(--text-secondary);
   padding: 14px 20px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  border-bottom: 2px solid #5C7020;
+  border-bottom: 1px solid #1e293b;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-secondary);
+  background: #0f172a;
 }
 
 .headerLeft {
@@ -27,7 +27,7 @@
 }
 
 .headerTitle {
-  color: #fff;
+  color: var(--text-secondary);
 }
 
 .statusDot {
@@ -38,26 +38,26 @@
 }
 
 .connected {
-  background-color: var(--parrot-green);
-  box-shadow: 0 0 10px var(--parrot-green);
+  background-color: #3b82f6;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
 }
 
 .connecting {
   background-color: #facc15;
-  box-shadow: 0 0 10px #facc15;
+  box-shadow: 0 0 8px rgba(250, 204, 21, 0.4);
   animation: pulse 1.5s infinite;
 }
 
 .disconnected {
   background-color: #ef4444;
-  box-shadow: 0 0 10px #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
 }
 
 .statusText {
   font-size: 9px;
   color: var(--text-muted);
   text-transform: none;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 @keyframes pulse {
@@ -68,11 +68,11 @@
 
 .changeNameBtn {
   font-size: 9px;
-  font-weight: 700;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  padding: 5px 12px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid #1e293b;
+  color: var(--text-muted);
+  padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
@@ -80,9 +80,8 @@
 }
 
 .changeNameBtn:hover {
-  background: var(--parrot-green-light);
-  color: var(--parrot-green);
-  border-color: var(--parrot-green);
+  background: #1e293b;
+  color: var(--text-primary);
 }
 
 .messagesList {
@@ -92,9 +91,9 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  background: var(--bg-primary);
+  background: #0a0a0f;
   scrollbar-width: thin;
-  scrollbar-color: var(--bg-tertiary) transparent;
+  scrollbar-color: #1e293b transparent;
 }
 
 .messagesList::-webkit-scrollbar {
@@ -102,7 +101,7 @@
 }
 
 .messagesList::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
+  background: #1e293b;
   border-radius: 2px;
 }
 
@@ -111,19 +110,12 @@
   font-size: 13px;
   text-align: center;
   margin-top: 40px;
-  font-weight: 500;
 }
 
 .messageItem {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  animation: msgIn 0.3s ease-out;
-}
-
-@keyframes msgIn {
-  from { opacity: 0; transform: translateX(-5px); }
-  to { opacity: 1; transform: translateX(0); }
 }
 
 .msgTop {
@@ -134,74 +126,70 @@
 
 .msgUser {
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.2px;
 }
 
 .msgTime {
   font-size: 9px;
-  color: var(--text-muted);
-  font-weight: 500;
+  color: #334155;
 }
 
 .msgContent {
   font-size: 13.5px;
-  color: #e2e2e2;
+  color: #94a3b8;
   line-height: 1.5;
   word-break: break-word;
-  background: var(--bg-secondary);
+  background: #0f172a;
   padding: 8px 12px;
   border-radius: 0 10px 10px 10px;
   display: inline-block;
   width: fit-content;
   max-width: 92%;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid #1e293b;
 }
 
 .deleteBtn {
   margin-left: auto;
   background: none;
   border: none;
-  color: #ef4444;
+  color: #475569;
   font-size: 10px;
   cursor: pointer;
-  opacity: 0.4;
-  transition: opacity 0.2s;
+  transition: color 0.2s;
 }
 
 .deleteBtn:hover {
-  opacity: 1;
+  color: #ef4444;
 }
 
 .inputArea {
   padding: 16px 20px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid #1e293b;
   display: flex;
   gap: 12px;
-  background: var(--bg-secondary);
+  background: #0f172a;
 }
 
 .chatInput {
   flex: 1;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
+  background: #0a0a0f;
+  border: 1px solid #1e293b;
   border-radius: 8px;
   padding: 11px 16px;
-  color: #fff;
+  color: #f8fafc;
   font-size: 13px;
   outline: none;
-  transition: all 0.2s;
 }
 
 .chatInput:focus {
-  border-color: var(--parrot-green);
-  background: #1e1e2d;
+  border-color: #3b82f6;
 }
 
 .sendBtn {
-  background: var(--parrot-green);
-  border: none;
-  color: #000;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: var(--text-secondary);
   border-radius: 8px;
   width: 44px;
   display: flex;
@@ -212,16 +200,20 @@
 }
 
 .sendBtn:hover {
-  background: var(--parrot-green-hover);
-  transform: scale(1.05);
-  box-shadow: 0 0 15px var(--parrot-green-dim);
+  background: #334155;
+  color: #fff;
+  border-color: #475569;
+}
+
+.sendBtn svg {
+  color: inherit;
 }
 
 /* Name Overlay */
 .nameOverlay {
   position: absolute;
   inset: 0;
-  background: var(--bg-primary);
+  background: #0a0a0f;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -240,43 +232,41 @@
 
 .nameForm p {
   font-size: 13px;
-  color: var(--text-secondary);
-  font-weight: 500;
+  color: var(--text-muted);
 }
 
 .adminSuccess {
   font-size: 12px;
-  color: var(--parrot-green);
-  background: var(--parrot-green-light);
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
   padding: 10px;
   border-radius: 6px;
-  border: 1px solid var(--parrot-green-dim);
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .nameInput {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  background: #0f172a;
+  border: 1px solid #1e293b;
   border-radius: 8px;
   padding: 14px;
   color: #fff;
   font-size: 14px;
   text-align: center;
   outline: none;
-  transition: border-color 0.2s;
 }
 
 .nameInput:focus {
-  border-color: var(--parrot-green);
+  border-color: #3b82f6;
 }
 
 .nameBtn {
-  background: var(--parrot-green);
-  border: none;
-  color: #000;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #fff;
   border-radius: 8px;
   padding: 14px;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
@@ -284,7 +274,6 @@
 }
 
 .nameBtn:hover {
-  background: var(--parrot-green-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--parrot-green-dim);
+  background: #334155;
+  border-color: #475569;
 }
