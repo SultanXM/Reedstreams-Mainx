@@ -59,18 +59,22 @@ export default function Chat() {
     return () => clearInterval(interval)
   }, [])
 
-  // Smart scrolling: Only scroll to bottom if shouldAutoScroll is true
+  // Smart scrolling logic
   useEffect(() => {
-    if (shouldAutoScroll) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [messages, shouldAutoScroll])
-
-  const handleScroll = () => {
     if (!scrollContainerRef.current) return
     const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current
-    const isAtBottom = scrollHeight - scrollTop - clientHeight < 50
-    setShouldAutoScroll(isAtBottom)
+    
+    // Only auto-scroll if the user is already near the bottom (within 100px)
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 100
+    
+    if (isNearBottom || shouldAutoScroll) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+      if (shouldAutoScroll) setShouldAutoScroll(false)
+    }
+  }, [messages])
+
+  const handleScroll = () => {
+    // We don't need to do much here now, but we'll keep the ref active
   }
 
   const handleSetName = (e: React.FormEvent) => {
