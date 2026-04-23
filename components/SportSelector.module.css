@@ -1,0 +1,142 @@
+/* ============================================
+   SPORT SELECTOR - HORIZONTAL SCROLL CARDS
+   ============================================ */
+
+.sportSelector {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.sportScrollContainer {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 4px;
+  margin-top: 8px;
+}
+
+.sportScrollContainer::-webkit-scrollbar {
+  height: 0px;
+  display: none;
+}
+
+.sportScrollContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sportScrollContainer::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.sportCard {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 120px;
+  height: 120px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  scroll-snap-align: start;
+  padding: 14px;
+}
+
+.sportCard:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+  border-color: var(--parrot-green-dim);
+  transform: translateY(-2px);
+}
+
+.sportCardActive {
+  background: linear-gradient(135deg, var(--parrot-green-dim) 0%, var(--bg-tertiary) 100%);
+  border-color: var(--parrot-green);
+  box-shadow: 0 4px 12px rgba(136, 136, 136, 0.2);
+}
+
+.sportCard:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sportEmoji {
+  font-size: 32px;
+  line-height: 1;
+  margin-top: 4px;
+  transition: all 0.2s ease;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+}
+
+.sportCard:hover:not(:disabled) .sportEmoji {
+  transform: scale(1.1);
+}
+
+.sportCardActive .sportEmoji {
+  transform: scale(1.1);
+}
+
+.sportName {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  transition: all 0.2s ease;
+}
+
+.sportCard:hover:not(:disabled) .sportName {
+  color: var(--text-primary);
+}
+
+.sportCardActive .sportName {
+  color: var(--parrot-green);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sportCard {
+    width: 90px;
+    height: 90px;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .sportEmoji {
+    font-size: 28px;
+  }
+
+  .sportName {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sportCard {
+    width: 80px;
+    height: 80px;
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .sportEmoji {
+    font-size: 26px;
+  }
+
+  .sportName {
+    font-size: 9px;
+  }
+}

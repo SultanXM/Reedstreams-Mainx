@@ -1,0 +1,641 @@
+.loginMain {
+  min-height: calc(100vh - 70px);
+  background: #0a0a0f;
+  padding: 40px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 360px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a2e;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.loginHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.loginTitle {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
+}
+
+.errorAlert {
+  padding: 10px 12px;
+  background: #1a0f0f;
+  border: 1px solid #3a1f1f;
+  border-radius: 6px;
+  color: #ff6b6b;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+.successAlert {
+  padding: 10px 12px;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  color: #4ade80;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.input {
+  width: 100%;
+  padding: 8px 14px 8px 34px;
+  background: #141420;
+  border: 1px solid #1e1e2d;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 10px 14px;
+  background: #141420;
+  border: 1px solid #1e1e2d;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.loginFooter {
+  text-align: center;
+  font-size: 11px;
+  color: #444;
+  margin-top: 16px;
+}
+
+.dashboardMain {
+  min-height: calc(100vh - 70px);
+  background: #0a0a0f;
+  padding: 24px;
+}
+
+.dashboardContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.dashboardTitle {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
+}
+
+.dashboardSubtitle {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.logoutButton {
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid #2a1a1a;
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.logoutButton:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #3a2a2a;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid #1a1a2e;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: -1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tabActive {
+  border-bottom-color: var(--parrot-green);
+  color: #fff;
+}
+
+.searchActions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.searchWrapper {
+  flex: 1;
+  min-width: 250px;
+  position: relative;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 14px 12px 40px;
+  background: #0f0f14;
+  border: 1px solid #1a1a25;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+}
+
+.actionButton {
+  padding: 12px 20px;
+  background: #0f0f14;
+  border: 1px solid #1a1a25;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.clearButton {
+  color: #ef4444;
+  border-color: #2a1a1a;
+  background: transparent;
+}
+
+.clearButton:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.emptyState {
+  padding: 60px 20px;
+  text-align: center;
+  color: #444;
+  font-size: 14px;
+  background: #0f0f14;
+  border: 1px solid #1a1a25;
+  border-radius: 8px;
+}
+
+.itemCard {
+  background: #0f0f14;
+  border: 1px solid #1a1a25;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.itemCardExpanded {
+  border-color: #252530;
+}
+
+.itemRow {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #141420;
+  overflow: hidden;
+  border: 2px solid #1a1a25;
+  flex-shrink: 0;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.itemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.usernameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.username {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.timeoutBadge {
+  padding: 2px 8px;
+  background: rgba(239, 68, 68, 0.15);
+  border-radius: 4px;
+  font-size: 10px;
+  color: #ef4444;
+}
+
+.itemSubtext {
+  font-size: 11px;
+  color: #555;
+  margin-top: 2px;
+}
+
+.expandIcon {
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.expandIconOpen {
+  transform: rotate(180deg);
+}
+
+.itemDetails {
+  padding: 0 16px 16px;
+  border-top: 1px solid #1a1a25;
+  background: #0a0a0f;
+}
+
+.tagContainer {
+  padding: 12px 0;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  padding: 4px 10px;
+  background: #141420;
+  borderRadius: 4px;
+  font-size: 11px;
+  color: #888;
+}
+
+.itemActions {
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  flex-wrap: wrap;
+}
+
+.btnSmall {
+  padding: 8px 16px;
+  background: #141420;
+  border: 1px solid #1e1e2d;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnTimeout {
+  color: #ef4444;
+  border-color: #2a1a1a;
+  background: transparent;
+}
+
+.btnTimeout:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.btnUnban {
+  color: #4ade80;
+  border-color: #1e293b;
+  background: #0f172a;
+}
+
+.btnUnban:hover {
+  background: rgba(74, 222, 128, 0.1);
+}
+
+.messageCard {
+  background: #0f0f14;
+  border: 1px solid #1a1a25;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.messageContentWrapper {
+  flex: 1;
+}
+
+.messageUserRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.messageAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.messageUsername {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.messageTimestamp {
+  font-size: 11px;
+  color: #444;
+}
+
+.messageText {
+  font-size: 14px;
+  color: #ccc;
+  word-break: break-word;
+}
+
+.btnDelete {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid #2a1a1a;
+  border-radius: 6px;
+  color: #ef4444;
+  font-size: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  zIndex: 9999;
+  padding: 20px;
+}
+
+.modal {
+  background: #0f0f14;
+  border: 1px solid #1a1a25;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.modalHeader {
+  padding: 20px 24px;
+  border-bottom: 1px solid #1a1a25;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.modalBody {
+  padding: 24px;
+}
+
+.modalLabel {
+  display: block;
+  font-size: 12px;
+  fontWeight: 500;
+  color: #888;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badgeGrid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badgeButton {
+  padding: 10px 20px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a25;
+  border-radius: 6px;
+  color: #888;
+  font-size: 12px;
+  fontWeight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.textarea {
+  width: 100%;
+  padding: 12px;
+  background: #0a0a0f;
+  border: 1px solid #252530;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  minHeight: '80px';
+  resize: vertical;
+}
+
+.modalFooter {
+  display: flex;
+  gap: 12px;
+}
+
+.btnSaveModal {
+  flex: 1;
+  padding: 12px;
+  background: var(--parrot-green);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-size: 14px;
+  fontWeight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btnSaveModal:hover {
+  opacity: 0.9;
+}
+
+.btnCancelModal {
+  flex: 1;
+  padding: 12px;
+  background: #0a0a0f;
+  border: 1px solid #252530;
+  border-radius: 8px;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnCancelModal:hover {
+  background: #141420;
+  color: #fff;
+}
+
+/* Source Control - matches itemCard style */
+.itemCardDefault {
+  border-color: var(--parrot-green);
+  background: linear-gradient(135deg, #0f0f1a 0%, #0a1f0a 100%);
+}
+
+.itemCardInactive {
+  opacity: 0.5;
+}
+
+.sourceLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badgeDefault {
+  padding: 2px 8px;
+  background: rgba(164, 198, 57, 0.15);
+  border-radius: 4px;
+  font-size: 10px;
+  color: var(--parrot-green);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.badgeInactive {
+  padding: 2px 8px;
+  background: rgba(136, 136, 136, 0.15);
+  border-radius: 4px;
+  font-size: 10px;
+  color: #888;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.btnSmallActive {
+  background: rgba(164, 198, 57, 0.15);
+  border-color: var(--parrot-green);
+  color: var(--parrot-green);
+}
+
+.btnSmall:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

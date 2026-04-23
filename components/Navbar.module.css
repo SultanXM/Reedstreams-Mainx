@@ -1,0 +1,391 @@
+/* ============================================
+   REEDSTREAMS NAVBAR - PARROT GREEN THEME 🦜
+   ============================================ */
+
+/* Navbar Container */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--bg-primary);
+  border-bottom: none;
+  transition: all 0.3s ease;
+}
+
+.navbarScrolled {
+  background: rgba(10, 10, 15, 0.98);
+  backdrop-filter: blur(10px);
+  border-bottom: none;
+}
+
+.navContent {
+  margin: 0 auto;
+  padding: 10px 24px;
+  max-width: 1600px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 24px;
+  font-weight: 800;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+  letter-spacing: -0.5px;
+}
+
+.logo:hover {
+  opacity: 0.9;
+}
+
+.logoWhite {
+  color: #ffffff;
+}
+
+.logoGreen {
+  color: var(--parrot-green);
+}
+
+/* Desktop Actions */
+.desktopActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+/* Search Bar */
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+  min-width: 280px;
+  transition: all 0.2s ease;
+}
+
+.searchBarFocused {
+  border-color: var(--parrot-green);
+  background: var(--bg-tertiary);
+}
+
+.searchBar svg {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.searchBarInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  padding: 4px 0;
+}
+
+.searchBarInput::placeholder {
+  color: var(--text-muted);
+}
+
+.searchBarClose {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+  border-radius: 4px;
+}
+
+.searchBarClose:hover {
+  color: var(--text-primary);
+}
+
+/* Icon Buttons */
+.iconButton {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconButton:hover {
+  background: var(--bg-secondary);
+  color: var(--parrot-green);
+  border-color: var(--parrot-green);
+}
+
+/* Nav Links */
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navLink:hover {
+  background: var(--bg-secondary);
+  color: var(--parrot-green);
+  border-color: var(--parrot-green-dim);
+}
+
+.navLink span {
+  white-space: nowrap;
+}
+
+.profileBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--parrot-green-dim);
+  border-radius: 6px;
+  color: var(--parrot-green);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.profileBtn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--parrot-green);
+}
+
+.loginBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--parrot-green-light);
+  border: 1px solid var(--parrot-green-dim);
+  border-radius: 6px;
+  color: var(--parrot-green);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.loginBtn:hover {
+  background: var(--parrot-green);
+  border-color: var(--parrot-green);
+  color: #000;
+}
+
+/* Mobile Menu */
+.mobileMenu {
+  display: none;
+  margin-left: auto;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 1001;
+}
+
+.mobileUserBtn {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 8px;
+}
+
+.burgerBtn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--parrot-green);
+  transition: all 0.2s ease;
+}
+
+.burgerBtn:hover {
+  background: var(--bg-secondary);
+  color: var(--parrot-green);
+  border-color: var(--parrot-green);
+}
+
+.burgerBtnOpen {
+  background: var(--parrot-green-dim);
+  border-color: var(--parrot-green);
+  color: var(--parrot-green);
+}
+
+/* Mobile Dropdown Menu */
+.mobileDropdown {
+  position: fixed;
+  top: 58px;
+  left: 0;
+  right: 0;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 999;
+  animation: dropdownSlide 0.2s ease;
+  pointer-events: auto;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobileDropdownContent {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+}
+
+.mobileDropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: transparent;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.mobileDropdownItem:hover {
+  background: var(--bg-secondary);
+  color: var(--parrot-green);
+}
+
+.mobileDropdownItem span {
+  white-space: nowrap;
+  flex: 1;
+}
+
+.itemArrow {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.mobileDropdownItem:hover .itemArrow {
+  color: var(--parrot-green);
+  transform: translateX(4px);
+}
+
+.mobileDropdownDivider {
+  height: 1px;
+  background: var(--bg-tertiary);
+  margin: 8px 0;
+}
+
+.mobileDropdownSignIn {
+  color: var(--parrot-green);
+  font-weight: 600;
+}
+
+.mobileDropdownSignIn:hover {
+  background: var(--parrot-green-dim);
+}
+
+.mobileDropdownLogout {
+  color: #ef4444;
+}
+
+.mobileDropdownLogout:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .navLink span {
+    display: none;
+  }
+
+  .navLink {
+    padding: 8px;
+  }
+
+  .loginBtn span {
+    display: none;
+  }
+
+  .searchBar {
+    min-width: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .navContent {
+    margin: 0;
+    padding: 10px 16px;
+  }
+
+  .desktopActions,
+  .desktopActions .navLink,
+  .searchBar {
+    display: none !important;
+  }
+
+  .mobileMenu {
+    display: flex !important;
+    margin-left: auto;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+}

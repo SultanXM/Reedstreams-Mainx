@@ -1,0 +1,280 @@
+.matchLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  height: 100%;
+}
+
+.matchCard {
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #5C7020;  
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 16px;
+}
+
+.matchCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  bottom: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+  pointer-events: none;
+  border-radius: 10px 0 0 0;
+}
+
+.matchCard::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40%;
+  bottom: 0;
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+  pointer-events: none;
+  border-radius: 0 10px 0 0;
+}
+
+.matchCard:hover {
+  border-color: var(--parrot-green-dim);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* LIVE Badge */
+.liveBadge {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  z-index: 10;
+  letter-spacing: 0.5px;
+}
+
+.viewsCount {
+  color: #ccc;
+  font-size: 10px;
+  margin-left: 2px;
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  background: #ee0000;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Badge Wrapper + Shadow */
+.badgeWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badgeShadow {
+  display: none;
+}
+
+.badgeShadow img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Teams Section */
+.teamsSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex: 1;
+  position: relative;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.teamBadge {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+}
+
+.teamBadgePlaceholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  position: relative;
+  z-index: 1;
+}
+
+.teamName {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  line-height: 1.3;
+  position: relative;
+  z-index: 1;
+}
+
+/* Center Info */
+.centerInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 75px;
+  position: relative;
+  z-index: 1;
+}
+
+.dateText {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.centerDivider {
+  width: 100%;
+  height: 1px;
+  background: #fff;
+}
+
+.timeText {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.liveText {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--parrot-green);
+  white-space: nowrap;
+}
+
+/* Footer - Title + Sport in one row */
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+  margin-top: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.matchTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.categoryText {
+  font-size: 11px;
+  color: var(--parrot-green);
+  text-transform: capitalize;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Desktop: 4 cards per row, exact height */
+@media (min-width: 1200px) {
+  .matchCard {
+    height: 180px;
+    padding: 16px;
+  }
+  
+  .teamBadge {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+/* Tablet: 2-3 cards per row */
+@media (max-width: 1199px) and (min-width: 769px) {
+  .matchCard {
+    height: 170px;
+    padding: 14px;
+  }
+  
+  .teamBadge {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Mobile: 1 card per row, exact height */
+@media (max-width: 768px) {
+  .matchCard {
+    height: 160px;
+    padding: 14px;
+  }
+
+  .teamBadge {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .teamName {
+    font-size: 12px;
+  }
+  
+  .dateText,
+  .timeText,
+  .liveText {
+    font-size: 11px;
+  }
+  
+  .matchTitle {
+    font-size: 11px;
+  }
+  
+  .categoryText {
+    font-size: 10px;
+  }
+}

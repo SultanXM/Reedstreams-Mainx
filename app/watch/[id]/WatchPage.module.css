@@ -1,0 +1,482 @@
+.watchMain {
+  min-height: calc(100vh - 70px);
+  background: #050505;
+  padding: 0;
+  margin-top: -20px;
+}
+
+.watchLayout {
+  max-width: 100%;
+  margin: 0;
+  display: flex;
+  gap: 0;
+  min-height: calc(100vh - 70px);
+}
+
+.playerSection {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+}
+
+.playerContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #000;
+  overflow: hidden;
+}
+
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+  font-size: 14px;
+}
+
+.videoIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #000;
+}
+
+/* Streams Row - Horizontal Scrollable */
+.streamsRow {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #0a0a0f;
+  border-bottom: 1px solid #1a1a2e;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+  -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
+}
+
+.streamsRow::-webkit-scrollbar {
+  height: 4px;
+}
+
+.streamsRow::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.streamsRow::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 2px;
+}
+
+.streamBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  background: #141420;
+  border: 1px solid #1e1e2d;
+  border-radius: 6px;
+  color: #888;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  min-height: 34px;
+}
+
+.streamBtn:hover {
+  background: #1a1a2e;
+  color: #fff;
+  border-color: #2a2a4e;
+}
+
+.streamBtnActive {
+  background: #1a1a2e;
+  border-color: #2a2a4e;
+  color: #fff;
+}
+
+.streamSource {
+  letter-spacing: 0.3px;
+}
+
+.streamNumber {
+  font-size: 10px;
+  padding: 1px 5px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #888;
+  border-radius: 3px;
+  font-weight: 700;
+  min-width: 18px;
+  text-align: center;
+}
+
+.streamBtnActive .streamNumber {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.streamQuality {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.qualityHd {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.qualitySd {
+  background: rgba(255, 255, 255, 0.08);
+  color: #666;
+}
+
+.streamLang {
+  font-size: 9px;
+  padding: 1px 5px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #666;
+  border-radius: 3px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* Info Bar */
+.infoBar {
+  padding: 12px 20px;
+  background: #0a0a0f;
+  border-bottom: 1px solid #1a1a2e;
+  flex-shrink: 0;
+}
+
+.infoContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.matchTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 6px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.3;
+}
+
+.infoBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.matchCategory {
+  font-size: 11px;
+  color: #666;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.infoActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  padding: 0;
+}
+
+.actionBtn:hover {
+  color: #fff;
+}
+
+.actionBtn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.reportBtn:hover {
+  color: #ef4444;
+}
+
+/* ============================================
+   REPORT POPUP
+   ============================================ */
+
+.reportOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.reportPopup {
+  background: #0f0f13;
+  border: 1px solid #1a1a2e;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.reportHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  background: #141420;
+  border-bottom: 1px solid #1a1a2e;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.reportSent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 20px;
+  color: #22c55e;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.reportBody {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reportLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.reportSelect {
+  padding: 10px 12px;
+  background: #141420;
+  border: 1px solid #1e1e2d;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.reportSelect:focus {
+  border-color: #2a2a4e;
+}
+
+.reportTextarea {
+  padding: 10px 12px;
+  background: #141420;
+  border: 1px solid #1e1e2d;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+.reportTextarea:focus {
+  border-color: #2a2a4e;
+}
+
+.reportTextarea::placeholder {
+  color: #555;
+}
+
+.reportActions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px 16px;
+}
+
+.reportCancelBtn {
+  flex: 1;
+  padding: 10px;
+  background: #141420;
+  border: 1px solid #1e1e2d;
+  border-radius: 8px;
+  color: #888;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.reportCancelBtn:hover {
+  background: #1a1a2e;
+  color: #fff;
+}
+
+.reportSubmitBtn {
+  flex: 1;
+  padding: 10px;
+  background: var(--parrot-green);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.reportSubmitBtn:hover {
+  opacity: 0.85;
+}
+
+/* ============================================
+   SHARE TOAST
+   ============================================ */
+
+.shareToast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #141420;
+  border: 1px solid #22c55e;
+  border-radius: 8px;
+  color: #22c55e;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 10000;
+  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.2);
+  animation: toastIn 0.3s ease-out;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.skeletonText {
+  background: #1a1a2e;
+  border-radius: 4px;
+  animation: shimmer 1.5s infinite;
+  background-image: linear-gradient(90deg, #1a1a2e 25%, #252538 50%, #1a1a2e 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.cboxChatSection {
+  width: 350px;
+  background: #0a0a0f;
+  border-left: 1px solid #1a1a2e;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile - 100vh only for Android */
+@media (max-width: 1024px) {
+  .watchMain {
+    min-height: auto;
+  }
+
+  .watchLayout {
+    flex-direction: column;
+    gap: 0;
+    min-height: auto;
+  }
+
+  .playerSection {
+    height: auto;
+    flex: none;
+  }
+
+  .cboxChatSection {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #1a1a2e;
+    height: 450px;
+  }
+
+  .playerContainer {
+    aspect-ratio: 16/9;
+  }
+
+  .infoBar {
+    margin: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .streamsRow {
+    padding: 8px 12px;
+    gap: 6px;
+  }
+
+  .streamBtn {
+    padding: 7px 12px;
+    font-size: 10px;
+  }
+}
+
+/* Android only - force 100vh */
+@media (max-width: 1024px) and (max-width: 768px) {
+  .watchMain {
+    min-height: 100dvh;
+  }
+
+  .watchLayout {
+    min-height: 100dvh;
+  }
+}
