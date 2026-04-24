@@ -14,3 +14,6 @@ yarn-error.log*
 .aider*
 generate_the_bible*
 edgebackend_the_bible*
+
+# Local Netlify folder
+.netlify

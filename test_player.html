@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Backend - Stream Tester</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        body {
+            background: #0a0a0f;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #0f172a;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #1e293b;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        h2 { margin-top: 0; font-size: 18px; color: #A4C639; }
+        video {
+            width: 100%;
+            background: #000;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        input {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 12px;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+        }
+        button {
+            background: #A4C639;
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover { background: #8db901; }
+        .status {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>HLS Stream Tester (Direct Proxy)</h2>
+    
+    <video id="video" controls></video>
+
+    <div class="input-group">
+        <label for="url">Paste your signed URL here:</label>
+        <input type="text" id="url" placeholder="http://187.127.106.231:5000/api/v1/proxy?..." 
+               value="">
+        <button onclick="loadStream()">Load & Play</button>
+    </div>
+
+    <div id="status" class="status">Ready.</div>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    const status = document.getElementById('status');
+
+    function loadStream() {
+        const streamUrl = document.getElementById('url').value;
+        if (!streamUrl) {
+            alert('Please paste a URL first');
+            return;
+        }
+
+        status.innerText = 'Initializing HLS.js...';
+
+        if (Hls.isSupported()) {
+            const hls = new Hls({
+                debug: true,
+                enableWorker: true,
+                lowLatencyMode: true,
+            });
+            
+            hls.loadSource(streamUrl);
+            hls.attachMedia(video);
+            
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                status.innerText = 'Manifest parsed. Playing...';
+                video.play();
+            });
+
+            hls.on(Hls.Events.ERROR, function(event, data) {
+                console.error('HLS Error:', data);
+                status.innerText = `Error: ${data.details} (Type: ${data.type})`;
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            status.innerText += ' - Network error. Check VPS logs!';
+                            hls.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            status.innerText += ' - Media error. Trying to recover...';
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            hls.destroy();
+                            break;
+                    }
+                }
+            });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Safari support
+            video.src = streamUrl;
+            video.addEventListener('loadedmetadata', function() {
+                video.play();
+            });
+        }
+    }
+</script>
+
+</body>
+</html>
