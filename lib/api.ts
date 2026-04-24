@@ -1,5 +1,4 @@
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://reedstreams-backend-app-production.up.railway.app'
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api' // Use relative path for backend API calls
+const API_BASE_URL = 'https://streamed.pk/api'
 const API_URL = API_BASE_URL
 
 export function getFullImageUrl(url: string | null | undefined): string | undefined {
@@ -260,12 +259,14 @@ export async function changeUsername(newUsername: string) {
   return res.json()
 }
 
+const ENGAGEMENT_API = 'https://api.reedstreams.live'
+
 export async function trackView(matchId: string) {
   try {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 3000)
     
-    const res = await fetch(`${API_BASE_URL}/views/track`, {
+    const res = await fetch(`${ENGAGEMENT_API}/views/track`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ match_id: matchId }),
@@ -288,7 +289,7 @@ export async function getViews(matchId: string) {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 3000)
     
-    const res = await fetch(`${API_BASE_URL}/views/${matchId}`, {
+    const res = await fetch(`${ENGAGEMENT_API}/views/${matchId}`, {
       signal: controller.signal
     })
     clearTimeout(timeout)
@@ -308,7 +309,7 @@ export async function getAllViews(): Promise<{ match_id: string, views: number }
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 3000)
     
-    const res = await fetch(`${API_BASE_URL}/views/all`, {
+    const res = await fetch(`${ENGAGEMENT_API}/views/all`, {
       signal: controller.signal
     })
     clearTimeout(timeout)
