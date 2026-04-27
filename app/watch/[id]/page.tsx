@@ -30,6 +30,7 @@ export default function WatchPage() {
     const [streams, setStreams] = useState<Stream[]>([])
     const [selectedStream, setSelectedStream] = useState<Stream | null>(null)
     const [loadingMatch, setLoadingMatch] = useState(true)
+    const [iframeLoaded, setIframeLoaded] = useState(false)
     const [defaultSource, setDefaultSource] = useState<string | null>(null)
     const [showReportPopup, setShowReportPopup] = useState(false)
     const [reportReason, setReportReason] = useState(REPORT_REASONS[0])
@@ -163,16 +164,28 @@ export default function WatchPage() {
                     <div className={styles.playerSection}>
                         <div className={styles.playerContainer}>
                             {loadingMatch ? (
-                                <div className={styles.centered}>Loading match...</div>
+                                <div className={styles.loadingOverlay}>
+                                    <div className={styles.loadingSpinner} />
+                                    <div className={styles.loadingText}>Loading match data...</div>
+                                </div>
                             ) : selectedStream ? (
-                                <AdShieldErrorBoundary>
-                                    <iframe
-                                        src={selectedStream.embedUrl}
-                                        className={styles.videoIframe}
-                                        allowFullScreen
-                                        allow="autoplay; fullscreen; picture-in-picture"
-                                    />
-                                </AdShieldErrorBoundary>
+                                <>
+                                    {!iframeLoaded && (
+                                        <div className={styles.loadingOverlay}>
+                                            <div className={styles.loadingSpinner} />
+                                            <div className={styles.loadingText}>Connecting to stream...</div>
+                                        </div>
+                                    )}
+                                    <AdShieldErrorBoundary>
+                                        <iframe
+                                            src={selectedStream.embedUrl}
+                                            className={styles.videoIframe}
+                                            allowFullScreen
+                                            allow="autoplay; fullscreen; picture-in-picture"
+                                            onLoad={() => setIframeLoaded(true)}
+                                        />
+                                    </AdShieldErrorBoundary>
+                                </>
                             ) : (
                                 <div className={styles.centered}>No streams available</div>
                             )}
@@ -199,7 +212,12 @@ export default function WatchPage() {
                                         return (
                                             <button
                                                 key={`${stream.source}-${stream.streamNo}`}
-                                                onClick={() => setSelectedStream(stream)}
+                                                onClick={() => {
+                                                    if (selectedStream?.embedUrl !== stream.embedUrl) {
+                                                        setIframeLoaded(false);
+                                                        setSelectedStream(stream);
+                                                    }
+                                                }}
                                                 className={`${styles.streamBtn} ${isActive ? styles.streamBtnActive : ''}`}
                                             >
                                                 <span className={styles.streamSource}>{stream.source.toUpperCase()}</span>

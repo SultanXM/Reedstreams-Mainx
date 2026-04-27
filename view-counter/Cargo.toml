@@ -13,6 +13,7 @@ tracing = "0.1"
 tracing-subscriber = "0.3"
 uuid = { version = "1.0", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
+redis = { version = "0.24", features = ["tokio-comp", "json"] }
 
 [profile.release]
 lto = true

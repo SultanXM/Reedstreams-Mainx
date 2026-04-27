@@ -78,20 +78,11 @@ export function MatchesProvider({ children }: MatchesProviderProps) {
 
       setSports(sportsData)
 
-      // Fetch custom views separately to not block match loading
-      let customViews: { match_id: string, views: number }[] = []
-      try {
-        customViews = await getAllViews()
-      } catch (err) {
-        console.warn('Failed to fetch custom views:', err)
-      }
-
-      // Merge custom views with API matches
+      // Merge API matches
       const mergedMatches = allMatches.map(match => {
-        const customView = customViews.find(v => v.match_id === match.id)
         return {
           ...match,
-          views: (match.views || 0) + (customView?.views || 0)
+          views: match.views || 0
         }
       })
 
@@ -140,16 +131,17 @@ export function MatchesProvider({ children }: MatchesProviderProps) {
   )
   const liveViewCounts = useLiveViews(liveMatchIds)
 
+  // Multiplier to make views look more "alive"
+  const VIEW_MULTIPLIER = 1;
+
   // Merge live WebSocket view counts into matches
-  // The live count replaces the custom view portion for live matches
   const matchesWithLiveViews = useMemo(() => {
     return matches.map(match => {
-      if (match.status === 'live' && liveViewCounts[match.id] !== undefined) {
-        // For live matches, use the WebSocket count as the custom view portion
-        // This gets added to the streamed.pk API views
+      const liveCount = liveViewCounts[match.id] || 0;
+      if (liveCount > 0) {
         return {
           ...match,
-          views: (match.views || 0) - (liveViewCounts[match.id] > 0 ? 0 : 0) + liveViewCounts[match.id]
+          views: (match.views || 0) + (liveCount * VIEW_MULTIPLIER)
         }
       }
       return match

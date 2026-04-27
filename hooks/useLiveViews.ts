@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-const PING_INTERVAL = 120000; // 2 minutes
+const PING_INTERVAL = 30000; // 30 seconds
 const VIEW_API = process.env.NEXT_PUBLIC_VIEW_API || 'https://api.reedstreams.live'; 
 
 interface AllViewsResponse {
