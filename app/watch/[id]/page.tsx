@@ -67,19 +67,49 @@ export default function WatchPage() {
                 const parts = (id as string).split('_')
                 if (parts.length === 2) matchId = parts[1]
 
-                const allMatchesRes = await fetch(`${API_BASE}/matches/all`)
-                if (!allMatchesRes.ok) {
-                    throw new Error(`Failed to fetch matches: ${allMatchesRes.status}`)
+                // 1. Fetch from caching API (Always try our cache first or in parallel)
+                let cachedMatch: APIMatch | null = null
+                try {
+                    const cacheRes = await fetch(`https://api.reedstreams.live/match/${matchId}`)
+                    if (cacheRes.ok) {
+                        cachedMatch = await cacheRes.json()
+                    }
+                } catch (err) {
+                    console.warn('Failed to fetch from cache:', err)
                 }
-                const allMatches: APIMatch[] = await allMatchesRes.json()
-                const foundMatch = allMatches.find(m => m.id === matchId || m.sources.some(s => s.id === matchId))
+
+                // 2. Fetch from primary API
+                let primaryMatch: APIMatch | null = null
+                try {
+                    const allMatchesRes = await fetch(`${API_BASE}/matches/all`)
+                    if (allMatchesRes.ok) {
+                        const allMatches: APIMatch[] = await allMatchesRes.json()
+                        primaryMatch = allMatches.find(m => m.id === matchId || m.sources.some(s => s.id === matchId)) || null
+                    }
+                } catch (err) {
+                    console.warn('Failed to fetch from primary API:', err)
+                }
 
                 if (cancelled) return
+
+                // 3. Determine best match data
+                let foundMatch: APIMatch | null = primaryMatch || cachedMatch
 
                 if (!foundMatch) {
                     setError('Match not found')
                     setLoadingMatch(false)
                     return
+                }
+
+                // 4. Merge sources if both available
+                if (primaryMatch && cachedMatch) {
+                    const mergedSources = [...primaryMatch.sources]
+                    for (const s of cachedMatch.sources) {
+                        if (!mergedSources.find(ms => ms.source === s.source && ms.id === s.id)) {
+                            mergedSources.push(s)
+                        }
+                    }
+                    foundMatch.sources = mergedSources
                 }
 
                 setMatch(foundMatch)

@@ -19,12 +19,34 @@ const MAX_VIEWS_PER_IP: usize = 1; // 1-to-1 counting
 const MAX_MESSAGES: isize = 500;
 const REDIS_CHAT_KEY: &str = "chat:messages";
 const PING_EXPIRY_SECS: u64 = 60; // Viewers expire after 1 minute of inactivity
+const REDIS_MATCH_KEY_PREFIX: &str = "match:data:";
+const SOURCE_CACHE_EXPIRY_SECS: u64 = 86400; // 24 hours grace period for matches
 
 struct AppState { 
     view_matches: RwLock<HashMap<String, MatchState>>, 
     redis: redis::Client,
 }
 type MatchState = HashMap<String, Vec<Viewer>>;
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+struct Source {
+    source: String,
+    id: String,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+struct APIMatch {
+    id: String,
+    title: String,
+    category: String,
+    #[serde(default)]
+    date: i64,
+    #[serde(default)]
+    poster: Option<String>,
+    #[serde(default)]
+    popular: bool,
+    sources: Vec<Source>,
+}
 
 #[derive(Serialize, Deserialize, Clone)]
 struct PingRequest { match_id: String }
@@ -50,17 +72,30 @@ struct DeleteMessageRequest { admin_key: String }
 #[tokio::main]
 async fn main() {
     let redis_url = std::env::var("REDIS_URL").unwrap_or_else(|_| "redis://127.0.0.1:6379".to_string());
-    let client = redis::Client::open(redis_url).expect("Invalid Redis URL");
+    let client = redis::Client::open(redis_url.clone()).expect("Invalid Redis URL");
 
     let state = Arc::new(AppState { 
         view_matches: RwLock::new(HashMap::new()), 
         redis: client,
     });
 
+    // Start background source sync
+    let sync_state = state.clone();
+    tokio::spawn(async move {
+        let mut interval = tokio::time::interval(Duration::from_secs(300)); // Every 5 mins
+        loop {
+            interval.tick().await;
+            if let Err(e) = sync_sources(&sync_state).await {
+                eprintln!("Source sync error: {}", e);
+            }
+        }
+    });
+
     let app = Router::new()
         .route("/", get(health_check))
         .route("/ping", post(handle_ping))
         .route("/views/all", get(get_all_views))
+        .route("/match/:id", get(get_match_data))
         .route("/chat/messages", get(get_messages))
         .route("/chat/send", post(send_message))
         .route("/chat/message/:id", delete(delete_message))
@@ -68,12 +103,63 @@ async fn main() {
         .with_state(state);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3001));
-    println!("REDIS CHAT & VIEW SERVER STARTING ON {}", addr);
+    println!("REDIS CHAT, VIEW & SOURCE SERVER STARTING ON {}", addr);
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await.unwrap();
 }
 
-async fn health_check() -> &'static str { "Reedstreams Global API (Redis Mode) is running!" }
+async fn sync_sources(state: &Arc<AppState>) -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::Client::new();
+    let res = client.get("https://streamed.pk/api/matches/all").send().await?;
+    let matches: Vec<APIMatch> = res.json().await?;
+
+    let mut conn = state.redis.get_multiplexed_async_connection().await?;
+
+    for m in matches {
+        let key = format!("{}{}", REDIS_MATCH_KEY_PREFIX, m.id);
+        
+        // 1. Get existing data from Redis to merge sources
+        let existing_json: Option<String> = conn.get(&key).await?;
+        let mut final_match = m;
+
+        if let Some(json) = existing_json {
+            if let Ok(existing_match) = serde_json::from_str::<APIMatch>(&json) {
+                // Merge sources, avoiding duplicates
+                for ext in existing_match.sources {
+                    if !final_match.sources.iter().any(|s| s.source == ext.source && s.id == ext.id) {
+                        final_match.sources.push(ext);
+                    }
+                }
+            }
+        }
+
+        // 2. Save merged match with expiry (grace period)
+        let json = serde_json::to_string(&final_match)?;
+        let _: () = conn.set_ex(&key, json, SOURCE_CACHE_EXPIRY_SECS).await?;
+    }
+
+    println!("Synced matches and sources at {}", Utc::now());
+    Ok(())
+}
+
+async fn get_match_data(
+    Path(id): Path<String>,
+    State(state): State<Arc<AppState>>
+) -> Result<Json<APIMatch>, StatusCode> {
+    let mut conn = state.redis.get_multiplexed_async_connection().await.map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    let key = format!("{}{}", REDIS_MATCH_KEY_PREFIX, id);
+    
+    let json: Option<String> = conn.get(&key).await.map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    
+    if let Some(s) = json {
+        let match_data: APIMatch = serde_json::from_str(&s).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+        Ok(Json(match_data))
+    } else {
+        Err(StatusCode::NOT_FOUND)
+    }
+}
+
+async fn health_check() -> &'static str { "Reedstreams Global API (Redis & Source Mode) is running!" }
 
 async fn handle_ping(
     State(state): State<Arc<AppState>>,
