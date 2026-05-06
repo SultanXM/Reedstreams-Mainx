@@ -9,6 +9,7 @@ import { useUniversalAdBlocker } from '../../../hooks/useUniversalAdBlocker'
 import { useTrackMatchView } from '../../../hooks/useLiveViews'
 import { APIMatch, Stream, fetchStreams } from '../../../lib/matches/service'
 import { getDefaultSource } from '../../../lib/admin'
+import { isIOS } from '../../../lib/device'
 import styles from './WatchPage.module.css'
 
 const API_BASE = 'https://streamed.pk/api'
@@ -212,6 +213,7 @@ export default function WatchPage() {
                                             className={styles.videoIframe}
                                             allowFullScreen
                                             allow="autoplay; fullscreen; picture-in-picture"
+                                            sandbox={isIOS() ? "allow-scripts allow-same-origin allow-forms allow-presentation" : undefined}
                                             onLoad={() => setIframeLoaded(true)}
                                         />
                                     </AdShieldErrorBoundary>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import Navbar from '../../components/Navbar'
 import { trackView } from '../../lib/api'
+import { isIOS } from '../../lib/device'
 import { APIMatch, Stream, fetchStreams, fetchAllMatches, getPosterUrl, getTeamBadgeUrl } from '../../lib/matches/service'
 
 interface Slot {
@@ -134,6 +135,7 @@ export default function MultiviewPage() {
                       className="slot-iframe"
                       allowFullScreen
                       allow="autoplay; fullscreen"
+                      sandbox={isIOS() ? "allow-scripts allow-same-origin allow-forms allow-presentation" : undefined}
                     />
                   ) : (
                     <div className="slot-message">No streams available</div>
