@@ -213,7 +213,7 @@ export default function WatchPage() {
                                             className={styles.videoIframe}
                                             allowFullScreen
                                             allow="autoplay; fullscreen; picture-in-picture"
-                                            sandbox={isIOS() ? "allow-scripts allow-same-origin allow-forms allow-presentation" : undefined}
+                                            sandbox={isIOS() && selectedStream.source.toLowerCase() !== 'golf' ? "allow-scripts allow-same-origin allow-forms allow-presentation" : undefined}
                                             onLoad={() => setIframeLoaded(true)}
                                         />
                                     </AdShieldErrorBoundary>

@@ -135,7 +135,7 @@ export default function MultiviewPage() {
                       className="slot-iframe"
                       allowFullScreen
                       allow="autoplay; fullscreen"
-                      sandbox={isIOS() ? "allow-scripts allow-same-origin allow-forms allow-presentation" : undefined}
+                      sandbox={isIOS() && slot.selectedStream.source.toLowerCase() !== 'golf' ? "allow-scripts allow-same-origin allow-forms allow-presentation" : undefined}
                     />
                   ) : (
                     <div className="slot-message">No streams available</div>
