@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 
 const PING_INTERVAL = 30000; // 30 seconds
-const VIEW_API = process.env.NEXT_PUBLIC_VIEW_API || 'https://api.reedstreams.live'; 
+const VIEW_API = process.env.NEXT_PUBLIC_VIEW_API || 'https://69.169.102.59'; 
 
 interface AllViewsResponse {
   views: Record<string, number>

@@ -10,7 +10,7 @@ interface ChatMessage {
   timestamp: string
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_VIEW_API || 'https://api.reedstreams.live'
+const API_BASE = process.env.NEXT_PUBLIC_VIEW_API || 'https://69.169.102.59'
 const ADMIN_KEY_STORAGE = 'reedstreams_admin_key'
 
 export default function Chat() {

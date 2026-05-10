@@ -16,7 +16,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Set environment variables for build
-ARG NEXT_PUBLIC_API_URL=https://reedstreams-backend.fly.dev
+ARG NEXT_PUBLIC_API_URL=https://69.169.102.59
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 RUN npm run build
