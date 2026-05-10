@@ -40,6 +40,10 @@ async function handleRequest(request: NextRequest) {
       headers.set(key, value)
     }
   })
+
+  // Forward the client's IP address
+  const clientIp = request.headers.get('x-forwarded-for') || request.ip || '127.0.0.1'
+  headers.set('X-Forwarded-For', clientIp)
   
   try {
     const body = ['GET', 'HEAD'].includes(request.method) 
