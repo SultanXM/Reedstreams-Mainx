@@ -259,7 +259,7 @@ export async function changeUsername(newUsername: string) {
   return res.json()
 }
 
-const ENGAGEMENT_API = 'https://69.169.102.59'
+const ENGAGEMENT_API = '/api'
 
 export async function trackView(matchId: string) {
   try {

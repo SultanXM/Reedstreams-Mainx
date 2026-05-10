@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const BACKEND_URL = 'https://reedstreams-backend-app-production.up.railway.app'
+// Force allowing self-signed certificates for the proxy
+if (process.env.NODE_ENV === 'production') {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+}
+
+const BACKEND_URL = 'https://69.169.102.59'
 
 export async function GET(request: NextRequest) {
   return handleRequest(request)

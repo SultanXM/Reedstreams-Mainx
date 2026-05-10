@@ -11,7 +11,7 @@ primary_region = "sin"
 
 [build]
   [build.args]
-    NEXT_PUBLIC_API_URL = "https://69.169.102.59"
+    NEXT_PUBLIC_API_URL = "/api"
 
 [[vm]]
   cpu_kind = "shared"

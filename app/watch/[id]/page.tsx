@@ -71,7 +71,7 @@ export default function WatchPage() {
                 // 1. Fetch from caching API (Always try our cache first or in parallel)
                 let cachedMatch: APIMatch | null = null
                 try {
-                    const cacheRes = await fetch(`https://69.169.102.59/match/${matchId}`)
+                    const cacheRes = await fetch(`/api/match/${matchId}`)
                     if (cacheRes.ok) {
                         cachedMatch = await cacheRes.json()
                     }
