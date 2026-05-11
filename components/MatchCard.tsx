@@ -48,8 +48,8 @@ export function MatchCard({ match }: MatchCardProps) {
   const isLive = status === 'live'
   const [countdown, setCountdown] = useState('')
 
-  // For live matches, prefer the WebSocket live count
-  const displayViews = isLive && liveViewCounts[match.id] !== undefined
+  // Use the tracked live count for all matches if available
+  const displayViews = liveViewCounts[match.id] !== undefined
     ? liveViewCounts[match.id]
     : views
 
@@ -81,11 +81,20 @@ export function MatchCard({ match }: MatchCardProps) {
       onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = `/watch/${match.id}` }}
     >
       <div className={styles.matchCard}>
-        {/* LIVE Badge */}
-        {isLive && (
-          <div className={styles.liveBadge}>
-            <span className={styles.liveDot} />
-            LIVE
+        {/* Status/Views Badge */}
+        {(isLive || displayViews > 0) && (
+          <div className={isLive ? styles.liveBadge : styles.popularBadge}>
+            {isLive ? (
+              <>
+                <span className={styles.liveDot} />
+                LIVE
+              </>
+            ) : (
+              <svg className={styles.viewIcon} width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            )}
             <span className={styles.viewsCount}>{formatViews(displayViews)}</span>
           </div>
         )}

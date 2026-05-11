@@ -5,7 +5,7 @@ if (process.env.NODE_ENV === 'production') {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 }
 
-const BACKEND_URL = 'https://69.169.102.59'
+const BACKEND_URL = 'http://api.reedstreams.live:3001'
 
 export async function GET(request: NextRequest) {
   return handleRequest(request)

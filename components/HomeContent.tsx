@@ -61,50 +61,18 @@ export function HomeContent() {
         )
       : noDbMatches
 
-    // LIVE matches - Max 5 per sport, ranked by inverse count (fewer = higher rank)
-    const allLive = searchedMatches.filter(m => m.status === 'live')
-    
-    // Group live matches by sport
-    const liveBySport: Record<string, MatchWithStatus[]> = {}
-    allLive.forEach(match => {
-      const sport = match.category
-      if (!liveBySport[sport]) liveBySport[sport] = []
-      liveBySport[sport].push(match)
-    })
-    
-    // Sort sports by inverse count (fewer matches = higher priority)
-    const sortedSports = Object.entries(liveBySport).sort((a, b) => a[1].length - b[1].length)
-    
-    // Take max 5 from each sport, maintain sorted order
-    const live: MatchWithStatus[] = []
-    sortedSports.forEach(([sport, matches]) => {
-      live.push(...matches.slice(0, 5))
-    })
+    // LIVE matches - Ranked strictly by views descending
+    const live = searchedMatches
+      .filter(m => m.status === 'live')
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
 
     // POPULAR matches - EXPLICITLY exclude live matches (they have their own section)
-    let popular = searchedMatches.filter(m =>
-      m.popular === true && m.status !== 'live'
-    )
-
-    // If not searching, apply content restrictions to popular matches
-    if (!searchQuery.trim()) {
-      // Separate cricket/motor-sports from other sports
-      const restrictedSports = ['cricket', 'motor-sports']
-      const otherSports = popular.filter(m => !restrictedSports.includes(m.category))
-      const restrictedMatches = popular.filter(m => restrictedSports.includes(m.category))
-
-      // Top 20: Only other sports (no cricket/motor-sports)
-      const top20 = otherSports.slice(0, 20)
-
-      // Remaining 10: Can include cricket/motor-sports
-      const remaining = [...otherSports.slice(20), ...restrictedMatches].slice(0, 10)
-
-      // Combine: top 20 + 10 more (max 30 total)
-      popular = [...top20, ...remaining]
-    } else {
-      // When searching, just limit to 30
-      popular = popular.slice(0, 30)
-    }
+    // We define "Popular" as matches marked popular OR any match with active views
+    // Sorted strictly by views descending
+    const popular = searchedMatches
+      .filter(m => (m.popular === true || (m.views || 0) > 0) && m.status !== 'live')
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
+      .slice(0, 30)
 
     return { liveMatches: live, popularMatches: popular }
   }, [matchesWithBanners, searchQuery])

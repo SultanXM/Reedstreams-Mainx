@@ -124,12 +124,13 @@ export function MatchesProvider({ children }: MatchesProviderProps) {
     return matchesFilter && matchesSport && matchesSearch
   })
 
-  // WebSocket: track live view counts for LIVE matches
-  const liveMatchIds = useMemo(
-    () => matches.filter(m => m.status === 'live').map(m => m.id),
+  // Track view counts for all matches
+  // This ensures that Popular (non-live) matches can also be sorted by active view counts
+  const matchIdsForViews = useMemo(
+    () => matches.map(m => m.id),
     [matches]
   )
-  const liveViewCounts = useLiveViews(liveMatchIds)
+  const liveViewCounts = useLiveViews(matchIdsForViews)
 
   // Multiplier to make views look more "alive"
   const VIEW_MULTIPLIER = 1;
