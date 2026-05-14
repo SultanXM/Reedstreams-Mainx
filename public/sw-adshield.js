@@ -37,9 +37,12 @@ const AD_PATTERNS = [
 const WHITELIST_PATTERNS = [
     /reedstreams/i,
     /localhost/i,
+    /127\.0\.0\.1/i,
     /192\.168\./i,
+    /10\.\d+\./i,
     /vercel/i,
     /streamed\.pk/i,
+    /strmd\.link/i,
     /embedstream/i,
     /sportshub/i,
     /google-analytics/i,
@@ -48,7 +51,8 @@ const WHITELIST_PATTERNS = [
     /fonts\./i,
     /cloudflare/i,
     /jsdelivr/i,
-    /cdnjs/i
+    /cdnjs/i,
+    /\/api\//i
 ];
 
 /**

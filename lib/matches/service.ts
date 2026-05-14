@@ -3,7 +3,7 @@
 // Documentation: https://streamed.pk/docs
 // ============================================
 
-const API_BASE = 'https://streamed.pk/api'
+import { SERVICE_API_BASE } from '../serviceApi'
 
 // Types from API documentation
 export interface APIMatch {
@@ -63,7 +63,7 @@ export interface MatchWithStatus extends APIMatch {
  */
 export async function fetchSports(): Promise<Sport[]> {
   try {
-    const res = await fetch(`${API_BASE}/sports`)
+    const res = await fetch(`${SERVICE_API_BASE}/sports`)
     if (!res.ok) {
       console.warn('Failed to fetch sports, returning empty array')
       return []
@@ -81,7 +81,7 @@ export async function fetchSports(): Promise<Sport[]> {
  */
 export async function fetchMatchesBySport(sport: string): Promise<APIMatch[]> {
   try {
-    const res = await fetch(`${API_BASE}/matches/${sport}`)
+    const res = await fetch(`${SERVICE_API_BASE}/matches/${sport}`)
     if (!res.ok) {
       console.warn(`Failed to fetch matches for ${sport}, returning empty array`)
       return []
@@ -99,7 +99,7 @@ export async function fetchMatchesBySport(sport: string): Promise<APIMatch[]> {
  */
 export async function fetchAllMatches(): Promise<APIMatch[]> {
   try {
-    const res = await fetch(`${API_BASE}/matches/all`)
+    const res = await fetch(`${SERVICE_API_BASE}/matches/all`)
     if (!res.ok) {
       console.warn('Failed to fetch all matches, returning empty array')
       return []
@@ -117,7 +117,7 @@ export async function fetchAllMatches(): Promise<APIMatch[]> {
  */
 export async function fetchLiveMatches(): Promise<APIMatch[]> {
   try {
-    const res = await fetch(`${API_BASE}/matches/live`)
+    const res = await fetch(`${SERVICE_API_BASE}/matches/live`)
     if (!res.ok) {
       console.warn('Failed to fetch live matches, returning empty array')
       return []
@@ -135,7 +135,7 @@ export async function fetchLiveMatches(): Promise<APIMatch[]> {
  */
 export async function fetchPopularMatches(): Promise<APIMatch[]> {
   try {
-    const res = await fetch(`${API_BASE}/matches/all/popular`)
+    const res = await fetch(`${SERVICE_API_BASE}/matches/all/popular`)
     if (!res.ok) {
       console.warn('Failed to fetch popular matches, returning empty array')
       return []
@@ -153,7 +153,7 @@ export async function fetchPopularMatches(): Promise<APIMatch[]> {
  */
 export async function fetchStreams(source: string, id: string): Promise<Stream[]> {
   try {
-    const res = await fetch(`${API_BASE}/stream/${source}/${id}`)
+    const res = await fetch(`${SERVICE_API_BASE}/stream/${source}/${id}`)
     if (!res.ok) {
       console.warn('Failed to fetch streams, returning empty array')
       return []
@@ -169,17 +169,25 @@ export async function fetchStreams(source: string, id: string): Promise<Stream[]
 // IMAGE URL HELPERS
 // ============================================
 
-const SITE_BASE = 'https://streamed.pk'
-
 export function getTeamBadgeUrl(badgeId: string): string {
-  return `${SITE_BASE}/api/images/badge/${badgeId}.webp`
+  const badgeFile = badgeId.endsWith('.webp') ? badgeId : `${badgeId}.webp`
+  return `${SERVICE_API_BASE}/images/badge/${badgeFile}`
 }
 
 export function getPosterUrl(posterPath: string): string {
-  if (posterPath.startsWith('/api/images/')) {
-    return `${SITE_BASE}${posterPath}.webp`
+  if (posterPath.startsWith('http://') || posterPath.startsWith('https://')) {
+    return posterPath
   }
-  return `${SITE_BASE}/api/images/proxy/${posterPath}.webp`
+  if (posterPath.startsWith('/api/images/')) {
+    return posterPath
+  }
+  if (posterPath.startsWith('/images/')) {
+    return `${SERVICE_API_BASE}${posterPath}`
+  }
+
+  const normalizedPath = posterPath.replace(/^\/+/, '')
+  const posterFile = normalizedPath.endsWith('.webp') ? normalizedPath : `${normalizedPath}.webp`
+  return `${SERVICE_API_BASE}/images/proxy/${posterFile}`
 }
 
 // ============================================

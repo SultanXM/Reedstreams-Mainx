@@ -112,6 +112,10 @@ export function HomeContent() {
     }
   }
 
+  const renderMatchCards = (matches: MatchWithStatus[]) => {
+    return matches.map(match => <MatchCard key={match.id} match={match} />)
+  }
+
   // Render matches with date separators
   const renderMatchesWithDateSeparators = (matches: MatchWithStatus[]) => {
     const elements: React.ReactNode[] = []
@@ -212,7 +216,7 @@ export function HomeContent() {
               <SectionHeader title="Live Now" count={liveMatches.length} />
               {liveMatches.length > 0 ? (
                 <div className={styles.matchesGrid}>
-                  {renderMatchesWithDateSeparators(liveMatches.slice(0, visibleSections.has('live') ? liveMatches.length : 10))}
+                  {renderMatchCards(liveMatches.slice(0, visibleSections.has('live') ? liveMatches.length : 10))}
                 </div>
               ) : (
                 <div className={styles.noLiveMessage}>
@@ -228,7 +232,7 @@ export function HomeContent() {
               <SectionHeader title="Popular" count={popularMatches.length} />
               {popularMatches.length > 0 ? (
                 <div className={styles.matchesGrid}>
-                  {renderMatchesWithDateSeparators(popularMatches)}
+                  {renderMatchCards(popularMatches)}
                 </div>
               ) : (
                 <div className={styles.noLiveMessage}>

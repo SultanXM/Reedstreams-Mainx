@@ -9,31 +9,25 @@ interface MatchCardProps {
   match: MatchWithStatus
 }
 
-function formatDate(dateMs: number): string {
-  const date = new Date(dateMs)
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  return `${months[date.getMonth()]} ${date.getDate()}`
-}
-
 function formatTime(dateMs: number): string {
   return new Date(dateMs).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
 }
 
-function formatCountdown(targetDate: number): string {
+function getUpcomingLabel(targetDate: number): string {
   const targetTime = targetDate > 10000000000 ? targetDate : targetDate * 1000
   const now = Date.now()
   const diff = targetTime - now
 
-  if (diff <= 0) return 'LIVE'
+  if (diff <= 0) return ''
 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
 
-  if (minutes < 15) return 'Starting soon'
+  if (diff <= 15 * 60 * 1000) return 'Starting soon'
   if (days > 0) return `${days}d ${hours}h`
   if (hours > 0) return `${hours}h ${minutes}m`
-  return `${minutes}m`
+  return `${Math.max(minutes, 1)}m`
 }
 
 function formatViews(count: number): string {
@@ -44,7 +38,7 @@ function formatViews(count: number): string {
 
 export function MatchCard({ match }: MatchCardProps) {
   const { liveViewCounts } = useMatches()
-  const { status, date, title, category, teams, views = 0 } = match
+  const { status, date, title, category, teams, views = 0, formattedDate, formattedTime } = match
   const isLive = status === 'live'
   const [countdown, setCountdown] = useState('')
 
@@ -55,10 +49,10 @@ export function MatchCard({ match }: MatchCardProps) {
 
   useEffect(() => {
     if (!isLive && date) {
-      setCountdown(formatCountdown(date))
+      setCountdown(getUpcomingLabel(date))
       const interval = setInterval(() => {
-        setCountdown(formatCountdown(date))
-      }, 1000)
+        setCountdown(getUpcomingLabel(date))
+      }, 30000)
       return () => clearInterval(interval)
     }
   }, [isLive, date])
@@ -69,8 +63,8 @@ export function MatchCard({ match }: MatchCardProps) {
   const awayName = teams?.away?.name || 'TBD'
 
   const categoryName = category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
-  const dateStr = date ? formatDate(date) : ''
-  const timeStr = date ? formatTime(date) : ''
+  const dateStr = formattedDate || (date ? new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '')
+  const timeStr = formattedTime || (date ? formatTime(date) : '')
 
   return (
     <div
@@ -88,6 +82,9 @@ export function MatchCard({ match }: MatchCardProps) {
               <>
                 <span className={styles.liveDot} />
                 LIVE
+                {displayViews > 0 && (
+                  <span className={styles.viewsCount}>{formatViews(displayViews)}</span>
+                )}
               </>
             ) : (
               <svg className={styles.viewIcon} width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -95,7 +92,9 @@ export function MatchCard({ match }: MatchCardProps) {
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
             )}
-            <span className={styles.viewsCount}>{formatViews(displayViews)}</span>
+            {!isLive && (
+              <span className={styles.viewsCount}>{formatViews(displayViews)}</span>
+            )}
           </div>
         )}
 

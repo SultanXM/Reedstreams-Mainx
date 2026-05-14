@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { SERVICE_API_BASE } from '../lib/serviceApi'
 
 const PING_INTERVAL = 30000; // 30 seconds
-const VIEW_API = process.env.NEXT_PUBLIC_VIEW_API || '/api'; 
 
 interface AllViewsResponse {
   views: Record<string, number>
@@ -19,7 +19,7 @@ export function useLiveViews(matchIds: string[]): Record<string, number> {
   useEffect(() => {
     const fetchAllCounts = async () => {
       try {
-        const res = await fetch(`${VIEW_API}/views/all`)
+        const res = await fetch(`${SERVICE_API_BASE}/views/all`)
         if (res.ok) {
           const data: AllViewsResponse = await res.json()
           setCounts(data.views)
@@ -46,11 +46,16 @@ export function useTrackMatchView(matchId: string | undefined) {
 
         const sendPing = async () => {
             try {
-                await fetch(`${VIEW_API}/ping`, {
+                const controller = new AbortController()
+                const timeoutId = setTimeout(() => controller.abort(), 5000)
+                
+                await fetch(`${SERVICE_API_BASE}/ping`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ match_id: matchId }),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId)
             } catch (err) {
                 console.warn('View count ping failed', err);
             }

@@ -7,12 +7,11 @@ import Chat from '../../../components/Chat'
 import { AdShieldErrorBoundary } from '../../../components/AdShieldErrorBoundary'
 import { useUniversalAdBlocker } from '../../../hooks/useUniversalAdBlocker'
 import { useTrackMatchView } from '../../../hooks/useLiveViews'
-import { APIMatch, Stream, fetchStreams } from '../../../lib/matches/service'
+import { APIMatch, Stream, fetchAllMatches, fetchStreams } from '../../../lib/matches/service'
+import { SERVICE_API_BASE } from '../../../lib/serviceApi'
 import { getDefaultSource } from '../../../lib/admin'
 import { isIOS } from '../../../lib/device'
 import styles from './WatchPage.module.css'
-
-const API_BASE = 'https://streamed.pk/api'
 
 const REPORT_REASONS = [
   'Stream Lag / Buffering',
@@ -71,7 +70,7 @@ export default function WatchPage() {
                 // 1. Fetch from caching API (Always try our cache first or in parallel)
                 let cachedMatch: APIMatch | null = null
                 try {
-                    const cacheRes = await fetch(`/api/match/${matchId}`)
+                    const cacheRes = await fetch(`${SERVICE_API_BASE}/match/${matchId}`)
                     if (cacheRes.ok) {
                         cachedMatch = await cacheRes.json()
                     }
@@ -82,11 +81,8 @@ export default function WatchPage() {
                 // 2. Fetch from primary API
                 let primaryMatch: APIMatch | null = null
                 try {
-                    const allMatchesRes = await fetch(`${API_BASE}/matches/all`)
-                    if (allMatchesRes.ok) {
-                        const allMatches: APIMatch[] = await allMatchesRes.json()
-                        primaryMatch = allMatches.find(m => m.id === matchId || m.sources.some(s => s.id === matchId)) || null
-                    }
+                    const allMatches = await fetchAllMatches()
+                    primaryMatch = allMatches.find(m => m.id === matchId || m.sources.some(s => s.id === matchId)) || null
                 } catch (err) {
                     console.warn('Failed to fetch from primary API:', err)
                 }

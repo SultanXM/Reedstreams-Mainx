@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import styles from './Chat.module.css'
+import { SERVICE_API_BASE } from '../lib/serviceApi'
 
 interface ChatMessage {
   id: string
@@ -10,7 +11,6 @@ interface ChatMessage {
   timestamp: string
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_VIEW_API || '/api'
 const ADMIN_KEY_STORAGE = 'reedstreams_admin_key'
 
 export default function Chat() {
@@ -39,7 +39,7 @@ export default function Chat() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await fetch(`${API_BASE}/chat/messages`)
+        const res = await fetch(`${SERVICE_API_BASE}/chat/messages`)
         if (res.ok) {
           const data = await res.json()
           setMessages(data)
@@ -100,7 +100,7 @@ export default function Chat() {
     if (!inputText.trim()) return
 
     try {
-      const res = await fetch(`${API_BASE}/chat/send`, {
+      const res = await fetch(`${SERVICE_API_BASE}/chat/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -120,7 +120,7 @@ export default function Chat() {
   const handleDeleteMessage = async (msgId: string) => {
     if (!adminKey) return
     try {
-      const res = await fetch(`${API_BASE}/chat/message/${msgId}`, {
+      const res = await fetch(`${SERVICE_API_BASE}/chat/message/${msgId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ admin_key: adminKey }),
